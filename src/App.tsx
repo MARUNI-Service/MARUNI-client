@@ -1,19 +1,21 @@
 import { Button } from './shared/components/ui/Button';
+import { Layout } from './shared/components/layout/Layout';
 
 function App() {
   const handleButtonClick = (buttonName: string) => {
     console.log(`${buttonName} 버튼이 클릭되었습니다.`);
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="text-center py-8 bg-white shadow-sm">
-        <h1 className="text-3xl font-bold text-gray-900">MARUNI</h1>
-        <p className="text-lg text-gray-600 mt-2">마음이 닿는 안부</p>
-        <p className="text-base text-blue-600 mt-1">Phase 1 - Button 컴포넌트 테스트</p>
-      </header>
+  const handleBackClick = () => {
+    console.log('뒤로가기 버튼이 클릭되었습니다.');
+  };
 
-      <main className="max-w-md mx-auto px-4 py-8">
+  return (
+    <Layout
+      title="MARUNI 컴포넌트 테스트"
+      showBack
+      onBack={handleBackClick}
+    >
         <div className="space-y-8">
           {/* Button 컴포넌트 테스트 섹션 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
@@ -113,9 +115,19 @@ function App() {
               <li>• 터치 영역이 60px 이상인지 확인</li>
             </ul>
           </section>
+
+          {/* Layout 컴포넌트 테스트 안내 */}
+          <section className="bg-green-50 p-6 rounded-lg">
+            <h3 className="text-lg font-bold text-green-900 mb-3">Layout 컴포넌트 테스트</h3>
+            <ul className="text-green-800 space-y-1 text-base">
+              <li>• 뒤로가기 버튼 클릭 확인</li>
+              <li>• Header와 Main 영역 분리 확인</li>
+              <li>• 제목 중앙 정렬 확인</li>
+              <li>• 모바일 최적화 확인 (max-width 480px)</li>
+            </ul>
+          </section>
         </div>
-      </main>
-    </div>
+    </Layout>
   )
 }
 
