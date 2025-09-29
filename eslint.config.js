@@ -39,7 +39,6 @@ export default defineConfig([
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/prefer-const': 'error',
 
       // General rules
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
