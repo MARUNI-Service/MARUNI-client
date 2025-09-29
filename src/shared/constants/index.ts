@@ -1,8 +1,7 @@
 export * from './api';
 export * from './routes';
-export * from './storage';
 
-// UI Constants
+// UI Constants (노인 친화적)
 export const UI_CONSTANTS = {
   // Font sizes (elderly-friendly)
   FONT_SIZE: {
