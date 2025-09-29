@@ -199,26 +199,7 @@ export default [
 
 ## 📊 개발 명령어
 
-```bash
-# 개발 환경 실행
-npm run dev
-
-# 프로덕션 빌드
-npm run build
-
-# 타입 체크
-npm run build  # TypeScript 컴파일 포함
-
-# 코드 검사 및 수정
-npm run lint
-npm run lint:fix
-
-# 프리뷰 (빌드 결과 확인)
-npm run preview
-
-# PWA 기능 테스트
-npm run build && npm run preview
-```
+> **상세한 개발 명령어**: [현재 상태 문서](./project/CURRENT_STATUS.md#개발-명령어) 참조
 
 ## 🔄 업데이트 로그
 
@@ -231,7 +212,7 @@ npm run build && npm run preview
 - 📐 [기술 아키텍처](./architecture/TECHNICAL_ARCHITECTURE.md) - 시스템 구조 및 설계
 - 📁 [패키지 구조](./development/PACKAGE_STRUCTURE.md) - 프로젝트 구조 가이드
 - 📝 [코딩 컨벤션](./development/CODING_CONVENTIONS.md) - 개발 규칙
-- 📊 [프로젝트 진행 상황](./project/PROJECT_PROGRESS.md) - 현재 구현 상태
+- 📊 [현재 상태](./project/CURRENT_STATUS.md) - 현재 구현 상태
 
 ---
 

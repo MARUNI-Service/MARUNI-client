@@ -102,18 +102,6 @@ npm run preview
 .text-high-contrast # 고대비 텍스트
 ```
 
-## 폴더 구조 (예정)
-```
-src/
-├── components/     # 재사용 컴포넌트
-├── pages/         # 페이지 컴포넌트
-├── hooks/         # 커스텀 훅
-├── store/         # Zustand 스토어
-├── api/           # API 관련
-├── types/         # TypeScript 타입 정의
-└── utils/         # 유틸리티 함수
-```
-
 ## 개발 시 주의사항
 1. **접근성**: 스크린 리더, 키보드 네비게이션 고려
 2. **성능**: PWA이므로 번들 크기 최적화 필요

@@ -6,7 +6,7 @@
 - 📋 [기술 스택](../TECH_STACK.md) - 사용 기술 상세 정보
 - 📁 [패키지 구조](../development/PACKAGE_STRUCTURE.md) - 구현 구조 가이드
 - 🎨 [디자인 시스템](./DESIGN_SYSTEM.md) - UI/UX 설계
-- 📈 [프로젝트 진행 상황](../project/PROJECT_PROGRESS.md) - 현재 구현 상태
+- 📈 [현재 상태](../project/CURRENT_STATUS.md) - 현재 구현 상태
 
 ## 🏗️ 아키텍처 개요
 
@@ -51,76 +51,14 @@
 ## 📦 패키지 아키텍처
 
 ### 계층별 책임 분리
-```typescript
-// 1. App Layer - 앱 설정과 전역 상태
-src/app/
-├── App.tsx              // 메인 앱 컴포넌트
-├── router.tsx           // 라우팅 설정
-└── providers/           // 전역 Provider들
-    ├── QueryProvider.tsx    // TanStack Query
-    ├── AuthProvider.tsx     // 인증 Context
-    └── ThemeProvider.tsx    // 테마 설정
 
-// 2. Pages Layer - 화면 조합
-src/pages/
-├── auth/
-│   ├── LoginPage.tsx        // 로그인 화면
-│   ├── RegisterPage.tsx     // 회원가입 화면
-│   └── index.ts             // Export
-├── dashboard/
-│   └── DashboardPage.tsx    // 메인 대시보드
-├── conversation/
-│   ├── ConversationPage.tsx // AI 대화 화면
-│   └── HistoryPage.tsx      // 대화 이력
-└── [도메인]/[페이지].tsx
+> **상세한 패키지 구조**: [패키지 구조 문서](../development/PACKAGE_STRUCTURE.md) 참조
 
-// 3. Features Layer - 도메인별 비즈니스 로직
-src/features/
-├── auth/                    // 인증 도메인
-│   ├── components/          // UI 컴포넌트
-│   ├── hooks/               // 비즈니스 로직
-│   ├── api/                 // API 통신
-│   ├── store/               // 상태 관리
-│   ├── types/               // 타입 정의
-│   └── index.ts             // Public API
-├── [도메인]/
-└── 서버 6개 도메인 매핑
-
-// 4. Shared Layer - 공통 모듈
-src/shared/
-├── components/ui/           // 재사용 UI 컴포넌트
-├── hooks/                   // 공통 훅
-├── utils/                   // 유틸리티 함수
-├── constants/               // 상수
-└── types/                   // 공통 타입
-```
-
-### Feature 모듈 상세 구조
-```typescript
-// 예시: features/auth/
-├── components/
-│   ├── LoginForm/
-│   │   ├── LoginForm.tsx
-│   │   ├── LoginForm.test.tsx
-│   │   └── index.ts
-│   ├── ProtectedRoute/
-│   └── index.ts
-├── hooks/
-│   ├── useAuth.ts           // 인증 상태 훅
-│   ├── useLogin.ts          // 로그인 로직
-│   ├── useLogout.ts         // 로그아웃 로직
-│   └── index.ts
-├── api/
-│   ├── authApi.ts           // API 함수들
-│   └── index.ts
-├── store/
-│   ├── authStore.ts         // Zustand 스토어
-│   └── index.ts
-├── types/
-│   ├── auth.types.ts        // 인증 관련 타입
-│   └── index.ts
-└── index.ts                 // Feature 전체 Export
-```
+4계층 아키텍처 구조:
+- **App Layer**: 앱 설정과 전역 상태 관리
+- **Pages Layer**: 화면 조합 및 라우팅
+- **Features Layer**: 도메인별 비즈니스 로직 (서버 도메인과 매핑)
+- **Shared Layer**: 공통 모듈 및 재사용 컴포넌트
 
 ## 🔧 기술 아키텍처 개념
 
