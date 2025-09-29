@@ -16,6 +16,12 @@
   - Phase별 상세 작업 내용
   - 성공 지표 및 마일스톤
 
+### 🚀 실행 가이드
+- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** ⭐ **개발 시작 필수**
+  - Phase 1 상세 실행 계획 (7일간 일정)
+  - 컴포넌트별 구현 가이드
+  - 코드 템플릿과 테스트 방법
+
 ### 🛠️ 개발 가이드
 - **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** ⭐ **개발 시 필수**
   - 노인 친화적 컴포넌트 설계 원칙
@@ -84,6 +90,11 @@
   - 상세 작업 일정 및 체크리스트
   - 위험 관리 및 성공 지표
 
+- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** ⭐ **신규**
+  - Phase 1 상세 실행 가이드 (7일간)
+  - 컴포넌트별 구현 단계와 코드 템플릿
+  - 테스트 방법 및 문제 해결 가이드
+
 - **[PROJECT_PROGRESS.md](./project/PROJECT_PROGRESS.md)**
   - 전체적인 프로젝트 진행 상황
   - 핵심 성과 및 인사이트
@@ -94,9 +105,10 @@
 ### 🔰 처음 시작하는 경우 (필수 순서)
 1. **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** ⭐ - 현재 프로젝트 상황 파악
 2. **[DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md)** ⭐ - 개발 계획 이해
-3. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** ⭐ - 컴포넌트 개발 가이드
-4. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 상세 정보
-5. **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙
+3. **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** ⭐ - Phase 1 실행 가이드
+4. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** ⭐ - 컴포넌트 개발 가이드
+5. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 상세 정보
+6. **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙
 
 ### 🎯 상황별 문서 찾기
 
@@ -117,6 +129,7 @@
 #### 📊 **프로젝트 관리할 때**
 - **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** - 현재 상태
 - **[DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md)** - 개발 계획
+- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** - 실행 가이드
 
 ### 🔄 문서 업데이트 규칙
 
