@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* 노인 친화적 기본 스타일 */
+@layer base {
+  :root {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    font-weight: 400;
+    color-scheme: light;
+    color: #111827;
+    background-color: #ffffff;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    font-size: 18px; /* 기본 큰 폰트 사이즈 */
+  }
+
+  /* 터치 영역 최소 크기 */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+@layer components {
+  /* 노인 친화적 버튼 스타일 */
+  .btn-primary {
+    @apply bg-blue-600 text-white font-semibold py-4 px-6 rounded-lg text-xl min-h-[60px] hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-700 font-semibold py-4 px-6 rounded-lg text-xl min-h-[60px] hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-colors;
+  }
+
+  /* 큰 터치 영역 */
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  /* 명확한 대비 텍스트 */
+  .text-high-contrast {
+    @apply text-gray-900 bg-white;
+  }
+}
