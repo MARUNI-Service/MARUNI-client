@@ -16,6 +16,20 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/components/*": ["src/shared/components/*"],
+      "@/hooks/*": ["src/shared/hooks/*"],
+      "@/utils/*": ["src/shared/utils/*"],
+      "@/constants/*": ["src/shared/constants/*"],
+      "@/types/*": ["src/shared/types/*"],
+      "@/features/*": ["src/features/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/app/*": ["src/app/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
