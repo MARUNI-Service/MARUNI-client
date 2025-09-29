@@ -22,267 +22,267 @@ function App() {
       showBack
       onBack={handleBackClick}
     >
-        <div className="space-y-8">
-          {/* Button 컴포넌트 테스트 섹션 */}
-          <Card padding="large">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Button 컴포넌트 테스트</h2>
+      <div className="space-y-8">
+        {/* Button 컴포넌트 테스트 섹션 */}
+        <Card padding="large">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Button 컴포넌트 테스트</h2>
 
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">Primary 버튼</h3>
-                <div className="space-y-3">
-                  <Button
-                    variant="primary"
-                    size="large"
-                    onClick={() => handleButtonClick('Primary Large')}
-                  >
-                    Primary Large
-                  </Button>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Primary 버튼</h3>
+              <div className="space-y-3">
+                <Button
+                  variant="primary"
+                  size="large"
+                  onClick={() => handleButtonClick('Primary Large')}
+                >
+                  Primary Large
+                </Button>
 
-                  <Button
-                    variant="primary"
-                    size="extra-large"
-                    onClick={() => handleButtonClick('Primary Extra Large')}
-                  >
-                    Primary Extra Large
-                  </Button>
+                <Button
+                  variant="primary"
+                  size="extra-large"
+                  onClick={() => handleButtonClick('Primary Extra Large')}
+                >
+                  Primary Extra Large
+                </Button>
 
-                  <Button
-                    variant="primary"
-                    size="large"
-                    fullWidth
-                    onClick={() => handleButtonClick('Primary Full Width')}
-                  >
-                    Primary Full Width
-                  </Button>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">Secondary 버튼</h3>
-                <div className="space-y-3">
-                  <Button
-                    variant="secondary"
-                    size="large"
-                    onClick={() => handleButtonClick('Secondary Large')}
-                  >
-                    Secondary Large
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="extra-large"
-                    onClick={() => handleButtonClick('Secondary Extra Large')}
-                  >
-                    Secondary Extra Large
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="large"
-                    fullWidth
-                    onClick={() => handleButtonClick('Secondary Full Width')}
-                  >
-                    Secondary Full Width
-                  </Button>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">Disabled 상태</h3>
-                <div className="space-y-3">
-                  <Button
-                    variant="primary"
-                    size="large"
-                    disabled
-                  >
-                    Disabled Primary
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="large"
-                    disabled
-                  >
-                    Disabled Secondary
-                  </Button>
-                </div>
+                <Button
+                  variant="primary"
+                  size="large"
+                  fullWidth
+                  onClick={() => handleButtonClick('Primary Full Width')}
+                >
+                  Primary Full Width
+                </Button>
               </div>
             </div>
-          </Card>
 
-          {/* 접근성 테스트 안내 */}
-          <section className="bg-blue-50 p-6 rounded-lg">
-            <h3 className="text-lg font-bold text-blue-900 mb-3">접근성 테스트 안내</h3>
-            <ul className="text-blue-800 space-y-1 text-base">
-              <li>• Tab 키로 모든 버튼 접근 확인</li>
-              <li>• Enter/Space 키로 버튼 클릭 확인</li>
-              <li>• 포커스 링이 명확하게 표시되는지 확인</li>
-              <li>• 터치 영역이 60px 이상인지 확인</li>
-            </ul>
-          </section>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Secondary 버튼</h3>
+              <div className="space-y-3">
+                <Button
+                  variant="secondary"
+                  size="large"
+                  onClick={() => handleButtonClick('Secondary Large')}
+                >
+                  Secondary Large
+                </Button>
 
-          {/* Input 컴포넌트 테스트 섹션 */}
-          <section className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Input 컴포넌트 테스트</h2>
+                <Button
+                  variant="secondary"
+                  size="extra-large"
+                  onClick={() => handleButtonClick('Secondary Extra Large')}
+                >
+                  Secondary Extra Large
+                </Button>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">기본 입력 필드</h3>
-                <div className="space-y-4">
-                  <Input
-                    label="이름"
-                    placeholder="이름을 입력하세요"
-                    required
-                  />
-
-                  <Input
-                    label="전화번호"
-                    type="tel"
-                    placeholder="010-0000-0000"
-                    helperText="'-' 없이 숫자만 입력해주세요"
-                  />
-
-                  <Input
-                    label="이메일"
-                    type="email"
-                    placeholder="example@email.com"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">특수 상태</h3>
-                <div className="space-y-4">
-                  <Input
-                    label="에러 상태"
-                    placeholder="잘못된 입력"
-                    error="올바른 형식으로 입력해주세요"
-                    defaultValue="wrong input"
-                  />
-
-                  <Input
-                    label="비활성 상태"
-                    placeholder="입력할 수 없습니다"
-                    disabled
-                    defaultValue="disabled input"
-                  />
-
-                  <Input
-                    label="긴 라벨 테스트"
-                    placeholder="긴 라벨이 있는 입력 필드"
-                    helperText="이것은 긴 도움말 텍스트입니다. 사용자에게 추가 정보를 제공합니다."
-                    required
-                  />
-                </div>
+                <Button
+                  variant="secondary"
+                  size="large"
+                  fullWidth
+                  onClick={() => handleButtonClick('Secondary Full Width')}
+                >
+                  Secondary Full Width
+                </Button>
               </div>
             </div>
-          </section>
 
-          {/* Layout 컴포넌트 테스트 안내 */}
-          <section className="bg-green-50 p-6 rounded-lg">
-            <h3 className="text-lg font-bold text-green-900 mb-3">Layout 컴포넌트 테스트</h3>
-            <ul className="text-green-800 space-y-1 text-base">
-              <li>• 뒤로가기 버튼 클릭 확인</li>
-              <li>• Header와 Main 영역 분리 확인</li>
-              <li>• 제목 중앙 정렬 확인</li>
-              <li>• 모바일 최적화 확인 (max-width 480px)</li>
-            </ul>
-          </section>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Disabled 상태</h3>
+              <div className="space-y-3">
+                <Button
+                  variant="primary"
+                  size="large"
+                  disabled
+                >
+                  Disabled Primary
+                </Button>
 
-          {/* Input 접근성 테스트 안내 */}
-          <section className="bg-purple-50 p-6 rounded-lg">
-            <h3 className="text-lg font-bold text-purple-900 mb-3">Input 접근성 테스트 안내</h3>
-            <ul className="text-purple-800 space-y-1 text-base">
-              <li>• Tab 키로 모든 입력 필드 접근 확인</li>
-              <li>• 라벨 클릭 시 해당 입력 필드 포커스 확인</li>
-              <li>• 에러 메시지 스크린 리더 읽기 확인</li>
-              <li>• 필수 입력 표시(*) 확인</li>
-              <li>• 터치 영역 60px 이상 확인</li>
-            </ul>
-          </section>
-
-          {/* Card 컴포넌트 테스트 섹션 */}
-          <Card padding="large">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Card 컴포넌트 테스트</h2>
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">기본 카드</h3>
-                <div className="space-y-4">
-                  <Card padding="small">
-                    <h4 className="font-bold text-gray-900">Small Padding 카드</h4>
-                    <p className="text-gray-600 mt-2">작은 패딩을 가진 카드입니다.</p>
-                  </Card>
-
-                  <Card padding="medium">
-                    <h4 className="font-bold text-gray-900">Medium Padding 카드</h4>
-                    <p className="text-gray-600 mt-2">중간 패딩을 가진 카드입니다.</p>
-                  </Card>
-
-                  <Card padding="large" shadow="large">
-                    <h4 className="font-bold text-gray-900">Large Padding & Shadow 카드</h4>
-                    <p className="text-gray-600 mt-2">큰 패딩과 그림자를 가진 카드입니다.</p>
-                  </Card>
-                </div>
+                <Button
+                  variant="secondary"
+                  size="large"
+                  disabled
+                >
+                  Disabled Secondary
+                </Button>
               </div>
+            </div>
+          </div>
+        </Card>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">클릭 가능한 카드</h3>
-                <div className="space-y-4">
-                  <Card
-                    clickable
-                    padding="medium"
-                    onClick={() => handleCardClick('첫 번째 클릭 가능 카드')}
-                  >
-                    <h4 className="font-bold text-gray-900">클릭해보세요!</h4>
-                    <p className="text-gray-600 mt-2">이 카드는 클릭할 수 있습니다. 호버 효과와 포커스 상태를 확인해보세요.</p>
-                  </Card>
+        {/* 접근성 테스트 안내 */}
+        <section className="bg-blue-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-blue-900 mb-3">접근성 테스트 안내</h3>
+          <ul className="text-blue-800 space-y-1 text-base">
+            <li>• Tab 키로 모든 버튼 접근 확인</li>
+            <li>• Enter/Space 키로 버튼 클릭 확인</li>
+            <li>• 포커스 링이 명확하게 표시되는지 확인</li>
+            <li>• 터치 영역이 60px 이상인지 확인</li>
+          </ul>
+        </section>
 
-                  <Card
-                    clickable
-                    padding="large"
-                    shadow="medium"
-                    onClick={() => handleCardClick('두 번째 클릭 가능 카드')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-bold text-gray-900">안부 확인</h4>
-                        <p className="text-gray-600 mt-1">오늘의 기분은 어떠신가요?</p>
-                      </div>
-                      <span className="text-2xl">😊</span>
+        {/* Input 컴포넌트 테스트 섹션 */}
+        <Card padding="large">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Input 컴포넌트 테스트</h2>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">기본 입력 필드</h3>
+              <div className="space-y-4">
+                <Input
+                  label="이름"
+                  placeholder="이름을 입력하세요"
+                  required
+                />
+
+                <Input
+                  label="전화번호"
+                  type="tel"
+                  placeholder="010-0000-0000"
+                  helperText="'-' 없이 숫자만 입력해주세요"
+                />
+
+                <Input
+                  label="이메일"
+                  type="email"
+                  placeholder="example@email.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">특수 상태</h3>
+              <div className="space-y-4">
+                <Input
+                  label="에러 상태"
+                  placeholder="잘못된 입력"
+                  error="올바른 형식으로 입력해주세요"
+                  defaultValue="wrong input"
+                />
+
+                <Input
+                  label="비활성 상태"
+                  placeholder="입력할 수 없습니다"
+                  disabled
+                  defaultValue="disabled input"
+                />
+
+                <Input
+                  label="긴 라벨 테스트"
+                  placeholder="긴 라벨이 있는 입력 필드"
+                  helperText="이것은 긴 도움말 텍스트입니다. 사용자에게 추가 정보를 제공합니다."
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Layout 컴포넌트 테스트 안내 */}
+        <section className="bg-green-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-green-900 mb-3">Layout 컴포넌트 테스트</h3>
+          <ul className="text-green-800 space-y-1 text-base">
+            <li>• 뒤로가기 버튼 클릭 확인</li>
+            <li>• Header와 Main 영역 분리 확인</li>
+            <li>• 제목 중앙 정렬 확인</li>
+            <li>• 모바일 최적화 확인 (max-width 480px)</li>
+          </ul>
+        </section>
+
+        {/* Input 접근성 테스트 안내 */}
+        <section className="bg-purple-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-purple-900 mb-3">Input 접근성 테스트 안내</h3>
+          <ul className="text-purple-800 space-y-1 text-base">
+            <li>• Tab 키로 모든 입력 필드 접근 확인</li>
+            <li>• 라벨 클릭 시 해당 입력 필드 포커스 확인</li>
+            <li>• 에러 메시지 스크린 리더 읽기 확인</li>
+            <li>• 필수 입력 표시(*) 확인</li>
+            <li>• 터치 영역 60px 이상 확인</li>
+          </ul>
+        </section>
+
+        {/* Card 컴포넌트 테스트 섹션 */}
+        <Card padding="large">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Card 컴포넌트 테스트</h2>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">기본 카드</h3>
+              <div className="space-y-4">
+                <Card padding="small">
+                  <h4 className="font-bold text-gray-900">Small Padding 카드</h4>
+                  <p className="text-gray-600 mt-2">작은 패딩을 가진 카드입니다.</p>
+                </Card>
+
+                <Card padding="medium">
+                  <h4 className="font-bold text-gray-900">Medium Padding 카드</h4>
+                  <p className="text-gray-600 mt-2">중간 패딩을 가진 카드입니다.</p>
+                </Card>
+
+                <Card padding="large" shadow="large">
+                  <h4 className="font-bold text-gray-900">Large Padding & Shadow 카드</h4>
+                  <p className="text-gray-600 mt-2">큰 패딩과 그림자를 가진 카드입니다.</p>
+                </Card>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">클릭 가능한 카드</h3>
+              <div className="space-y-4">
+                <Card
+                  clickable
+                  padding="medium"
+                  onClick={() => handleCardClick('첫 번째 클릭 가능 카드')}
+                >
+                  <h4 className="font-bold text-gray-900">클릭해보세요!</h4>
+                  <p className="text-gray-600 mt-2">이 카드는 클릭할 수 있습니다. 호버 효과와 포커스 상태를 확인해보세요.</p>
+                </Card>
+
+                <Card
+                  clickable
+                  padding="large"
+                  shadow="medium"
+                  onClick={() => handleCardClick('두 번째 클릭 가능 카드')}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-gray-900">안부 확인</h4>
+                      <p className="text-gray-600 mt-1">오늘의 기분은 어떠신가요?</p>
                     </div>
-                  </Card>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">다양한 스타일</h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <Card rounded="small" shadow="none" padding="medium">
-                    <p className="text-gray-700">둥글기: small, 그림자: none</p>
-                  </Card>
-
-                  <Card rounded="large" shadow="large" padding="medium">
-                    <p className="text-gray-700">둥글기: large, 그림자: large</p>
-                  </Card>
-                </div>
+                    <span className="text-2xl">😊</span>
+                  </div>
+                </Card>
               </div>
             </div>
-          </Card>
 
-          {/* Card 접근성 테스트 안내 */}
-          <section className="bg-orange-50 p-6 rounded-lg">
-            <h3 className="text-lg font-bold text-orange-900 mb-3">Card 접근성 테스트 안내</h3>
-            <ul className="text-orange-800 space-y-1 text-base">
-              <li>• Tab 키로 클릭 가능한 카드 접근 확인</li>
-              <li>• Enter/Space 키로 카드 클릭 확인</li>
-              <li>• 호버 시 시각적 피드백 확인</li>
-              <li>• 포커스 상태 링 표시 확인</li>
-              <li>• 클릭 시 살짝 축소 효과 확인</li>
-            </ul>
-          </section>
-        </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">다양한 스타일</h3>
+              <div className="grid grid-cols-1 gap-4">
+                <Card rounded="small" shadow="none" padding="medium">
+                  <p className="text-gray-700">둥글기: small, 그림자: none</p>
+                </Card>
+
+                <Card rounded="large" shadow="large" padding="medium">
+                  <p className="text-gray-700">둥글기: large, 그림자: large</p>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Card 접근성 테스트 안내 */}
+        <section className="bg-orange-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-orange-900 mb-3">Card 접근성 테스트 안내</h3>
+          <ul className="text-orange-800 space-y-1 text-base">
+            <li>• Tab 키로 클릭 가능한 카드 접근 확인</li>
+            <li>• Enter/Space 키로 카드 클릭 확인</li>
+            <li>• 호버 시 시각적 피드백 확인</li>
+            <li>• 포커스 상태 링 표시 확인</li>
+            <li>• 클릭 시 살짝 축소 효과 확인</li>
+          </ul>
+        </section>
+      </div>
     </Layout>
   )
 }
