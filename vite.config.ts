@@ -17,25 +17,18 @@ export default defineConfig({
         name: 'MARUNI - 마음이 닿는 안부',
         short_name: 'MARUNI',
         description: '노인 돌봄을 위한 AI 기반 소통 서비스',
-        theme_color: '#ffffff',
+        theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
-        start_url: '/',
-        icons: [
-          {
-            src: 'icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
+        start_url: '/'
+        // TODO: 아이콘 파일 추가 후 icons 배열 활성화
       }
     })
-  ]
+  ],
+  server: {
+    port: 3000,
+    open: true,
+  },
 })
