@@ -1,6 +1,7 @@
 import { Button } from './shared/components/ui/Button';
 import { Layout } from './shared/components/layout/Layout';
 import { Input } from './shared/components/ui/Input';
+import { Card } from './shared/components/ui/Card';
 
 function App() {
   const handleButtonClick = (buttonName: string) => {
@@ -11,6 +12,10 @@ function App() {
     console.log('뒤로가기 버튼이 클릭되었습니다.');
   };
 
+  const handleCardClick = (cardName: string) => {
+    console.log(`${cardName} 카드가 클릭되었습니다.`);
+  };
+
   return (
     <Layout
       title="MARUNI 컴포넌트 테스트"
@@ -19,7 +24,7 @@ function App() {
     >
         <div className="space-y-8">
           {/* Button 컴포넌트 테스트 섹션 */}
-          <section className="bg-white p-6 rounded-lg shadow-sm">
+          <Card padding="large">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Button 컴포넌트 테스트</h2>
 
             <div className="space-y-4">
@@ -104,7 +109,7 @@ function App() {
                 </div>
               </div>
             </div>
-          </section>
+          </Card>
 
           {/* 접근성 테스트 안내 */}
           <section className="bg-blue-50 p-6 rounded-lg">
@@ -194,6 +199,87 @@ function App() {
               <li>• 에러 메시지 스크린 리더 읽기 확인</li>
               <li>• 필수 입력 표시(*) 확인</li>
               <li>• 터치 영역 60px 이상 확인</li>
+            </ul>
+          </section>
+
+          {/* Card 컴포넌트 테스트 섹션 */}
+          <Card padding="large">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Card 컴포넌트 테스트</h2>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">기본 카드</h3>
+                <div className="space-y-4">
+                  <Card padding="small">
+                    <h4 className="font-bold text-gray-900">Small Padding 카드</h4>
+                    <p className="text-gray-600 mt-2">작은 패딩을 가진 카드입니다.</p>
+                  </Card>
+
+                  <Card padding="medium">
+                    <h4 className="font-bold text-gray-900">Medium Padding 카드</h4>
+                    <p className="text-gray-600 mt-2">중간 패딩을 가진 카드입니다.</p>
+                  </Card>
+
+                  <Card padding="large" shadow="large">
+                    <h4 className="font-bold text-gray-900">Large Padding & Shadow 카드</h4>
+                    <p className="text-gray-600 mt-2">큰 패딩과 그림자를 가진 카드입니다.</p>
+                  </Card>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">클릭 가능한 카드</h3>
+                <div className="space-y-4">
+                  <Card
+                    clickable
+                    padding="medium"
+                    onClick={() => handleCardClick('첫 번째 클릭 가능 카드')}
+                  >
+                    <h4 className="font-bold text-gray-900">클릭해보세요!</h4>
+                    <p className="text-gray-600 mt-2">이 카드는 클릭할 수 있습니다. 호버 효과와 포커스 상태를 확인해보세요.</p>
+                  </Card>
+
+                  <Card
+                    clickable
+                    padding="large"
+                    shadow="medium"
+                    onClick={() => handleCardClick('두 번째 클릭 가능 카드')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-gray-900">안부 확인</h4>
+                        <p className="text-gray-600 mt-1">오늘의 기분은 어떠신가요?</p>
+                      </div>
+                      <span className="text-2xl">😊</span>
+                    </div>
+                  </Card>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">다양한 스타일</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <Card rounded="small" shadow="none" padding="medium">
+                    <p className="text-gray-700">둥글기: small, 그림자: none</p>
+                  </Card>
+
+                  <Card rounded="large" shadow="large" padding="medium">
+                    <p className="text-gray-700">둥글기: large, 그림자: large</p>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Card 접근성 테스트 안내 */}
+          <section className="bg-orange-50 p-6 rounded-lg">
+            <h3 className="text-lg font-bold text-orange-900 mb-3">Card 접근성 테스트 안내</h3>
+            <ul className="text-orange-800 space-y-1 text-base">
+              <li>• Tab 키로 클릭 가능한 카드 접근 확인</li>
+              <li>• Enter/Space 키로 카드 클릭 확인</li>
+              <li>• 호버 시 시각적 피드백 확인</li>
+              <li>• 포커스 상태 링 표시 확인</li>
+              <li>• 클릭 시 살짝 축소 효과 확인</li>
             </ul>
           </section>
         </div>
