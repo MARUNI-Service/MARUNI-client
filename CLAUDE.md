@@ -1,5 +1,41 @@
 # MARUNI Client - Claude Assistant Guide
 
+## Development Guidelines for Claude Assistant
+
+### Planning and Implementation
+- When asked for a plan, always ask if you should implement the code.
+- Don't write more code than requested.
+- Don't start the server after implementation.
+- Don't use emojis in design. Use Lucide icons instead.
+- Always run TypeScript check after code generation.
+- Don't write excessive code examples in CLAUDE.md files.
+- Always prefer Korean over English in responses.
+- Always create files with UTF-8 encoding.
+- After code updates, always access the appropriate page and check for errors. If errors exist, resolve them.
+- When problems are found, always approach solutions fundamentally, not as temporary fixes.
+
+### Elderly-Friendly Development Guidelines
+- Ensure all UI components have minimum touch area of 48x48px.
+- Use minimum font size of 18px, button text should be 20px or larger.
+- Maintain color contrast above WCAG 2.1 AA standards.
+- Minimize complex interactions or multi-step flows.
+
+### PWA Related
+- When working on PWA features, check manifest and service worker settings.
+- Always consider offline functionality possibilities.
+
+### API Communication
+- Always include error handling and loading states for API calls.
+- Use TanStack Query for server state, Zustand for client state.
+
+### Testing and Quality
+- Always verify actual functionality in browser after component creation.
+- Test in mobile viewport as well.
+
+### Technology Stack Compliance
+- Use Tailwind CSS v4 syntax (@import "tailwindcss").
+- Check if existing stack can solve the problem before adding new dependencies.
+
 ## 프로젝트 개요
 - **프로젝트명**: MARUNI (마음이 닿는 안부)
 - **설명**: 노인 돌봄을 위한 AI 기반 소통 서비스 - PWA 클라이언트
@@ -95,42 +131,6 @@ src/
 VITE_API_BASE_URL=http://localhost:8080/api
 VITE_APP_NAME=MARUNI
 ```
-
-## Development Guidelines for Claude Assistant
-
-### Planning and Implementation
-- When asked for a plan, always ask if you should implement the code.
-- Don't write more code than requested.
-- Don't start the server after implementation.
-- Don't use emojis in design. Use Lucide icons instead.
-- Always run TypeScript check after code generation.
-- Don't write excessive code examples in CLAUDE.md files.
-- Always prefer Korean over English in responses.
-- Always create files with UTF-8 encoding.
-- After code updates, always access the appropriate page and check for errors. If errors exist, resolve them.
-- When problems are found, always approach solutions fundamentally, not as temporary fixes.
-
-### Elderly-Friendly Development Guidelines
-- Ensure all UI components have minimum touch area of 48x48px.
-- Use minimum font size of 18px, button text should be 20px or larger.
-- Maintain color contrast above WCAG 2.1 AA standards.
-- Minimize complex interactions or multi-step flows.
-
-### PWA Related
-- When working on PWA features, check manifest and service worker settings.
-- Always consider offline functionality possibilities.
-
-### API Communication
-- Always include error handling and loading states for API calls.
-- Use TanStack Query for server state, Zustand for client state.
-
-### Testing and Quality
-- Always verify actual functionality in browser after component creation.
-- Test in mobile viewport as well.
-
-### Technology Stack Compliance
-- Use Tailwind CSS v4 syntax (@import "tailwindcss").
-- Check if existing stack can solve the problem before adding new dependencies.
 
 ---
 *마지막 업데이트: 2025-09-29*

@@ -4,6 +4,12 @@
 
 ## 📁 문서 구조
 
+### 📋 기술 스택
+- **[TECH_STACK.md](./TECH_STACK.md)**
+  - 사용 기술 상세 정보 및 선택 이유
+  - PWA 설정 및 개발 도구 구성
+  - 성능 최적화 전략 및 업데이트 로그
+
 ### 📐 Architecture (아키텍처)
 시스템 설계와 UI/UX 설계 관련 문서들
 
@@ -13,10 +19,10 @@
   - 접근성 가이드라인 (WCAG 2.1 AA 준수)
 
 - **[TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)**
-  - 기술 스택 및 시스템 아키텍처
-  - API 클라이언트 설계
-  - PWA 및 오프라인 전략
-  - 성능 최적화 방안
+  - 고수준 시스템 아키텍처 설계
+  - API 통신 및 상태 관리 아키텍처
+  - 라우팅 및 PWA 전략
+  - 보안 및 인증 아키텍처
 
 - **[USER_FLOW_DESIGN.md](./architecture/USER_FLOW_DESIGN.md)**
   - 노인 사용자 페르소나
@@ -59,9 +65,10 @@
 
 ### 🔰 새로운 팀원을 위한 필독 순서
 1. **[PROJECT_PROGRESS.md](./project/PROJECT_PROGRESS.md)** - 현재 상황 파악
-2. **[TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)** - 기술적 이해
-3. **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙 숙지
-4. **[USER_FLOW_DESIGN.md](./architecture/USER_FLOW_DESIGN.md)** - 사용자 관점 이해
+2. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 이해
+3. **[TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)** - 시스템 아키텍처
+4. **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙 숙지
+5. **[USER_FLOW_DESIGN.md](./architecture/USER_FLOW_DESIGN.md)** - 사용자 관점 이해
 
 ### 🎯 목적별 문서 찾기
 
@@ -70,9 +77,10 @@
 - [USER_FLOW_DESIGN.md](./architecture/USER_FLOW_DESIGN.md) - 사용자 플로우
 
 **코드 작성할 때:**
+- [TECH_STACK.md](./TECH_STACK.md) - 사용 기술 및 설정
 - [CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md) - 코딩 규칙
 - [PACKAGE_STRUCTURE.md](./development/PACKAGE_STRUCTURE.md) - 구조 가이드
-- [TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md) - 기술적 구현 방법
+- [TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md) - 시스템 아키텍처
 
 **프로젝트 계획 세울 때:**
 - [DEVELOPMENT_ROADMAP.md](./project/DEVELOPMENT_ROADMAP.md) - 개발 계획
@@ -82,6 +90,7 @@
 
 - **PROJECT_PROGRESS.md**: 주요 작업 완료시마다 업데이트
 - **DEVELOPMENT_ROADMAP.md**: 주간 단위로 검토 및 조정
+- **TECH_STACK.md**: 기술 스택 변경시 업데이트
 - **기타 문서**: 관련 작업 수행시 함께 업데이트
 
 ## 🎨 MARUNI 프로젝트 특징
@@ -107,8 +116,9 @@
 ## 📞 문의 및 지원
 
 프로젝트 관련 문의사항이 있으시면 다음 문서들을 먼저 확인해주세요:
-- 기술적 질문: [TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)
-- 개발 관련: [CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)
+- 기술 스택: [TECH_STACK.md](./TECH_STACK.md)
+- 기술 아키텍처: [TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)
+- 개발 규칙: [CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)
 - 진행 상황: [PROJECT_PROGRESS.md](./project/PROJECT_PROGRESS.md)
 
 ---

@@ -1,5 +1,13 @@
 # MARUNI Client 기술 아키텍처
 
+> 노인 돌봄 AI 서비스 **MARUNI** 클라이언트의 고수준 시스템 아키텍처 설계
+
+## 🔗 관련 문서
+- 📋 [기술 스택](../TECH_STACK.md) - 사용 기술 상세 정보
+- 📁 [패키지 구조](../development/PACKAGE_STRUCTURE.md) - 구현 구조 가이드
+- 🎨 [디자인 시스템](./DESIGN_SYSTEM.md) - UI/UX 설계
+- 📈 [프로젝트 진행 상황](../project/PROJECT_PROGRESS.md) - 현재 구현 상태
+
 ## 🏗️ 아키텍처 개요
 
 ### 전체 시스템 구조
@@ -114,144 +122,91 @@ src/shared/
 └── index.ts                 // Feature 전체 Export
 ```
 
-## 🔧 기술 스택 상세
+## 🔧 기술 아키텍처 개념
 
-### Core Technologies
-```json
-{
-  "framework": "React 19.1.1",
-  "language": "TypeScript 5.8.3",
-  "bundler": "Vite 7.1.7",
-  "styling": "Tailwind CSS 4.1.13",
-  "pwa": "vite-plugin-pwa 1.0.3"
-}
+> **상세한 기술 스택 정보는 [TECH_STACK.md](../TECH_STACK.md)를 참조하세요.**
+
+### 아키텍처 설계 원칙
+- **계층 분리**: 명확한 책임 분담으로 유지보수성 향상
+- **도메인 중심**: 서버 도메인과 일치하는 Feature 구조
+- **확장성**: 새로운 기능 추가시 기존 코드 영향 최소화
+- **접근성 우선**: 노인 사용자를 위한 설계
+
+### 상태 관리 아키텍처
+
+**이원화된 상태 관리 전략:**
+- **서버 상태**: TanStack Query로 캐싱, 동기화, 낙관적 업데이트
+- **클라이언트 상태**: Zustand로 가벼운 전역 상태 관리
+
+```typescript
+// 서버 상태 예시 - 대화 기록
+const useConversations = () => {
+  return useQuery({
+    queryKey: ['conversations'],
+    queryFn: conversationApi.getHistory,
+    staleTime: 5 * 60 * 1000, // 5분 캐시
+  });
+};
+
+// 클라이언트 상태 예시 - 앱 설정
+const useAppSettings = create<AppSettings>()(persist(
+  (set) => ({
+    fontSize: 'medium',
+    theme: 'light',
+    // ...
+  }),
+  { name: 'app-settings' }
+));
 ```
 
-### State Management
+### API 통신 아키텍처
+
+**핵심 설계 원칙:**
+- **JWT 자동 갱신**: 사용자 경험 중단 없는 토큰 관리
+- **에러 처리**: 네트워크 오류, 인증 오류 체계적 처리
+- **타입 안전성**: TypeScript로 API 응답 타입 보장
+
 ```typescript
-// 1. Server State - TanStack Query v5.90.2
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-// 서버 데이터 캐싱 및 동기화
-const { data, isLoading, error } = useQuery({
-  queryKey: ['conversations'],
-  queryFn: () => conversationApi.getHistory(),
-  staleTime: 5 * 60 * 1000, // 5분
-  cacheTime: 10 * 60 * 1000, // 10분
-});
-
-// 2. Client State - Zustand v5.0.8
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-// 클라이언트 전용 상태 (설정, UI 상태 등)
-interface AppSettingsStore {
-  fontSize: 'small' | 'medium' | 'large';
-  darkMode: boolean;
-  setFontSize: (size: string) => void;
-  toggleDarkMode: () => void;
-}
-
-const useAppSettingsStore = create<AppSettingsStore>()(
-  persist(
-    (set) => ({
-      fontSize: 'medium',
-      darkMode: false,
-      setFontSize: (fontSize) => set({ fontSize }),
-      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-    }),
-    { name: 'app-settings' }
-  )
-);
-```
-
-### API Client Architecture
-```typescript
-// shared/utils/api.ts
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-
+// API 클라이언트 구조
 class ApiClient {
-  private client: AxiosInstance;
-
-  constructor() {
-    this.client = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL,
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    this.setupInterceptors();
-  }
-
-  private setupInterceptors() {
-    // 요청 인터셉터 - JWT 토큰 자동 첨부
-    this.client.interceptors.request.use(
-      (config) => {
-        const token = this.getAccessToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    // 응답 인터셉터 - 토큰 갱신 및 에러 처리
-    this.client.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response?.status === 401) {
-          return this.handleTokenRefresh(error);
-        }
-        return Promise.reject(error);
-      }
-    );
-  }
-
-  private async handleTokenRefresh(originalError: any) {
-    try {
-      const refreshToken = this.getRefreshToken();
-      if (!refreshToken) {
-        this.redirectToLogin();
-        return Promise.reject(originalError);
-      }
-
-      const response = await this.client.post('/auth/refresh', {
-        refreshToken,
-      });
-
-      const { accessToken } = response.data;
-      this.setAccessToken(accessToken);
-
-      // 원래 요청 재시도
-      const originalRequest = originalError.config;
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-      return this.client(originalRequest);
-    } catch (refreshError) {
-      this.redirectToLogin();
-      return Promise.reject(originalError);
-    }
-  }
+  // 1. 요청 인터셉터: JWT 토큰 자동 첨부
+  // 2. 응답 인터셉터: 401 오류시 토큰 갱신 및 재시도
+  // 3. 에러 정규화: 일관된 에러 객체 반환
+  // 4. 타임아웃 관리: 네트워크 상황 대응
 }
 
-export const apiClient = new ApiClient();
+// Feature별 API 모듈
+auth/api/authApi.ts        // 인증 관련 API
+member/api/memberApi.ts    // 회원 관리 API
+conversation/api/chatApi.ts // 대화 API
+// ...
 ```
 
-### Routing Architecture
-```typescript
-// app/router.tsx
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
-import { ProtectedRoute } from '@/features/auth';
+> **구현된 API 클라이언트**: `src/shared/utils/api.ts` 참조
 
-const routes: RouteObject[] = [
-  {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      // Public Routes
-      {
+### 라우팅 아키텍처
+
+**계층적 라우팅 구조:**
+- **보호된 라우트**: 인증 필요 페이지들
+- **공개 라우트**: 로그인, 회원가입 등
+- **에러 경계**: 라우트 레벨 에러 처리
+
+```typescript
+// 라우팅 구조 개념
+/ (루트)
+├── /auth/* (공개)
+│   ├── /login
+│   └── /register
+└── /app/* (보호됨)
+    ├── /dashboard
+    ├── /conversation
+    ├── /guardians
+    └── /settings
+
+// 인증 가드 적용
+const protectedRoutes = [
+  { path: '/dashboard', element: <Dashboard /> },
+  // ...
         path: 'auth',
         children: [
           { path: 'login', element: <LoginPage /> },
