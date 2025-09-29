@@ -1,4 +1,28 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # MARUNI Client - Claude Assistant Guide
+
+## 📚 필수 문서 진입점
+
+**모든 작업 전에 반드시 확인할 문서들:**
+
+1. **[docs/project/CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md)** ⭐ **최우선**
+   - 현재 프로젝트 상태 및 진행률
+   - 완료된 작업과 다음 단계
+   - 기술적 완성도 현황
+
+2. **[docs/project/PHASE1_EXECUTION_GUIDE.md](./docs/project/PHASE1_EXECUTION_GUIDE.md)** ⭐ **개발 시 필수**
+   - Phase 1 상세 실행 계획 (7일간 일정)
+   - 컴포넌트별 구현 가이드 및 코드 템플릿
+   - 테스트 방법 및 문제 해결 가이드
+
+3. **[docs/development/COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md)** ⭐ **컴포넌트 개발 시 필수**
+   - 노인 친화적 컴포넌트 설계 원칙
+   - 컴포넌트 구현 템플릿 및 접근성 체크리스트
+
+**전체 문서 구조**: [docs/README.md](./docs/README.md)
 
 ## Development Guidelines for Claude Assistant
 
@@ -8,33 +32,27 @@
 - Don't start the server after implementation.
 - Don't use emojis in design. Use Lucide icons instead.
 - Always run TypeScript check after code generation.
-- Don't write excessive code examples in CLAUDE.md files.
 - Always prefer Korean over English in responses.
 - Always create files with UTF-8 encoding.
 - After code updates, always access the appropriate page and check for errors. If errors exist, resolve them.
 - When problems are found, always approach solutions fundamentally, not as temporary fixes.
 
+### Development Workflow
+- **BEFORE ANY CODING**: Read [CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md) for current project state
+- **FOR COMPONENT WORK**: Read [COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md) for design patterns
+- **FOR ARCHITECTURE**: Read [TECHNICAL_ARCHITECTURE.md](./docs/architecture/TECHNICAL_ARCHITECTURE.md) for system design
+
 ### Elderly-Friendly Development Guidelines
-- Ensure all UI components have minimum touch area of 48x48px.
-- Use minimum font size of 18px, button text should be 20px or larger.
-- Maintain color contrast above WCAG 2.1 AA standards.
-- Minimize complex interactions or multi-step flows.
-
-### PWA Related
-- When working on PWA features, check manifest and service worker settings.
-- Always consider offline functionality possibilities.
-
-### API Communication
-- Always include error handling and loading states for API calls.
-- Use TanStack Query for server state, Zustand for client state.
-
-### Testing and Quality
-- Always verify actual functionality in browser after component creation.
-- Test in mobile viewport as well.
+- Ensure all UI components have minimum touch area of 48x48px (권장 60px+)
+- Use minimum font size of 18px, button text should be 20px or larger
+- Maintain color contrast above WCAG 2.1 AA standards
+- Minimize complex interactions or multi-step flows
+- Follow [DESIGN_SYSTEM.md](./docs/architecture/DESIGN_SYSTEM.md) guidelines
 
 ### Technology Stack Compliance
-- Use Tailwind CSS v4 syntax (@import "tailwindcss").
-- Check if existing stack can solve the problem before adding new dependencies.
+- Use Tailwind CSS v4 syntax (@import "tailwindcss")
+- Check if existing stack can solve the problem before adding new dependencies
+- Follow [CODING_CONVENTIONS.md](./docs/development/CODING_CONVENTIONS.md) for style rules
 
 ## 프로젝트 개요
 - **프로젝트명**: MARUNI (마음이 닿는 안부)
@@ -59,11 +77,8 @@
 # 개발 서버 실행
 npm run dev
 
-# 빌드
+# 빌드 + TypeScript 컴파일
 npm run build
-
-# 타입 체크
-npm run build  # TypeScript 컴파일 포함
 
 # 린트
 npm run lint
@@ -72,10 +87,35 @@ npm run lint
 npm run preview
 ```
 
-## 중요 설정 파일들
-- `vite.config.ts`: PWA 설정 포함, Tailwind v4 공식 플러그인 사용
-- `src/index.css`: Tailwind import + 노인 친화적 기본 스타일
-- `package.json`: 모든 필수 의존성 정의
+**중요**: 모든 코드 생성 후 반드시 `npm run build` 실행하여 TypeScript 오류 확인
+
+## 프로젝트 구조
+```
+src/
+├── App.tsx                    # 메인 앱 컴포넌트
+├── main.tsx                   # React 19 엔트리 포인트
+├── index.css                  # Tailwind v4 + 노인 친화적 기본 스타일
+└── shared/                    # 공유 리소스
+    ├── constants/             # 상수 정의
+    │   ├── api.ts            # API 엔드포인트
+    │   ├── routes.ts         # 라우트 상수
+    │   ├── storage.ts        # 스토리지 키
+    │   └── index.ts          # UI 상수, 앱 설정
+    └── types/                # TypeScript 타입 정의
+        ├── common.ts         # 공통 타입 (ApiResponse, LoadingState 등)
+        └── index.ts
+```
+
+## 주요 설정 파일 상세
+### TypeScript 설정
+- `tsconfig.app.json`: 앱 코드용 (React JSX, bundler mode)
+- `tsconfig.node.json`: Vite 설정 파일용
+
+### 개발 도구 설정
+- `vite.config.ts`: PWA autoUpdate, Tailwind v4 플러그인
+- `eslint.config.js`: TypeScript strict + React hooks 규칙
+- `.prettierrc`: 100자 줄바꿈, 단일 따옴표
+- `.vscode/settings.json`: 저장시 자동 포맷팅, Tailwind 인텔리센스
 
 ## PWA 설정
 - **매니페스트**: vite.config.ts에서 정의
