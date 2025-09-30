@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Button } from './shared/components/ui/Button';
-import { Layout } from './shared/components/layout/Layout';
-import { Input } from './shared/components/ui/Input';
-import { Card } from './shared/components/ui/Card';
-import { LoadingSpinner } from './shared/components/ui/LoadingSpinner';
+import {
+  Button,
+  Layout,
+  Input,
+  Card,
+  LoadingSpinner,
+} from './shared/components';
 
 function App() {
   const [shouldThrowError, setShouldThrowError] = useState(false);
