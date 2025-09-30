@@ -2,6 +2,7 @@ import { Button } from './shared/components/ui/Button';
 import { Layout } from './shared/components/layout/Layout';
 import { Input } from './shared/components/ui/Input';
 import { Card } from './shared/components/ui/Card';
+import { LoadingSpinner } from './shared/components/ui/LoadingSpinner';
 
 function App() {
   const handleButtonClick = (buttonName: string) => {
@@ -280,6 +281,54 @@ function App() {
             <li>• 호버 시 시각적 피드백 확인</li>
             <li>• 포커스 상태 링 표시 확인</li>
             <li>• 클릭 시 살짝 축소 효과 확인</li>
+          </ul>
+        </section>
+
+        {/* LoadingSpinner 컴포넌트 테스트 섹션 */}
+        <Card padding="large">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">
+            LoadingSpinner 컴포넌트 테스트
+          </h2>
+
+          <div className="space-y-8">
+            {/* 크기 테스트 */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">크기 변형</h3>
+              <div className="flex gap-8 justify-around items-end">
+                <div>
+                  <LoadingSpinner size="small" label="작은 크기" />
+                </div>
+                <div>
+                  <LoadingSpinner size="medium" label="중간 크기" />
+                </div>
+                <div>
+                  <LoadingSpinner size="large" label="큰 크기" />
+                </div>
+              </div>
+            </div>
+
+            {/* 레이블 테스트 */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">레이블 변형</h3>
+              <div className="space-y-4">
+                <LoadingSpinner label="데이터를 불러오고 있습니다..." />
+                <LoadingSpinner label="저장 중입니다..." />
+                <LoadingSpinner label="" />
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* LoadingSpinner 접근성 테스트 안내 */}
+        <section className="bg-indigo-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-indigo-900 mb-3">
+            LoadingSpinner 테스트 안내
+          </h3>
+          <ul className="text-indigo-800 space-y-1 text-base">
+            <li>• 스피너가 부드럽게 회전하는지 확인</li>
+            <li>• 로딩 메시지가 명확하게 표시되는지 확인</li>
+            <li>• 스크린 리더가 role="status"를 읽는지 확인</li>
+            <li>• 3가지 크기가 적절한지 확인</li>
           </ul>
         </section>
       </div>
