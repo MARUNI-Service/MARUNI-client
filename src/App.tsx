@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from './shared/components/ui/Button';
 import { Layout } from './shared/components/layout/Layout';
 import { Input } from './shared/components/ui/Input';
@@ -5,6 +6,13 @@ import { Card } from './shared/components/ui/Card';
 import { LoadingSpinner } from './shared/components/ui/LoadingSpinner';
 
 function App() {
+  const [shouldThrowError, setShouldThrowError] = useState(false);
+
+  // 에러 발생 시뮬레이션
+  if (shouldThrowError) {
+    throw new Error('테스트 에러입니다! ErrorBoundary가 이 에러를 캐치합니다.');
+  }
+
   const handleButtonClick = (buttonName: string) => {
     console.log(`${buttonName} 버튼이 클릭되었습니다.`);
   };
@@ -329,6 +337,52 @@ function App() {
             <li>• 로딩 메시지가 명확하게 표시되는지 확인</li>
             <li>• 스크린 리더가 role="status"를 읽는지 확인</li>
             <li>• 3가지 크기가 적절한지 확인</li>
+          </ul>
+        </section>
+
+        {/* ErrorBoundary 테스트 섹션 */}
+        <Card padding="large">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">
+            ErrorBoundary 컴포넌트 테스트
+          </h2>
+
+          <div className="space-y-4">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              아래 버튼을 클릭하면 의도적으로 에러가 발생합니다.
+              <br />
+              ErrorBoundary가 에러를 캐치하여 사용자 친화적인 화면을 보여줍니다.
+            </p>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-base text-yellow-800 font-medium mb-2">
+                ⚠️ 주의: 이 버튼은 개발 테스트용입니다
+              </p>
+              <p className="text-sm text-yellow-700">
+                에러 발생 후 "다시 시도" 버튼으로 복구할 수 있습니다.
+              </p>
+            </div>
+
+            <Button
+              variant="secondary"
+              size="large"
+              fullWidth
+              onClick={() => setShouldThrowError(true)}
+            >
+              🚨 에러 발생 테스트
+            </Button>
+          </div>
+        </Card>
+
+        {/* ErrorBoundary 테스트 안내 */}
+        <section className="bg-red-50 p-6 rounded-lg">
+          <h3 className="text-lg font-bold text-red-900 mb-3">
+            ErrorBoundary 테스트 안내
+          </h3>
+          <ul className="text-red-800 space-y-1 text-base">
+            <li>• 에러 발생 버튼 클릭 시 에러 UI 표시 확인</li>
+            <li>• "다시 시도" 버튼으로 복구 가능한지 확인</li>
+            <li>• "홈으로 가기" 버튼 동작 확인</li>
+            <li>• 개발 모드에서 에러 상세 정보 표시 확인</li>
           </ul>
         </section>
       </div>
