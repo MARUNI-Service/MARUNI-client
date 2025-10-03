@@ -27,6 +27,11 @@ export interface CardProps {
   rounded?: 'none' | 'small' | 'medium' | 'large';
 
   /**
+   * 추가 CSS 클래스
+   */
+  className?: string;
+
+  /**
    * 클릭 핸들러 (clickable이 true일 때)
    */
   onClick?: () => void;

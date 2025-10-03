@@ -1,5 +1,16 @@
-// 기본 라우트 (최소한의 구조)
+// 라우트 경로 상수
 export const ROUTES = {
+  // 공개 라우트
   HOME: '/',
   LOGIN: '/login',
+
+  // 보호된 라우트
+  DASHBOARD: '/dashboard',
+  CONVERSATION: '/conversation',
+  GUARDIANS: '/guardians',
+  SETTINGS: '/settings',
 } as const;
+
+// 타입 정의
+export type RouteKey = keyof typeof ROUTES;
+export type RoutePath = (typeof ROUTES)[RouteKey];
