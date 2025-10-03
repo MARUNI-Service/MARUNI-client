@@ -10,3 +10,9 @@ export { useAuthStore } from './store';
 
 // API
 export { login, logout, refreshAccessToken } from './api';
+
+// Hooks
+export { useAuth } from './hooks/useAuth';
+
+// Components
+export { ProtectedRoute } from './components/ProtectedRoute';

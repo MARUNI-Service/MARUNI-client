@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoginPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -10,7 +11,7 @@ import { ROUTES } from '@/shared/constants/routes';
  * 구조:
  * - 루트: / → /dashboard로 리다이렉트
  * - 공개 라우트: /login
- * - 보호 라우트: /dashboard (Phase 2 Day 5에서 ProtectedRoute 추가 예정)
+ * - 보호 라우트: /dashboard (ProtectedRoute로 보호)
  * - 404: 존재하지 않는 모든 경로
  */
 export const router = createBrowserRouter([
@@ -30,10 +31,14 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
 
-      // 보호된 라우트 - 대시보드 (Day 5에서 ProtectedRoute 추가)
+      // 보호된 라우트 - 대시보드 (인증 필요)
       {
         path: ROUTES.DASHBOARD,
-        element: <DashboardPage />,
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
       },
 
       // 404 페이지 (존재하지 않는 모든 경로)

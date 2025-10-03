@@ -47,14 +47,19 @@ export interface RefreshTokenResponse {
 export interface AuthState {
   // 상태
   user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   error: string | null;
 
   // 액션
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
-  refreshToken: () => Promise<void>;
+  refreshAccessToken: () => Promise<void>;
   setUser: (user: User | null) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
+  initialize: () => void;
   clearError: () => void;
 }
