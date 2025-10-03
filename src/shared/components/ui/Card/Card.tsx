@@ -28,6 +28,7 @@ export function Card({
   padding = 'medium',
   shadow = 'small',
   rounded = 'medium',
+  className = '',
   onClick
 }: CardProps) {
   // 기본 스타일
@@ -81,8 +82,9 @@ export function Card({
     paddingClasses[padding],
     shadowClasses[shadow],
     roundedClasses[rounded],
-    ...interactiveClasses
-  ].join(' ');
+    ...interactiveClasses,
+    className
+  ].filter(Boolean).join(' ');
 
   // 클릭 가능한 카드는 button으로, 아니면 div로 렌더링
   const Component = clickable ? 'button' : 'div';
