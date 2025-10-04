@@ -86,32 +86,71 @@ const useConversations = () => {
   });
 };
 
-// 클라이언트 상태 예시 - 앱 설정
-const useAppSettings = create<AppSettings>()(persist(
+// 클라이언트 상태 예시 - 인증 상태 (Phase 2 리팩토링 완료)
+const useAuthStore = create<AuthState>()(persist(
   (set) => ({
-    fontSize: 'medium',
-    theme: 'light',
-    // ...
+    user: null,
+    accessToken: null,
+    refreshToken: null,
+    isAuthenticated: false,
+    login: async (credentials) => { /* ... */ },
+    logout: () => { /* ... */ },
+    // persist가 모든 상태를 자동으로 localStorage에 저장/복원
   }),
-  { name: 'app-settings' }
+  { name: 'auth-storage' }
 ));
 ```
 
 ### API 통신 아키텍처
 
 **핵심 설계 원칙:**
-- **JWT 자동 갱신**: 사용자 경험 중단 없는 토큰 관리
+- **JWT 자동 갱신**: 사용자 경험 중단 없는 토큰 관리 ⭐ **Phase 2 리팩토링 완료**
 - **에러 처리**: 네트워크 오류, 인증 오류 체계적 처리
 - **타입 안전성**: TypeScript로 API 응답 타입 보장
+- **중복 요청 방지**: 토큰 갱신 중 대기 큐 관리 ⭐ **NEW**
 
 ```typescript
-// API 클라이언트 구조
-class ApiClient {
-  // 1. 요청 인터셉터: JWT 토큰 자동 첨부
-  // 2. 응답 인터셉터: 401 오류시 토큰 갱신 및 재시도
-  // 3. 에러 정규화: 일관된 에러 객체 반환
-  // 4. 타임아웃 관리: 네트워크 상황 대응
-}
+// API 클라이언트 구조 (Phase 2 리팩토링 완료)
+// src/shared/api/client.ts
+
+// 1. 요청 인터셉터: Zustand persist에서 JWT 토큰 자동 로드 및 첨부
+apiClient.interceptors.request.use((config) => {
+  const authStorage = localStorage.getItem('auth-storage');
+  if (authStorage) {
+    const { state } = JSON.parse(authStorage);
+    const token = state?.accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+// 2. 응답 인터셉터: 401 에러 시 자동 토큰 갱신 및 재시도
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      // 중복 갱신 방지: isRefreshing 플래그 + failedQueue
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        });
+      }
+
+      // 토큰 갱신 시도
+      const refreshToken = getRefreshToken();
+      const newTokens = await refreshAccessToken(refreshToken);
+
+      // 대기 중인 모든 요청 재시도
+      processQueue(null, newTokens.accessToken);
+
+      // 원래 요청 재시도
+      return apiClient(originalRequest);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Feature별 API 모듈
 auth/api/authApi.ts        // 인증 관련 API
@@ -120,7 +159,8 @@ conversation/api/chatApi.ts // 대화 API
 // ...
 ```
 
-> **구현된 API 클라이언트**: `src/shared/utils/api.ts` 참조
+> **구현된 API 클라이언트**: `src/shared/api/client.ts` 참조
+> **리팩토링 상세 내용**: [PHASE2_REFACTORING_REPORT.md](../project/PHASE2_REFACTORING_REPORT.md) 참조
 
 ### 라우팅 아키텍처
 
