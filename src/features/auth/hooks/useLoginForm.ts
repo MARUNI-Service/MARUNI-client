@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/constants/routes';
 import { useAuthStore } from '../store';
+import { LOGIN_VALIDATION, LOGIN_VALIDATION_MESSAGES } from '../constants';
 import type { LoginRequest } from '../types';
 
 /**
@@ -51,13 +52,13 @@ export function useLoginForm() {
     const errors: { username?: string; password?: string } = {};
 
     if (!formData.username.trim()) {
-      errors.username = '사용자 이름을 입력해주세요';
+      errors.username = LOGIN_VALIDATION_MESSAGES.USERNAME_REQUIRED;
     }
 
     if (!formData.password) {
-      errors.password = '비밀번호를 입력해주세요';
-    } else if (formData.password.length < 4) {
-      errors.password = '비밀번호는 4자 이상이어야 합니다';
+      errors.password = LOGIN_VALIDATION_MESSAGES.PASSWORD_REQUIRED;
+    } else if (formData.password.length < LOGIN_VALIDATION.PASSWORD_MIN_LENGTH) {
+      errors.password = LOGIN_VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH;
     }
 
     setValidationErrors(errors);
