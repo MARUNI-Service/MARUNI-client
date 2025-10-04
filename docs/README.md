@@ -21,6 +21,7 @@
 ### 🔌 API 연동 가이드
 
 - **[API_REFERENCE.md](./api/API_REFERENCE.md)** ⭐ **API 작업 시 필수**
+
   - 서버 API 레퍼런스 및 클라이언트 구현 예제
   - 6개 도메인 API 문서 (Auth, Member, Conversation, Guardian, AlertRule, Notification)
 
@@ -250,7 +251,7 @@
 ### 📋 개발 시작 체크리스트
 
 - [ ] [CURRENT_STATUS.md](./project/CURRENT_STATUS.md) 읽기
-- [ ] [DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md) Phase 1 확인
+- [ ] [DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md) 읽기
 - [ ] [COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md) 가이드라인 숙지
 - [ ] 개발 환경 설정 확인 (`npm run dev` 실행)
 
@@ -260,14 +261,14 @@
 
 > **상세한 현황**: [CURRENT_STATUS.md](./project/CURRENT_STATUS.md) 문서 참조
 
-| 항목            | 상태         | 비고                                                                                     |
-| --------------- | ------------ | ---------------------------------------------------------------------------------------- |
-| **기술 스택**   | ✅ 완료      | React 19, TypeScript, PWA 준비                                                           |
-| **개발 환경**   | ✅ 완료      | Vite, ESLint, Prettier 설정                                                              |
-| **문서화**      | ✅ 완료      | 설계, 개발 가이드, API 레퍼런스, 구현 플로우 완비                                        |
-| **컴포넌트**    | ✅ 완료      | Phase 1 - 6개 컴포넌트 완성                                                              |
-| **API 문서**    | ✅ 완료      | 서버 API 레퍼런스 및 구현 플로우 가이드                                                  |
-| **기능 구현**   | 🔄 다음 단계 | Phase 3 - 실제 기능 구현 (인증, AI 대화, 보호자 관리)                                    |
+| 항목          | 상태         | 비고                                                  |
+| ------------- | ------------ | ----------------------------------------------------- |
+| **기술 스택** | ✅ 완료      | React 19, TypeScript, PWA 준비                        |
+| **개발 환경** | ✅ 완료      | Vite, ESLint, Prettier 설정                           |
+| **문서화**    | ✅ 완료      | 설계, 개발 가이드, API 레퍼런스, 구현 플로우 완비     |
+| **컴포넌트**  | ✅ 완료      | Phase 1 - 6개 컴포넌트 완성                           |
+| **API 문서**  | ✅ 완료      | 서버 API 레퍼런스 및 구현 플로우 가이드               |
+| **기능 구현** | 🔄 다음 단계 | Phase 3 - 실제 기능 구현 (인증, AI 대화, 보호자 관리) |
 
 **📅 마지막 업데이트**: 2025-10-05
 **📈 현재 진행률**: Phase 2 완료 (70%)
