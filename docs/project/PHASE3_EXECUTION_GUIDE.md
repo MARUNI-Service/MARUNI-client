@@ -82,11 +82,11 @@
 
 ## 📅 Week 1: AI 대화 시스템 (7일)
 
-### Day 1: Conversation Feature 기본 구조
+### Day 1: Conversation Feature 기본 구조 + ConfirmDialog 컴포넌트
 
-**⏰ 예상 소요 시간**: 5-6시간
+**⏰ 예상 소요 시간**: 7-8시간
 
-**🎯 목표**: features/conversation 모듈 구조 및 타입 정의
+**🎯 목표**: features/conversation 모듈 구조 및 타입 정의, ConfirmDialog 공용 컴포넌트 추가
 
 **📋 상세 작업**:
 
@@ -112,6 +112,11 @@
    │   ├── conversation.types.ts
    │   └── index.ts
    └── index.ts
+
+   src/shared/components/ui/
+   ├── ConfirmDialog/
+   │   ├── ConfirmDialog.tsx
+   │   └── index.ts
    ```
 
 2. **타입 정의** (2시간)
@@ -184,7 +189,7 @@
      // 대화 조회
      async getConversation(conversationId: number): Promise<Conversation> {
        const response = await apiClient.get<Conversation>(
-         `${API_ENDPOINTS.CONVERSATION.BASE}/${conversationId}`
+         API_ENDPOINTS.CONVERSATION.BASE + `/${conversationId}`
        );
        return response.data;
      },
@@ -192,7 +197,7 @@
      // 메시지 전송
      async sendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
        const response = await apiClient.post<SendMessageResponse>(
-         `${API_ENDPOINTS.CONVERSATION.BASE}/${request.conversationId}/messages`,
+         API_ENDPOINTS.CONVERSATION.MESSAGES(request.conversationId),
          { content: request.content }
        );
        return response.data;
@@ -201,14 +206,14 @@
      // 대화 종료
      async endConversation(conversationId: number): Promise<void> {
        await apiClient.post(
-         `${API_ENDPOINTS.CONVERSATION.BASE}/${conversationId}/end`
+         API_ENDPOINTS.CONVERSATION.END(conversationId)
        );
      },
 
      // 최근 대화 목록
      async getRecentConversations(limit: number = 10): Promise<Conversation[]> {
        const response = await apiClient.get<Conversation[]>(
-         `${API_ENDPOINTS.CONVERSATION.BASE}/recent`,
+         API_ENDPOINTS.CONVERSATION.RECENT,
          { params: { limit } }
        );
        return response.data;
@@ -231,16 +236,111 @@
    } as const;
    ```
 
+5. **ConfirmDialog 컴포넌트 구현** (2-3시간)
+   ```typescript
+   // shared/components/ui/ConfirmDialog/ConfirmDialog.tsx
+   import { Dialog } from '@headlessui/react';
+   import { Button } from '../Button';
+
+   interface ConfirmDialogProps {
+     isOpen: boolean;
+     onClose: () => void;
+     onConfirm: () => void;
+     title: string;
+     message: string;
+     confirmText?: string;
+     cancelText?: string;
+     confirmVariant?: 'primary' | 'danger';
+   }
+
+   export function ConfirmDialog({
+     isOpen,
+     onClose,
+     onConfirm,
+     title,
+     message,
+     confirmText = '확인',
+     cancelText = '취소',
+     confirmVariant = 'primary',
+   }: ConfirmDialogProps) {
+     const handleConfirm = () => {
+       onConfirm();
+       onClose();
+     };
+
+     return (
+       <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+         {/* 배경 오버레이 */}
+         <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+
+         {/* 중앙 컨테이너 */}
+         <div className="fixed inset-0 flex items-center justify-center p-4">
+           <Dialog.Panel className="mx-auto max-w-md w-full bg-white rounded-2xl shadow-xl p-6">
+             {/* 제목 */}
+             <Dialog.Title className="text-2xl font-bold text-gray-900 mb-4">
+               {title}
+             </Dialog.Title>
+
+             {/* 메시지 */}
+             <Dialog.Description className="text-lg text-gray-700 mb-6 leading-relaxed">
+               {message}
+             </Dialog.Description>
+
+             {/* 버튼 그룹 */}
+             <div className="flex gap-3">
+               <Button
+                 variant="secondary"
+                 size="extra-large"
+                 fullWidth
+                 onClick={onClose}
+               >
+                 {cancelText}
+               </Button>
+               <Button
+                 variant={confirmVariant}
+                 size="extra-large"
+                 fullWidth
+                 onClick={handleConfirm}
+               >
+                 {confirmText}
+               </Button>
+             </div>
+           </Dialog.Panel>
+         </div>
+       </Dialog>
+     );
+   }
+   ```
+
+   ```typescript
+   // shared/components/ui/ConfirmDialog/index.ts
+   export { ConfirmDialog } from './ConfirmDialog';
+   ```
+
+   ```typescript
+   // shared/components/index.ts 업데이트
+   export { Button } from './ui/Button';
+   export { Card } from './ui/Card';
+   export { Input } from './ui/Input';
+   export { LoadingSpinner } from './ui/LoadingSpinner';
+   export { Layout } from './layout/Layout';
+   export { ConfirmDialog } from './ui/ConfirmDialog';  // 추가
+   ```
+
 **🔍 중간 점검 (Day 1 종료 시)**:
 - [ ] 폴더 구조 완성
 - [ ] 모든 타입 정의 완료
 - [ ] conversationApi 함수 정의 완료
 - [ ] TypeScript 컴파일 에러 없음
 - [ ] API 상수 추가 완료
+- [ ] ConfirmDialog 컴포넌트 구현 완료
+- [ ] Dialog가 열리고 닫히는 동작 확인
+- [ ] 큰 버튼 (60px+) 터치 영역 확인
 
 **✅ Day 1 완료 기준**:
 - [ ] features/conversation 기본 구조 완성
 - [ ] 타입 정의 및 API 함수 작성 완료
+- [ ] ConfirmDialog 컴포넌트 정상 동작
 - [ ] `npm run build` 성공
 - [ ] 다음 단계 준비 완료
 
@@ -364,7 +464,7 @@
    }
    ```
 
-3. **useSendMessage 훅 구현** (1-2시간)
+3. **useSendMessage 훅 구현 (에러 처리 강화)** (2-3시간)
    ```typescript
    // hooks/useSendMessage.ts
    import { useMutation } from '@tanstack/react-query';
@@ -402,7 +502,10 @@
        onError: (error, variables, context) => {
          // 에러 발생 시 optimistic update 롤백
          console.error('Failed to send message:', error);
-         // TODO: 에러 처리 및 사용자 알림
+
+         // 사용자에게 에러 알림 표시
+         // ConversationPage에서 error 상태를 확인하여 UI로 표시
+         // 예: Toast 메시지 또는 에러 메시지 표시
        },
      });
 
@@ -410,6 +513,7 @@
        sendMessage: sendMessage.mutate,
        isSending: sendMessage.isPending,
        error: sendMessage.error,
+       isError: sendMessage.isError,
      };
    }
    ```
@@ -439,11 +543,13 @@
 - [ ] useConversation 훅 타입 에러 없음
 - [ ] useSendMessage 훅 구현 완료
 - [ ] Optimistic update 로직 작동 확인
+- [ ] 에러 처리 로직 (isError, error) 추가 완료
 - [ ] TypeScript 컴파일 성공
 
 **✅ Day 2 완료 기준**:
 - [ ] TanStack Query 기반 훅 구현 완료
 - [ ] Zustand 스토어 정상 동작
+- [ ] 메시지 전송 실패 처리 준비 완료
 - [ ] `npm run build` 성공
 - [ ] 다음 단계(UI 컴포넌트) 준비 완료
 
@@ -672,10 +778,16 @@
 
 2. **컴포넌트 통합 테스트** (1시간)
    ```typescript
-   // components/index.ts
+   // features/conversation/components/index.ts
    export { ChatMessage } from './ChatMessage/ChatMessage';
    export { MessageInput } from './MessageInput/MessageInput';
    export { EmotionBadge } from './EmotionBadge/EmotionBadge';
+   ```
+
+   ```typescript
+   // features/guardian/components/index.ts
+   export { GuardianCard } from './GuardianCard/GuardianCard';
+   export { GuardianForm } from './GuardianForm/GuardianForm';
    ```
 
 **🔍 중간 점검 (Day 4 종료 시)**:
@@ -705,8 +817,8 @@
 1. **ConversationPage 컴포넌트 생성** (4-5시간)
    ```typescript
    // pages/conversation/ConversationPage.tsx
-   import { useEffect, useRef } from 'react';
-   import { Layout, Button, LoadingSpinner } from '@/shared/components';
+   import { useEffect, useRef, useState } from 'react';
+   import { Layout, Button, LoadingSpinner, ConfirmDialog } from '@/shared/components';
    import {
      ChatMessage,
      MessageInput,
@@ -719,6 +831,7 @@
    export function ConversationPage() {
      const navigate = useNavigate();
      const messagesEndRef = useRef<HTMLDivElement>(null);
+     const [showEndConfirm, setShowEndConfirm] = useState(false);
 
      const {
        currentConversation,
@@ -728,7 +841,7 @@
        isStarting,
      } = useConversation();
 
-     const { sendMessage, isSending } = useSendMessage();
+     const { sendMessage, isSending, isError, error } = useSendMessage();
 
      // 대화 시작 (페이지 로드 시 자동)
      useEffect(() => {
@@ -753,11 +866,13 @@
 
      const handleEndConversation = () => {
        if (!currentConversation) return;
+       setShowEndConfirm(true);
+     };
 
-       if (confirm('대화를 종료하시겠습니까?')) {
-         endConversation(currentConversation.id);
-         navigate(ROUTES.DASHBOARD);
-       }
+     const confirmEndConversation = () => {
+       if (!currentConversation) return;
+       endConversation(currentConversation.id);
+       navigate(ROUTES.DASHBOARD);
      };
 
      // 로딩 상태
@@ -822,8 +937,35 @@
                disabled={isSending || !isConversationActive}
                placeholder="메시지를 입력하세요..."
              />
+
+             {/* 전송 실패 에러 메시지 */}
+             {isError && (
+               <div
+                 className="mt-3 p-4 bg-red-50 border-2 border-red-300 rounded-lg"
+                 role="alert"
+               >
+                 <p className="text-lg text-red-700 font-semibold">
+                   ⚠️ 메시지 전송에 실패했습니다
+                 </p>
+                 <p className="text-base text-red-600 mt-1">
+                   네트워크 연결을 확인하고 다시 시도해주세요.
+                 </p>
+               </div>
+             )}
            </div>
          </div>
+
+         {/* 대화 종료 확인 다이얼로그 */}
+         <ConfirmDialog
+           isOpen={showEndConfirm}
+           onClose={() => setShowEndConfirm(false)}
+           onConfirm={confirmEndConversation}
+           title="대화 종료"
+           message="정말 대화를 종료하시겠습니까?"
+           confirmText="종료"
+           cancelText="취소"
+           confirmVariant="primary"
+         />
        </Layout>
      );
    }
@@ -865,13 +1007,17 @@
 **🔍 중간 점검 (Day 5-6 종료 시)**:
 - [ ] ConversationPage 정상 렌더링
 - [ ] 대화 시작/종료 플로우 동작
+- [ ] ConfirmDialog로 종료 확인 (confirm() 대체)
 - [ ] 메시지 전송 및 수신 정상
+- [ ] 메시지 전송 실패 시 에러 메시지 표시
 - [ ] 자동 스크롤 동작
 - [ ] 로딩/에러 상태 처리
 
 **✅ Day 5-6 완료 기준**:
 - [ ] 전체 대화 플로우 완성
 - [ ] 실시간 메시지 전송/수신 동작
+- [ ] ConfirmDialog를 통한 사용자 확인
+- [ ] 전송 실패 에러 UI 표시
 - [ ] UI/UX 노인 친화적
 - [ ] TypeScript 에러 0개
 - [ ] `npm run build` 성공
@@ -1457,7 +1603,216 @@
 
 **📋 상세 작업** (5-6시간):
 
-1. **GuardianCard 컴포넌트** (2-3시간)
+1. **GuardianForm 컴포넌트** (3-4시간)
+   ```typescript
+   // components/GuardianForm/GuardianForm.tsx
+   import { useState, FormEvent } from 'react';
+   import { Input, Button, Card } from '@/shared/components';
+   import type {
+     Guardian,
+     GuardianRelation,
+     NotificationType,
+     CreateGuardianRequest,
+     UpdateGuardianRequest,
+   } from '../../types/guardian.types';
+
+   interface GuardianFormProps {
+     guardian?: Guardian;  // 수정 시 전달
+     onSubmit: (data: CreateGuardianRequest | UpdateGuardianRequest) => void;
+     onCancel: () => void;
+     isSubmitting?: boolean;
+   }
+
+   export function GuardianForm({
+     guardian,
+     onSubmit,
+     onCancel,
+     isSubmitting = false,
+   }: GuardianFormProps) {
+     const [formData, setFormData] = useState({
+       name: guardian?.name || '',
+       phoneNumber: guardian?.phoneNumber || '',
+       email: guardian?.email || '',
+       relation: guardian?.relation || 'DAUGHTER' as GuardianRelation,
+       notificationSettings: guardian?.notificationSettings || [] as NotificationType[],
+     });
+
+     const [errors, setErrors] = useState<Record<string, string>>({});
+
+     const relations: { value: GuardianRelation; label: string }[] = [
+       { value: 'DAUGHTER', label: '딸' },
+       { value: 'SON', label: '아들' },
+       { value: 'SPOUSE', label: '배우자' },
+       { value: 'CAREGIVER', label: '간병인' },
+       { value: 'OTHER', label: '기타' },
+     ];
+
+     const notificationTypes: { value: NotificationType; label: string }[] = [
+       { value: 'DAILY_SUMMARY', label: '일일 요약' },
+       { value: 'EMOTION_ALERT', label: '감정 이상' },
+       { value: 'NO_RESPONSE', label: '무응답 알림' },
+       { value: 'EMERGENCY', label: '긴급 상황' },
+     ];
+
+     const handleSubmit = (e: FormEvent) => {
+       e.preventDefault();
+
+       // 유효성 검사
+       const newErrors: Record<string, string> = {};
+
+       if (!formData.name.trim()) {
+         newErrors.name = '이름을 입력해주세요';
+       }
+
+       if (!formData.phoneNumber.trim()) {
+         newErrors.phoneNumber = '전화번호를 입력해주세요';
+       } else if (!/^[0-9-]+$/.test(formData.phoneNumber)) {
+         newErrors.phoneNumber = '올바른 전화번호 형식이 아닙니다';
+       }
+
+       if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+         newErrors.email = '올바른 이메일 형식이 아닙니다';
+       }
+
+       if (Object.keys(newErrors).length > 0) {
+         setErrors(newErrors);
+         return;
+       }
+
+       onSubmit(formData);
+     };
+
+     const toggleNotification = (type: NotificationType) => {
+       setFormData((prev) => ({
+         ...prev,
+         notificationSettings: prev.notificationSettings.includes(type)
+           ? prev.notificationSettings.filter((t) => t !== type)
+           : [...prev.notificationSettings, type],
+       }));
+     };
+
+     return (
+       <Card padding="large">
+         <h2 className="text-2xl font-bold text-gray-900 mb-6">
+           {guardian ? '보호자 수정' : '보호자 추가'}
+         </h2>
+
+         <form onSubmit={handleSubmit} className="space-y-6">
+           {/* 이름 */}
+           <Input
+             label="이름"
+             value={formData.name}
+             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+             error={errors.name}
+             required
+             disabled={isSubmitting}
+           />
+
+           {/* 전화번호 */}
+           <Input
+             label="전화번호"
+             type="tel"
+             placeholder="010-0000-0000"
+             value={formData.phoneNumber}
+             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+             error={errors.phoneNumber}
+             required
+             disabled={isSubmitting}
+           />
+
+           {/* 이메일 (선택) */}
+           <Input
+             label="이메일 (선택사항)"
+             type="email"
+             placeholder="example@email.com"
+             value={formData.email}
+             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+             error={errors.email}
+             disabled={isSubmitting}
+           />
+
+           {/* 관계 선택 */}
+           <div>
+             <label className="block text-lg font-semibold text-gray-700 mb-3">
+               관계 <span className="text-red-600">*</span>
+             </label>
+             <div className="grid grid-cols-2 gap-3">
+               {relations.map((relation) => (
+                 <button
+                   key={relation.value}
+                   type="button"
+                   onClick={() => setFormData({ ...formData, relation: relation.value })}
+                   disabled={isSubmitting}
+                   className={`
+                     py-4 px-4 rounded-lg text-lg font-medium
+                     border-2 transition-colors
+                     ${
+                       formData.relation === relation.value
+                         ? 'bg-blue-600 text-white border-blue-600'
+                         : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
+                     }
+                     disabled:opacity-50 disabled:cursor-not-allowed
+                   `}
+                 >
+                   {relation.label}
+                 </button>
+               ))}
+             </div>
+           </div>
+
+           {/* 알림 설정 */}
+           <div>
+             <label className="block text-lg font-semibold text-gray-700 mb-3">
+               알림 설정
+             </label>
+             <div className="space-y-3">
+               {notificationTypes.map((type) => (
+                 <label
+                   key={type.value}
+                   className="flex items-center gap-3 p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
+                 >
+                   <input
+                     type="checkbox"
+                     checked={formData.notificationSettings.includes(type.value)}
+                     onChange={() => toggleNotification(type.value)}
+                     disabled={isSubmitting}
+                     className="w-6 h-6 cursor-pointer"
+                   />
+                   <span className="text-lg text-gray-700">{type.label}</span>
+                 </label>
+               ))}
+             </div>
+           </div>
+
+           {/* 버튼 */}
+           <div className="flex gap-3 pt-4">
+             <Button
+               type="submit"
+               variant="primary"
+               size="extra-large"
+               fullWidth
+               disabled={isSubmitting}
+             >
+               {isSubmitting ? '저장 중...' : guardian ? '수정 완료' : '보호자 추가'}
+             </Button>
+             <Button
+               type="button"
+               variant="secondary"
+               size="extra-large"
+               fullWidth
+               onClick={onCancel}
+               disabled={isSubmitting}
+             >
+               취소
+             </Button>
+           </div>
+         </form>
+       </Card>
+     );
+   }
+   ```
+
+2. **GuardianCard 컴포넌트** (1-2시간)
    ```typescript
    // components/GuardianCard/GuardianCard.tsx
    import { Card, Button } from '@/shared/components';
@@ -1554,11 +1909,7 @@
            <Button
              variant="secondary"
              size="large"
-             onClick={() => {
-               if (confirm('정말 삭제하시겠습니까?')) {
-                 onDelete(guardian.id);
-               }
-             }}
+             onClick={() => onDelete(guardian.id)}
              className="flex-1"
            >
              삭제
@@ -1590,42 +1941,99 @@
    }
    ```
 
-2. **GuardiansPage 페이지** (2-3시간)
+3. **GuardiansPage 페이지 (ConfirmDialog 적용)** (2-3시간)
    ```typescript
    // pages/guardians/GuardiansPage.tsx
    import { useState } from 'react';
-   import { Layout, Button, LoadingSpinner } from '@/shared/components';
-   import { GuardianCard, useGuardians } from '@/features/guardian';
+   import { Layout, Button, LoadingSpinner, ConfirmDialog } from '@/shared/components';
+   import {
+     GuardianCard,
+     GuardianForm,
+     useGuardians,
+   } from '@/features/guardian';
    import { useNavigate } from 'react-router-dom';
    import { ROUTES } from '@/shared/constants/routes';
-   import type { Guardian } from '@/features/guardian';
+   import type { Guardian, CreateGuardianRequest } from '@/features/guardian';
+
+   type FormMode = 'list' | 'add' | 'edit';
 
    export function GuardiansPage() {
      const navigate = useNavigate();
      const {
        guardians,
        isLoading,
+       createGuardian,
+       updateGuardian,
        deleteGuardian,
        sendTestNotification,
-       isDeleting,
+       isCreating,
+       isUpdating,
      } = useGuardians();
 
-     const [editingGuardian, setEditingGuardian] = useState<Guardian | null>(
-       null
-     );
+     const [mode, setMode] = useState<FormMode>('list');
+     const [editingGuardian, setEditingGuardian] = useState<Guardian | null>(null);
+     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+     const [deletingGuardianId, setDeletingGuardianId] = useState<number | null>(null);
+
+     const handleAdd = () => {
+       setMode('add');
+       setEditingGuardian(null);
+     };
 
      const handleEdit = (guardian: Guardian) => {
+       setMode('edit');
        setEditingGuardian(guardian);
-       // TODO: 모달 또는 별도 페이지로 수정 폼 표시
+     };
+
+     const handleSubmit = (data: CreateGuardianRequest) => {
+       if (mode === 'add') {
+         createGuardian(data, {
+           onSuccess: () => {
+             setMode('list');
+             alert('보호자가 추가되었습니다!');
+           },
+         });
+       } else if (mode === 'edit' && editingGuardian) {
+         updateGuardian(
+           { id: editingGuardian.id, data },
+           {
+             onSuccess: () => {
+               setMode('list');
+               setEditingGuardian(null);
+               alert('보호자 정보가 수정되었습니다!');
+             },
+           }
+         );
+       }
+     };
+
+     const handleCancel = () => {
+       setMode('list');
+       setEditingGuardian(null);
      };
 
      const handleDelete = (id: number) => {
-       deleteGuardian(id);
+       setDeletingGuardianId(id);
+       setShowDeleteConfirm(true);
+     };
+
+     const confirmDelete = () => {
+       if (deletingGuardianId === null) return;
+
+       deleteGuardian(deletingGuardianId, {
+         onSuccess: () => {
+           alert('보호자가 삭제되었습니다.');
+           setDeletingGuardianId(null);
+         },
+       });
      };
 
      const handleTestNotification = (id: number) => {
-       sendTestNotification(id);
-       alert('테스트 알림이 전송되었습니다!');
+       sendTestNotification(id, {
+         onSuccess: () => {
+           alert('테스트 알림이 전송되었습니다!');
+         },
+       });
      };
 
      if (isLoading) {
@@ -1638,6 +2046,25 @@
        );
      }
 
+     // 폼 표시 모드
+     if (mode === 'add' || mode === 'edit') {
+       return (
+         <Layout
+           title={mode === 'add' ? '보호자 추가' : '보호자 수정'}
+           showBack
+           onBack={handleCancel}
+         >
+           <GuardianForm
+             guardian={editingGuardian || undefined}
+             onSubmit={handleSubmit}
+             onCancel={handleCancel}
+             isSubmitting={isCreating || isUpdating}
+           />
+         </Layout>
+       );
+     }
+
+     // 목록 표시 모드
      return (
        <Layout title="보호자 관리" showBack onBack={() => navigate(ROUTES.DASHBOARD)}>
          {/* 보호자 추가 버튼 */}
@@ -1646,10 +2073,7 @@
              variant="primary"
              size="extra-large"
              fullWidth
-             onClick={() => {
-               // TODO: 보호자 추가 폼 표시
-               alert('보호자 추가 기능은 구현 중입니다.');
-             }}
+             onClick={handleAdd}
            >
              + 보호자 추가
            </Button>
@@ -1678,22 +2102,43 @@
              ))}
            </div>
          )}
+
+         {/* 삭제 확인 다이얼로그 */}
+         <ConfirmDialog
+           isOpen={showDeleteConfirm}
+           onClose={() => {
+             setShowDeleteConfirm(false);
+             setDeletingGuardianId(null);
+           }}
+           onConfirm={confirmDelete}
+           title="보호자 삭제"
+           message="정말 이 보호자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+           confirmText="삭제"
+           cancelText="취소"
+           confirmVariant="danger"
+         />
        </Layout>
      );
    }
    ```
 
 **🔍 중간 점검 (Day 11 종료 시)**:
+- [ ] GuardianForm 유효성 검사 동작
 - [ ] GuardianCard 정상 렌더링
 - [ ] 보호자 목록 조회 성공
+- [ ] 보호자 추가 전체 플로우 동작
+- [ ] 보호자 수정 전체 플로우 동작
+- [ ] ConfirmDialog로 삭제 확인 (confirm() 대체)
 - [ ] 삭제 기능 동작
 - [ ] 테스트 알림 전송
-- [ ] 노인 친화적 UI
+- [ ] 노인 친화적 UI (큰 버튼, 체크박스)
 
 **✅ Day 10-11 완료 기준**:
 - [ ] features/guardian 모듈 완성
+- [ ] GuardianForm 컴포넌트 완성
 - [ ] GuardiansPage 완전 동작
-- [ ] CRUD 기능 정상 동작
+- [ ] ConfirmDialog를 통한 삭제 확인
+- [ ] CRUD 전체 기능 정상 동작
 - [ ] TypeScript 에러 0개
 - [ ] `npm run build` 성공
 
@@ -1707,10 +2152,11 @@
 
 **📋 상세 작업**:
 
-1. **DashboardPage 리팩토링** (4-5시간)
+1. **DashboardPage 리팩토링 (ConfirmDialog 적용)** (4-5시간)
    ```typescript
    // pages/dashboard/DashboardPage.tsx
-   import { Layout, Button, Card } from '@/shared/components';
+   import { useState } from 'react';
+   import { Layout, Button, Card, ConfirmDialog } from '@/shared/components';
    import { DailyCheckCard } from '@/features/daily-check';
    import { useAuth } from '@/features/auth';
    import { useNavigate } from 'react-router-dom';
@@ -1719,12 +2165,15 @@
    export function DashboardPage() {
      const navigate = useNavigate();
      const { user, logout } = useAuth();
+     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
      const handleLogout = () => {
-       if (confirm('로그아웃 하시겠습니까?')) {
-         logout();
-         navigate(ROUTES.LOGIN);
-       }
+       setShowLogoutConfirm(true);
+     };
+
+     const confirmLogout = () => {
+       logout();
+       navigate(ROUTES.LOGIN);
      };
 
      return (
@@ -1778,6 +2227,18 @@
              로그아웃
            </Button>
          </div>
+
+         {/* 로그아웃 확인 다이얼로그 */}
+         <ConfirmDialog
+           isOpen={showLogoutConfirm}
+           onClose={() => setShowLogoutConfirm(false)}
+           onConfirm={confirmLogout}
+           title="로그아웃"
+           message="정말 로그아웃 하시겠습니까?"
+           confirmText="로그아웃"
+           cancelText="취소"
+           confirmVariant="primary"
+         />
        </Layout>
      );
    }
@@ -1856,6 +2317,7 @@
 
 **🔍 중간 점검 (Day 12-13 종료 시)**:
 - [ ] 대시보드 모든 기능 링크 동작
+- [ ] ConfirmDialog로 로그아웃 확인 (confirm() 대체)
 - [ ] 전체 사용자 플로우 완성
 - [ ] 페이지 간 이동 정상
 - [ ] 데이터 일관성 유지
@@ -1863,6 +2325,7 @@
 
 **✅ Day 12-13 완료 기준**:
 - [ ] 대시보드 통합 완료
+- [ ] 모든 confirm() 제거 및 ConfirmDialog 적용
 - [ ] 모든 페이지 연결 완료
 - [ ] 전체 플로우 정상 동작
 - [ ] TypeScript 에러 0개
