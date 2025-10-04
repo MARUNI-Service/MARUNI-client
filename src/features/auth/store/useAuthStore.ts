@@ -1,16 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { STORAGE_KEYS } from '@/shared/constants/storage';
 import { getApiErrorMessage } from '@/shared/api/client';
 import * as authApi from '../api';
 import type { AuthState, LoginRequest, User } from '../types';
 
 /**
  * Auth Store (Zustand with persist)
- * - 인증 상태 관리
+ * - 인증 상태 관리 (persist middleware로 자동 복원)
  * - 로그인/로그아웃 처리
  * - 토큰 갱신 처리
- * - 초기화 상태 관리 (persist 복원 대기)
  */
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -20,28 +18,8 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      isLoading: true, // 초기값 true (초기화 전까지 로딩)
-      isInitialized: false,
+      isLoading: false,
       error: null,
-
-      /**
-       * 초기화 (persist 복원 후 실행)
-       */
-      initialize: () => {
-        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-        const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-        const userJson = localStorage.getItem(STORAGE_KEYS.USER_INFO);
-        const user = userJson ? (JSON.parse(userJson) as User) : null;
-
-        set({
-          accessToken,
-          refreshToken,
-          user,
-          isAuthenticated: !!(accessToken && refreshToken && user),
-          isLoading: false,
-          isInitialized: true,
-        });
-      },
 
       /**
        * 로그인
@@ -52,18 +30,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await authApi.login(credentials);
 
-          // 토큰 저장
-          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
-          localStorage.setItem(
-            STORAGE_KEYS.REFRESH_TOKEN,
-            response.refreshToken
-          );
-          localStorage.setItem(
-            STORAGE_KEYS.USER_INFO,
-            JSON.stringify(response.user)
-          );
-
-          // 상태 업데이트
+          // 상태 업데이트 (persist가 자동으로 localStorage에 저장)
           set({
             user: response.user,
             accessToken: response.accessToken,
@@ -90,12 +57,7 @@ export const useAuthStore = create<AuthState>()(
        * 로그아웃
        */
       logout: () => {
-        // 토큰 및 사용자 정보 제거
-        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-
-        // 상태 초기화
+        // 상태 초기화 (persist가 자동으로 localStorage에서 제거)
         set({
           user: null,
           accessToken: null,
@@ -115,7 +77,7 @@ export const useAuthStore = create<AuthState>()(
        * 토큰 갱신
        */
       refreshAccessToken: async () => {
-        const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        const { refreshToken } = get();
 
         if (!refreshToken) {
           get().logout();
@@ -125,14 +87,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await authApi.refreshAccessToken(refreshToken);
 
-          // 새 토큰 저장
-          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
-          localStorage.setItem(
-            STORAGE_KEYS.REFRESH_TOKEN,
-            response.refreshToken
-          );
-
-          // 상태 업데이트
+          // 상태 업데이트 (persist가 자동으로 localStorage에 저장)
           set({
             accessToken: response.accessToken,
             refreshToken: response.refreshToken,
@@ -148,11 +103,6 @@ export const useAuthStore = create<AuthState>()(
        * 사용자 정보 설정
        */
       setUser: (user: User | null) => {
-        if (user) {
-          localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(user));
-        } else {
-          localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-        }
         set({
           user,
           isAuthenticated: !!user,
@@ -163,8 +113,6 @@ export const useAuthStore = create<AuthState>()(
        * 토큰 설정
        */
       setTokens: (accessToken: string, refreshToken: string) => {
-        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
         set({
           accessToken,
           refreshToken,
@@ -181,14 +129,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage', // localStorage 키
-      partialize: (state) => ({
-        // persist에서는 플래그만 저장 (실제 토큰은 별도 관리)
-        isAuthenticated: state.isAuthenticated,
-      }),
-      onRehydrateStorage: () => (state) => {
-        // persist 복원 완료 후 초기화 실행
-        state?.initialize();
-      },
+      // persist가 모든 상태를 자동으로 저장/복원 (partialize 제거)
     }
   )
 );

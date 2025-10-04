@@ -117,18 +117,17 @@ src/shared/
 ```
 src/features/auth/
 ├── components/             # 인증 관련 컴포넌트
-│   ├── LoginForm/
-│   ├── RegisterForm/
-│   ├── LogoutButton/
 │   └── ProtectedRoute/
 ├── hooks/                  # 인증 관련 훅
 │   ├── useAuth.ts          # 인증 상태 관리
-│   ├── useLogin.ts         # 로그인 로직
-│   └── useLogout.ts        # 로그아웃 로직
+│   └── useLoginForm.ts     # 로그인 폼 로직
 ├── api/                    # 인증 API
 │   └── authApi.ts
 ├── store/                  # 인증 상태 스토어
-│   └── authStore.ts        # Zustand 스토어
+│   └── useAuthStore.ts     # Zustand + persist 스토어
+├── constants/              # 인증 관련 상수
+│   ├── validation.ts       # 유효성 검사 규칙
+│   └── index.ts
 ├── types/                  # 인증 타입
 │   └── auth.types.ts
 └── index.ts                # Export 모음

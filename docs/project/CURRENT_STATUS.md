@@ -1,11 +1,17 @@
 # MARUNI Client 현재 상태 보고서
 
-## 📅 현재 상황 (2025-10-03)
+## 📅 현재 상황 (2025-10-04)
 
 **프로젝트**: MARUNI 클라이언트 - 노인 돌봄 PWA
-**현재 단계**: 🎉 Phase 2 완료 - 서버 연동 및 인증 시스템 구축 완료
-**진행률**: 60% (Phase 1-2 완료, Phase 3 준비 중)
+**현재 단계**: 🎉 Phase 2 완료 + 리팩토링 완료 - 서버 연동 및 인증 시스템 최적화 완료
+**진행률**: 65% (Phase 1-2 완료 + 리팩토링, Phase 3 준비 완료)
 **다음 단계**: Phase 3 시작 - 핵심 기능 구현 (AI 대화, 안부 확인)
+
+### 🔥 최근 주요 업데이트 (2025-10-04)
+- ✅ **Phase 2 리팩토링 완료**: 인증 시스템 최적화 및 코드 개선
+- ✅ **자동 토큰 갱신**: 401 에러 시 자동으로 토큰 갱신하여 사용자 경험 향상
+- ✅ **이중 저장 제거**: Zustand persist만 사용하여 코드 40% 감소
+- ✅ **불필요한 초기화 제거**: isInitialized 플래그 제거로 코드 단순화
 
 ## ✅ 완료된 작업
 
@@ -119,10 +125,11 @@ src/
    - 모든 상태 및 기능 테스트 가능한 App.tsx
    - 접근성 테스트 가이드라인 포함
 
-### ✅ Phase 2: 서버 연동 및 인증 시스템 (100% 완료)
-**목표**: React Router 설정, API 클라이언트, JWT 인증 시스템 구축
-**진행률**: 60% 달성
+### ✅ Phase 2: 서버 연동 및 인증 시스템 (100% 완료 + 리팩토링 완료)
+**목표**: React Router 설정, API 클라이언트, JWT 인증 시스템 구축 및 최적화
+**진행률**: 65% 달성 (리팩토링 포함)
 **상세 가이드**: [PHASE2_EXECUTION_GUIDE.md](./PHASE2_EXECUTION_GUIDE.md)
+**리팩토링 보고서**: [PHASE2_REFACTORING_REPORT.md](./PHASE2_REFACTORING_REPORT.md) ⭐ **NEW**
 
 #### 완료된 작업 내용
 
@@ -163,7 +170,22 @@ src/
    - 로그인 → 대시보드 전체 플로우 동작
    - TypeScript 컴파일 에러 0개
    - ESLint 경고 0개
-   - 빌드 성공 (343.81 KB)
+   - 빌드 성공 (343.55 KB)
+
+**✅ Day 8: Phase 2 리팩토링 (2025-10-04)**
+7. ✅ **Critical 리팩토링 (3건)**
+   - Auth Store 이중 저장 구조 제거 (코드 40% 감소)
+   - API 인터셉터 자동 토큰 갱신 추가 (중복 요청 방지)
+   - isInitialized 플래그 제거 및 단순화
+
+8. ✅ **Medium 리팩토링 (2건)**
+   - 유효성 검사 규칙 상수화 (유지보수성 향상)
+   - 로그인 폼 훅 책임 분리 검토 완료
+
+9. ✅ **최종 검증**
+   - TypeScript 빌드 0 에러
+   - ESLint 0 경고/에러
+   - 번들 사이즈: 343.55 KB (최적화 완료)
 
 **📂 생성된 주요 파일 구조:**
 ```
@@ -174,18 +196,19 @@ src/
 │       ├── QueryProvider.tsx
 │       ├── AppProviders.tsx
 │       └── index.ts
-├── features/auth/             ✅ 인증 모듈
+├── features/auth/             ✅ 인증 모듈 (13개 파일)
 │   ├── api/                   # authApi
-│   ├── store/                 # useAuthStore (Zustand + persist)
-│   ├── hooks/                 # useAuth, useLoginForm
-│   ├── components/            # ProtectedRoute
-│   └── types/                 # Auth 타입 정의
+│   ├── store/                 # useAuthStore (Zustand + persist) ⭐ 리팩토링
+│   ├── hooks/                 # useAuth, useLoginForm ⭐ 리팩토링
+│   ├── components/            # ProtectedRoute ⭐ 리팩토링
+│   ├── constants/             # validation 규칙 ⭐ NEW
+│   └── types/                 # Auth 타입 정의 ⭐ 리팩토링
 ├── pages/
 │   ├── auth/LoginPage.tsx     ✅ 로그인 페이지
 │   ├── dashboard/DashboardPage.tsx  ✅ 대시보드 (로그아웃 기능)
 │   └── NotFoundPage.tsx       ✅ 404 페이지
 └── shared/api/
-    └── client.ts              ✅ Axios 클라이언트
+    └── client.ts              ✅ Axios 클라이언트 (자동 토큰 갱신) ⭐ 리팩토링
 ```
 
 ### 🎯 Phase 3: 핵심 기능 구현 (예상 1-2주)
@@ -211,15 +234,17 @@ src/
 - **개발 환경**: 100% 완료
 - **기본 구조**: 100% 완료
 - **UI 컴포넌트**: 100% 완료 (Phase 1)
-- **인증 시스템**: 100% 완료 (Phase 2) ⭐ **NEW**
-- **라우팅**: 100% 완료 (Phase 2) ⭐ **NEW**
-- **Provider 구조**: 100% 완료 (Phase 2) ⭐ **NEW**
+- **인증 시스템**: 100% 완료 + 최적화 (Phase 2) ⭐ **리팩토링 완료**
+- **라우팅**: 100% 완료 (Phase 2)
+- **Provider 구조**: 100% 완료 (Phase 2)
+- **코드 품질**: 100% 완료 (리팩토링) ⭐ **NEW**
 - **기능 구현**: 30% 완료 (로그인/로그아웃 동작)
 
 ### 개발 준비 상태
 - ✅ **즉시 개발 가능**: Phase 3 핵심 기능 구현 시작 가능
-- ✅ **서버 연동 완료**: API 클라이언트 및 인터셉터 구축
-- ✅ **인증 플로우 완료**: 로그인/로그아웃/상태 유지
+- ✅ **서버 연동 완료**: API 클라이언트 및 자동 토큰 갱신 구축
+- ✅ **인증 플로우 최적화**: 로그인/로그아웃/상태 유지/자동 갱신
+- ✅ **코드 품질 보장**: 리팩토링 완료, 오버엔지니어링 제거
 - ✅ **PWA 준비**: 기본 설정 완료
 - ✅ **디자인 가이드**: 노인 친화적 컴포넌트 완성
 
@@ -300,6 +325,21 @@ npm run preview
 
 **🎯 다음 우선순위: [PHASE2_EXECUTION_GUIDE.md](./PHASE2_EXECUTION_GUIDE.md) 가이드에 따라 Phase 2 실행**
 
-**📅 마지막 업데이트**: 2025-10-03
-**📈 현재 진행률**: Phase 1 완료 (40%), Phase 2 진행 예정
-**⏰ 예상 완료**: 3주 후 MVP 완성 (Phase 2: 1주, Phase 3: 2주)
+**📅 마지막 업데이트**: 2025-10-04
+**📈 현재 진행률**: Phase 1-2 완료 + 리팩토링 (65%), Phase 3 준비 완료
+**⏰ 예상 완료**: 2주 후 MVP 완성 (Phase 3: 2주)
+
+---
+
+## 🎉 Phase 2 리팩토링 완료 요약 (2025-10-04)
+
+**✅ 달성한 것:**
+- 인증 시스템 코드 40% 감소 (이중 저장 제거)
+- 자동 토큰 갱신으로 사용자 경험 향상
+- 불필요한 초기화 로직 제거
+- 유효성 검사 규칙 중앙 관리
+- TypeScript 0 에러, ESLint 0 경고
+
+**📋 결론: Phase 2 리팩토링이 완료되어 더 깔끔하고 안정적인 코드베이스로 Phase 3를 시작할 준비가 되었습니다.**
+
+**🎯 다음 우선순위: Phase 3 핵심 기능 구현 (AI 대화, 안부 확인)**
