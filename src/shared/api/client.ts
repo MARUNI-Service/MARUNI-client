@@ -1,6 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
 import { API_BASE_URL } from '@/shared/constants/api';
-import { STORAGE_KEYS } from '@/shared/constants/storage';
 import type { ApiError, ApiResponse } from '@/shared/types/common';
 
 /**
@@ -19,15 +18,24 @@ export const apiClient = axios.create({
 
 /**
  * 요청 인터셉터
- * - 로컬 스토리지에서 액세스 토큰을 가져와 Authorization 헤더에 추가
+ * - Zustand store에서 액세스 토큰을 가져와 Authorization 헤더에 추가
  * - 토큰이 없으면 헤더 추가 없이 요청 진행 (공개 API용)
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    // Zustand persist storage에서 토큰 가져오기
+    const authStorage = localStorage.getItem('auth-storage');
+    if (authStorage) {
+      try {
+        const { state } = JSON.parse(authStorage);
+        const token = state?.accessToken;
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (error) {
+        console.error('토큰 파싱 실패:', error);
+      }
     }
 
     return config;
@@ -38,10 +46,31 @@ apiClient.interceptors.request.use(
 );
 
 /**
+ * 토큰 갱신 중복 요청 방지 플래그
+ */
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: Error | null, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+/**
  * 응답 인터셉터
  * - 성공 응답: data를 그대로 반환
  * - 에러 응답: 에러 타입에 따라 처리
- *   - 401: 토큰 만료/무효 -> 로그아웃 처리
+ *   - 401: 토큰 자동 갱신 시도 -> 실패 시 로그아웃
  *   - 403: 권한 없음
  *   - 500: 서버 에러
  */
@@ -51,19 +80,100 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError<ApiError>) => {
-    // 401 Unauthorized - 토큰 만료 또는 무효
-    if (error.response?.status === 401) {
-      // 토큰 제거 및 로그인 페이지로 리다이렉트
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-      // 현재 위치를 저장하여 로그인 후 돌아올 수 있도록 설정
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/login') {
-        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    // 401 Unauthorized - 토큰 자동 갱신 시도
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      // 로그인 요청이나 토큰 갱신 요청은 재시도하지 않음
+      if (
+        originalRequest.url?.includes('/auth/login') ||
+        originalRequest.url?.includes('/auth/refresh')
+      ) {
+        return Promise.reject(error);
       }
 
-      return Promise.reject(error);
+      // 이미 갱신 중이면 대기
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      // Zustand persist storage에서 refreshToken 가져오기
+      const authStorage = localStorage.getItem('auth-storage');
+      if (!authStorage) {
+        isRefreshing = false;
+        // 로그아웃 처리
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login') {
+          window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        }
+        return Promise.reject(error);
+      }
+
+      try {
+        const { state } = JSON.parse(authStorage);
+        const refreshToken = state?.refreshToken;
+
+        if (!refreshToken) {
+          throw new Error('리프레시 토큰이 없습니다');
+        }
+
+        // 토큰 갱신 요청 (순환 의존성 방지를 위해 직접 호출)
+        const response = await axios.post<
+          ApiResponse<{ accessToken: string; refreshToken: string }>
+        >(`${API_BASE_URL}/auth/refresh`, {
+          refreshToken,
+        });
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          response.data.data;
+
+        // Zustand storage 업데이트
+        const updatedState = {
+          ...state,
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        };
+        localStorage.setItem(
+          'auth-storage',
+          JSON.stringify({
+            state: updatedState,
+            version: 0,
+          })
+        );
+
+        // 원래 요청 재시도
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        processQueue(null, newAccessToken);
+        isRefreshing = false;
+
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError as Error, null);
+        isRefreshing = false;
+
+        // 토큰 갱신 실패 시 로그아웃 처리
+        localStorage.removeItem('auth-storage');
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login') {
+          window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        }
+
+        return Promise.reject(refreshError);
+      }
     }
 
     // 403 Forbidden - 권한 없음

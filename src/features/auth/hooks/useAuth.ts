@@ -11,7 +11,6 @@ export function useAuth() {
     refreshToken,
     isAuthenticated,
     isLoading,
-    isInitialized,
     login,
     logout,
     setUser,
@@ -25,7 +24,6 @@ export function useAuth() {
     refreshToken,
     isAuthenticated,
     isLoading,
-    isInitialized,
 
     // 액션
     login,

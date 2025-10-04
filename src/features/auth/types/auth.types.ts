@@ -51,7 +51,6 @@ export interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  isInitialized: boolean;
   error: string | null;
 
   // 액션
@@ -60,6 +59,5 @@ export interface AuthState {
   refreshAccessToken: () => Promise<void>;
   setUser: (user: User | null) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
-  initialize: () => void;
   clearError: () => void;
 }

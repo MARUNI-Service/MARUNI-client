@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ROUTES } from '@/shared/constants/routes';
-import { LoadingSpinner } from '@/shared/components';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -18,22 +17,12 @@ interface ProtectedRouteProps {
  * </ProtectedRoute>
  *
  * @features
- * - 인증 상태 확인
+ * - 인증 상태 확인 (persist가 자동 복원)
  * - 미인증 시 /login 리다이렉트
- * - 초기화 완료 전 로딩 표시 (persist 복원 대기)
  * - 접근성 지원
  */
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isInitialized } = useAuth();
-
-  // 초기화 완료 전까지 로딩 표시 (persist 복원 대기)
-  if (!isInitialized) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="large" />
-      </div>
-    );
-  }
+  const { isAuthenticated } = useAuth();
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   if (!isAuthenticated) {
