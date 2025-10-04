@@ -18,35 +18,60 @@
 ├─────────────────────────────────────────┤
 │  Presentation Layer (pages/)            │
 │  ├─ auth/ dashboard/ conversation/      │
-│  ├─ guardians/ settings/               │
+│  ├─ guardians/ alerts/ settings/       │
 │  └─ Route Guards & Navigation          │
 ├─────────────────────────────────────────┤
 │  Feature Layer (features/)             │
 │  ├─ auth/ member/ conversation/        │
-│  ├─ daily-check/ guardian/             │
-│  ├─ alert/ notification/               │
-│  └─ Domain-specific Business Logic     │
+│  ├─ guardian/ alert/ notification/     │
+│  └─ 서버 도메인과 1:1 매핑             │
 ├─────────────────────────────────────────┤
 │  Shared Layer (shared/)                │
 │  ├─ components/ hooks/ utils/          │
-│  ├─ constants/ types/                  │
+│  ├─ api/ constants/ types/             │
 │  └─ Common Utilities & UI Components   │
 ├─────────────────────────────────────────┤
 │  Infrastructure Layer                  │
-│  ├─ API Client (Axios)                │
+│  ├─ API Client (Axios + Interceptors) │
 │  ├─ State Management (Zustand)        │
 │  ├─ Cache Management (TanStack Query)  │
 │  └─ Storage (LocalStorage, PWA)       │
 └─────────────────────────────────────────┘
                     │
-                HTTP/HTTPS
+         HTTP/HTTPS (JWT Bearer)
                     │
 ┌─────────────────────────────────────────┐
 │            MARUNI Server                │
 │        (Spring Boot + JWT)              │
-│   ✅ Phase 2 MVP 100% 완성             │
+│                                         │
+│  📦 도메인 (6개)                        │
+│  ├─ Auth (인증/인가)                   │
+│  ├─ Member (회원 관리)                 │
+│  ├─ Conversation (AI 대화)             │
+│  ├─ Guardian (보호자 관리)              │
+│  ├─ AlertRule (이상징후 감지)           │
+│  └─ Notification (알림 발송)            │
+│                                         │
+│  🔧 기술 스택                           │
+│  ├─ OpenAI GPT-4o (AI 대화)           │
+│  ├─ Firebase FCM (푸시 알림)           │
+│  ├─ Redis (토큰 저장)                  │
+│  └─ PostgreSQL (메인 DB)               │
+│                                         │
+│   ✅ 서버 완성 (100%)                  │
 └─────────────────────────────────────────┘
 ```
+
+### 서버-클라이언트 도메인 매핑
+
+| 서버 도메인 | 클라이언트 Feature | API 엔드포인트 | 상태 |
+|------------|-------------------|---------------|------|
+| Auth | features/auth | /api/members/login, /api/auth/* | ✅ 완성 |
+| Member | features/member | /api/join, /api/users/me | ✅ 완성 |
+| Conversation | features/conversation | /api/conversations/messages | ⏳ 구현 예정 |
+| Guardian | features/guardian | /api/guardians/* | ⏳ 구현 예정 |
+| AlertRule | features/alert | /api/alert-rules/* | ⏳ 구현 예정 |
+| Notification | (내부 서비스) | - | N/A |
 
 ## 📦 패키지 아키텍처
 
@@ -108,6 +133,82 @@ const useAuthStore = create<AuthState>()(persist(
 - **에러 처리**: 네트워크 오류, 인증 오류 체계적 처리
 - **타입 안전성**: TypeScript로 API 응답 타입 보장
 - **중복 요청 방지**: 토큰 갱신 중 대기 큐 관리 ⭐ **NEW**
+
+**실제 API 엔드포인트:**
+
+```typescript
+// Base URL
+const API_BASE_URL = 'http://localhost:8080/api'; // 개발
+const API_BASE_URL = 'https://api.maruni.com/api'; // 운영
+
+// 인증 API (Auth Domain)
+POST   /api/members/login          // 로그인
+POST   /api/auth/token/refresh     // Access Token 재발급
+POST   /api/auth/token/refresh/full // 전체 토큰 재발급
+POST   /api/auth/logout            // 로그아웃
+
+// 회원 API (Member Domain)
+POST   /api/join                   // 회원가입
+GET    /api/join/email-check       // 이메일 중복 확인
+GET    /api/users/me               // 내 정보 조회
+PUT    /api/users/me               // 내 정보 수정
+DELETE /api/users/me               // 계정 삭제
+
+// AI 대화 API (Conversation Domain)
+POST   /api/conversations/messages // AI 대화 메시지 전송
+
+// 보호자 API (Guardian Domain)
+POST   /api/guardians              // 보호자 생성
+GET    /api/guardians/{id}         // 보호자 조회
+PUT    /api/guardians/{id}         // 보호자 수정
+DELETE /api/guardians/{id}         // 보호자 비활성화
+POST   /api/guardians/{id}/assign  // 보호자 할당
+DELETE /api/guardians/remove-guardian // 보호자 해제
+GET    /api/guardians/my-guardian  // 내 보호자 조회
+GET    /api/guardians/{id}/members // 담당 회원 목록
+
+// 알림 규칙 API (AlertRule Domain)
+POST   /api/alert-rules            // 알림 규칙 생성
+GET    /api/alert-rules            // 알림 규칙 목록
+GET    /api/alert-rules/{id}       // 알림 규칙 조회
+PUT    /api/alert-rules/{id}       // 알림 규칙 수정
+DELETE /api/alert-rules/{id}       // 알림 규칙 삭제
+POST   /api/alert-rules/{id}/toggle // 규칙 활성화/비활성화
+GET    /api/alert-rules/history    // 알림 이력 조회
+POST   /api/alert-rules/detect     // 수동 이상징후 감지
+```
+
+**공통 응답 형식:**
+
+```typescript
+// 모든 API는 공통 응답 래퍼 사용
+interface ApiResponse<T> {
+  success: boolean;
+  code: string;
+  message: string;
+  data: T | null;
+}
+
+// 성공 응답 예시
+{
+  "success": true,
+  "code": "SUCCESS",
+  "message": "성공적으로 처리되었습니다",
+  "data": { /* 실제 데이터 */ }
+}
+
+// 에러 응답 예시
+{
+  "success": false,
+  "code": "INVALID_INPUT_VALUE",
+  "message": "입력값이 올바르지 않습니다",
+  "data": {
+    "fieldErrors": [
+      { "field": "memberEmail", "message": "올바른 이메일 형식이어야 합니다" }
+    ]
+  }
+}
+```
 
 ```typescript
 // API 클라이언트 구조 (Phase 2 리팩토링 완료)

@@ -4,21 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # MARUNI Client - Claude Assistant Guide
 
-## 📚 필수 문서 진입점
+## 📚 시작하기
 
-**모든 작업 전에 반드시 확인할 문서들:**
+**작업 시작 전 필수 확인:**
 
-1. **[docs/project/CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md)** ⭐ **최우선**
-
-   - 현재 프로젝트 상태 및 진행률
-   - 완료된 작업과 다음 단계
-   - 기술적 완성도 현황
-
-2. **[docs/development/COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md)** ⭐ **컴포넌트 개발 시 필수**
-   - 노인 친화적 컴포넌트 설계 원칙
-   - 컴포넌트 구현 템플릿 및 접근성 체크리스트
-
-**전체 문서 구조**: [docs/README.md](./docs/README.md)
+1. **[CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md)** - 현재 프로젝트 상태 파악
+2. **[docs/README.md](./docs/README.md)** - 전체 문서 구조 및 진입점
 
 ## Development Guidelines for Claude Assistant
 
@@ -39,6 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **BEFORE ANY CODING**: Read [CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md) for current project state
 - **FOR COMPONENT WORK**: Read [COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md) for design patterns
 - **FOR ARCHITECTURE**: Read [TECHNICAL_ARCHITECTURE.md](./docs/architecture/TECHNICAL_ARCHITECTURE.md) for system design
+- **FOR API INTEGRATION**: Read [API_REFERENCE.md](./docs/api/API_REFERENCE.md) and [IMPLEMENTATION_FLOWS.md](./docs/flows/IMPLEMENTATION_FLOWS.md)
 
 ### Elderly-Friendly Development Guidelines
 
@@ -134,7 +126,7 @@ src/
 
 - **서버 주소**: (환경변수로 설정 예정)
 - **인증**: JWT 토큰 기반
-- **API 문서**: ../maruni-server/docs/README.md 참조
+- **상세 API 문서**: [API_REFERENCE.md](./docs/api/API_REFERENCE.md)
 
 ## 노인 친화적 UI 가이드라인
 
@@ -147,25 +139,10 @@ src/
 ## 커스텀 CSS 클래스
 
 ```css
-.btn-primary
-  #
-  주
-  버튼
-  (60px 높이, 큰 텍스트)
-  .btn-secondary
-  #
-  보조
-  버튼
-  .touch-target
-  #
-  터치
-  영역
-  최소
-  크기
-  .text-high-contrast
-  #
-  고대비
-  텍스트;
+.btn-primary       /* 주 버튼 (60px 높이, 큰 텍스트) */
+.btn-secondary     /* 보조 버튼 */
+.touch-target      /* 터치 영역 최소 크기 */
+.text-high-contrast /* 고대비 텍스트 */
 ```
 
 ## 개발 시 주의사항
@@ -191,4 +168,4 @@ VITE_APP_NAME=MARUNI
 
 ---
 
-_마지막 업데이트: 2025-09-29_
+_마지막 업데이트: 2025-10-05_

@@ -18,12 +18,15 @@
   - Phase별 상세 작업 내용
   - 성공 지표 및 마일스톤
 
-### 🚀 실행 가이드
+### 🔌 API 연동 가이드
 
-- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** ⭐ **개발 시작 필수**
-  - Phase 1 상세 실행 계획 (7일간 일정)
-  - 컴포넌트별 구현 가이드
-  - 코드 템플릿과 테스트 방법
+- **[API_REFERENCE.md](./api/API_REFERENCE.md)** ⭐ **API 작업 시 필수**
+  - 서버 API 레퍼런스 및 클라이언트 구현 예제
+  - 6개 도메인 API 문서 (Auth, Member, Conversation, Guardian, AlertRule, Notification)
+
+- **[IMPLEMENTATION_FLOWS.md](./flows/IMPLEMENTATION_FLOWS.md)** ⭐ **API 작업 시 필수**
+  - 주요 기능별 구현 플로우 가이드
+  - 코드 템플릿 및 TanStack Query 패턴
 
 ### 🛠️ 개발 가이드
 
@@ -66,11 +69,26 @@
   - 일상적 사용 플로우
   - 긴급상황 처리 플로우
 
+### 🔌 API & Flows (API 및 구현 플로우)
+
+서버 API 연동 및 구현 가이드 문서들
+
+- **[API_REFERENCE.md](./api/API_REFERENCE.md)** ⭐ **API 작업 시 필수**
+
+  - 서버 API 레퍼런스 (Auth, Member, Conversation, Guardian, AlertRule)
+  - TypeScript 코드 예제 및 클라이언트 구현 패턴
+  - 에러 처리 및 공통 응답 형식
+
+- **[IMPLEMENTATION_FLOWS.md](./flows/IMPLEMENTATION_FLOWS.md)** ⭐ **API 작업 시 필수**
+  - 주요 기능별 단계별 구현 가이드
+  - 인증 플로우, AI 대화, 보호자 관리, 알림 이력
+  - TanStack Query + Zustand 패턴
+
 ### 🎨 Components (컴포넌트)
 
 완성된 컴포넌트 라이브러리 문서
 
-- **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** ⭐ **NEW - Phase 1 완료**
+- **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** ⭐ **Phase 1 완료**
   - 완성된 컴포넌트 6개 카탈로그
   - 각 컴포넌트 Props 및 사용 예제
   - 노인 친화적 특징 및 접근성
@@ -102,10 +120,10 @@
 
 프로젝트 진행 상황과 로드맵 관련 문서들
 
-- **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** ⭐ **업데이트 (Phase 1 완료)**
+- **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** ⭐ **업데이트 (Phase 2 완료)**
 
   - 실시간 프로젝트 상태 보고서
-  - 완료된 작업 및 다음 단계 (Phase 1 완료)
+  - 완료된 작업 및 다음 단계 (Phase 2 완료)
   - 기술적 완성도 및 개발 준비 상태
 
 - **[DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md)** ⭐
@@ -113,12 +131,6 @@
   - 단계별 개발 계획 (Phase 1-4)
   - 상세 작업 일정 및 체크리스트
   - 위험 관리 및 성공 지표
-
-- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** ✅ **완료**
-
-  - Phase 1 상세 실행 가이드 (7일간)
-  - 컴포넌트별 구현 단계와 코드 템플릿
-  - 테스트 방법 및 문제 해결 가이드
 
 - **[PROJECT_PROGRESS.md](./project/PROJECT_PROGRESS.md)**
   - 전체적인 프로젝트 진행 상황
@@ -129,18 +141,24 @@
 
 ### 🔰 처음 시작하는 경우 (필수 순서)
 
-1. **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** ⭐ - 현재 프로젝트 상황 파악 (Phase 1 완료)
-2. **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** ⭐ **NEW** - 완성된 컴포넌트 6개 카탈로그
-3. **[DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md)** ⭐ - 개발 계획 이해 (Phase 2 다음 단계)
-4. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** ⭐ - 컴포넌트 개발 가이드
-5. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 상세 정보
-6. **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙
+1. **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** ⭐ - 현재 프로젝트 상황 파악
+2. **[API_REFERENCE.md](./api/API_REFERENCE.md)** ⭐ **NEW** - 서버 API 레퍼런스
+3. **[IMPLEMENTATION_FLOWS.md](./flows/IMPLEMENTATION_FLOWS.md)** ⭐ **NEW** - 구현 플로우 가이드
+4. **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** - 완성된 컴포넌트 카탈로그
+5. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 개발 가이드
+6. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 상세 정보
 
 ### 🎯 상황별 문서 찾기
 
+#### 🔌 **API 연동할 때**
+
+- **[API_REFERENCE.md](./api/API_REFERENCE.md)** ⭐ **필수** - 서버 API 레퍼런스
+- **[IMPLEMENTATION_FLOWS.md](./flows/IMPLEMENTATION_FLOWS.md)** ⭐ **필수** - 구현 플로우 가이드
+- **[TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)** - API 통신 아키텍처
+
 #### 📱 **컴포넌트 개발할 때**
 
-- **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** ⭐ **NEW** - 완성된 컴포넌트 참조
+- **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** - 완성된 컴포넌트 참조
 - **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 설계 가이드
 - **[DESIGN_SYSTEM.md](./architecture/DESIGN_SYSTEM.md)** - 디자인 시스템
 - **[CODING_CONVENTIONS.md](./development/CODING_CONVENTIONS.md)** - 코딩 규칙
@@ -158,10 +176,9 @@
 
 #### 📊 **프로젝트 관리할 때**
 
-- **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** - 현재 상태 (Phase 1 완료)
+- **[CURRENT_STATUS.md](./project/CURRENT_STATUS.md)** - 현재 상태
 - **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** - 완성된 컴포넌트 현황
 - **[DEVELOPMENT_PLAN.md](./project/DEVELOPMENT_PLAN.md)** - 개발 계획
-- **[PHASE1_EXECUTION_GUIDE.md](./project/PHASE1_EXECUTION_GUIDE.md)** - Phase 1 실행 가이드 (완료)
 
 ### 🔄 문서 업데이트 규칙
 
@@ -247,12 +264,12 @@
 | --------------- | ------------ | ---------------------------------------------------------------------------------------- |
 | **기술 스택**   | ✅ 완료      | React 19, TypeScript, PWA 준비                                                           |
 | **개발 환경**   | ✅ 완료      | Vite, ESLint, Prettier 설정                                                              |
-| **문서화**      | ✅ 완료      | 설계, 개발 가이드, 컴포넌트 카탈로그 완비                                                |
-| **컴포넌트**    | ✅ 완료      | Phase 1 - 6개 컴포넌트 완성 (Button, Layout, Input, Card, LoadingSpinner, ErrorBoundary) |
-| **통합 Export** | ✅ 완료      | 모든 컴포넌트 한 곳에서 import 가능                                                      |
-| **기능 구현**   | 🔄 다음 단계 | Phase 2 - 서버 연동 준비 (React Router, API 클라이언트, 인증)                            |
+| **문서화**      | ✅ 완료      | 설계, 개발 가이드, API 레퍼런스, 구현 플로우 완비                                        |
+| **컴포넌트**    | ✅ 완료      | Phase 1 - 6개 컴포넌트 완성                                                              |
+| **API 문서**    | ✅ 완료      | 서버 API 레퍼런스 및 구현 플로우 가이드                                                  |
+| **기능 구현**   | 🔄 다음 단계 | Phase 3 - 실제 기능 구현 (인증, AI 대화, 보호자 관리)                                    |
 
-**📅 마지막 업데이트**: 2025-09-30
-**📈 현재 진행률**: Phase 1 완료 (40%)
-**🎯 다음 단계**: Phase 2 - React Router 설정, API 클라이언트, JWT 인증 시스템
-**⏰ 예상 완료**: 3-4주 후 MVP 완성
+**📅 마지막 업데이트**: 2025-10-05
+**📈 현재 진행률**: Phase 2 완료 (70%)
+**🎯 다음 단계**: Phase 3 - 실제 기능 구현 (인증 시스템, AI 대화, 보호자 관리)
+**⏰ 예상 완료**: 2-3주 후 MVP 완성
