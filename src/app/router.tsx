@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoginPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
+import { ConversationPage } from '@/pages/conversation';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
@@ -37,6 +38,16 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+
+      // 보호된 라우트 - AI 대화 페이지
+      {
+        path: 'conversation',
+        element: (
+          <ProtectedRoute>
+            <ConversationPage />
           </ProtectedRoute>
         ),
       },
