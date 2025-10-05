@@ -3,16 +3,16 @@
 ## 📅 현재 상황 (2025-10-05)
 
 **프로젝트**: MARUNI 클라이언트 - 노인 돌봄 PWA
-**현재 단계**: 🎉 Phase 2 완료 + Phase 3 실행 가이드 작성 완료
-**진행률**: 70% (Phase 1-2 완료 + 리팩토링 + API 문서 통합 + Phase 3 계획 완성)
-**다음 단계**: Phase 3 실행 - 핵심 기능 구현 (AI 대화, 보호자 관리, 알림, 회원 정보)
+**현재 단계**: 🚀 Phase 3 진행 중 - AI 대화 기능 구현
+**진행률**: 73% (Phase 1-2 완료 + Phase 3 Day 1-2 기본 구조 완성)
+**다음 단계**: AI 대화 UI 완성 (감정 아이콘, 노인 친화적 디자인)
 
 ### 🔥 최근 주요 업데이트 (2025-10-05)
-- ✅ **서버 API 문서 통합**: 6개 도메인 API 레퍼런스 완성
-- ✅ **구현 플로우 가이드 작성**: 주요 기능별 클라이언트 구현 가이드
-- ✅ **기술 아키텍처 업데이트**: 실제 API 엔드포인트 및 도메인 매핑
-- ✅ **개발 기반 문서 완성**: Phase 3 개발 준비 완료
-- ✅ **Phase 3 실행 가이드 작성**: 14일간 상세 실행 계획 완성 ⭐ **NEW**
+- ✅ **Phase 3 Day 1-2 시작**: Conversation 기능 기본 구조 완성 ⭐ **NEW**
+- ✅ **Conversation API 모듈**: sendMessage API 연동 완료
+- ✅ **대화 UI 컴포넌트**: MessageInput, MessageList 기본 구현
+- ✅ **라우팅 연결**: /conversation 경로 추가 및 대시보드 연결
+- ✅ **TypeScript 빌드 성공**: 컴파일 에러 0개
 
 ## ✅ 완료된 작업
 
@@ -194,21 +194,29 @@ src/
 ```
 src/
 ├── app/
-│   ├── router.tsx              ✅ React Router 설정
+│   ├── router.tsx              ✅ React Router 설정 (conversation 경로 추가)
 │   └── providers/              ✅ Provider 통합
 │       ├── QueryProvider.tsx
 │       ├── AppProviders.tsx
 │       └── index.ts
-├── features/auth/             ✅ 인증 모듈 (13개 파일)
-│   ├── api/                   # authApi
-│   ├── store/                 # useAuthStore (Zustand + persist) ⭐ 리팩토링
-│   ├── hooks/                 # useAuth, useLoginForm ⭐ 리팩토링
-│   ├── components/            # ProtectedRoute ⭐ 리팩토링
-│   ├── constants/             # validation 규칙 ⭐ NEW
-│   └── types/                 # Auth 타입 정의 ⭐ 리팩토링
+├── features/
+│   ├── auth/                  ✅ 인증 모듈 (13개 파일)
+│   │   ├── api/               # authApi
+│   │   ├── store/             # useAuthStore (Zustand + persist) ⭐ 리팩토링
+│   │   ├── hooks/             # useAuth, useLoginForm ⭐ 리팩토링
+│   │   ├── components/        # ProtectedRoute ⭐ 리팩토링
+│   │   ├── constants/         # validation 규칙 ⭐ NEW
+│   │   └── types/             # Auth 타입 정의 ⭐ 리팩토링
+│   └── conversation/          🔄 AI 대화 모듈 (진행 중 60%) ⭐ NEW
+│       ├── api/               ✅ conversationApi.ts
+│       ├── types/             ✅ conversation.types.ts
+│       ├── hooks/             ✅ useConversation.ts
+│       └── components/        ✅ MessageInput.tsx, MessageList.tsx
 ├── pages/
 │   ├── auth/LoginPage.tsx     ✅ 로그인 페이지
-│   ├── dashboard/DashboardPage.tsx  ✅ 대시보드 (로그아웃 기능)
+│   ├── conversation/          ✅ 대화 페이지 ⭐ NEW
+│   │   └── ConversationPage.tsx
+│   ├── dashboard/DashboardPage.tsx  ✅ 대시보드 (대화 링크 추가)
 │   └── NotFoundPage.tsx       ✅ 404 페이지
 └── shared/api/
     └── client.ts              ✅ Axios 클라이언트 (자동 토큰 갱신) ⭐ 리팩토링
@@ -223,15 +231,23 @@ src/
 |------------|-------------------|---------|------------|------|
 | Auth | features/auth | ✅ 완성 | ✅ Phase 2 | ✅ 구현 완료 |
 | Member | features/member | ✅ 완성 | ✅ Phase 3 | ⏳ 구현 예정 |
-| Conversation | features/conversation | ✅ 완성 | ✅ Phase 3 | ⏳ 구현 예정 |
+| Conversation | features/conversation | ✅ 완성 | ✅ Phase 3 | 🔄 구현 중 (60%) |
 | Guardian | features/guardian | ✅ 완성 | ✅ Phase 3 | ⏳ 구현 예정 |
 | AlertRule | features/alert | ✅ 완성 | ✅ Phase 3 | ⏳ 구현 예정 |
 | Notification | (내부 서비스) | ✅ 완성 | N/A | N/A |
 
 #### Phase 3 실행 일정 (14일)
 **Week 1: AI 대화 및 보호자 관리**
-- Day 1: Conversation API 연동 및 타입 정의
-- Day 2-3: 대화 UI 컴포넌트 (MessageBubble, MessageList, MessageInput)
+- ✅ Day 1-2 (진행 중): Conversation 기본 구조 완성 (60%)
+  - ✅ 타입 정의 (EmotionType, MessageType, ConversationResponse)
+  - ✅ API 모듈 (conversationApi.sendMessage)
+  - ✅ useSendMessage 훅 (기본 구현)
+  - ✅ MessageInput, MessageList 컴포넌트 (기본 구조)
+  - ✅ ConversationPage 생성 및 라우팅 연결
+  - ❌ 감정 아이콘 표시 (EmotionBadge) - 미완성
+  - ❌ 노인 친화적 디자인 - 미완성
+  - ❌ 낙관적 업데이트 - 미완성
+- Day 3: UI 개선 (감정 아이콘, 말풍선 스타일, 자동 스크롤)
 - Day 4: ConversationPage 통합 및 테스트
 - Day 5-6: Guardian 기능 구현 (API, 폼, 설정)
 - Day 7: Week 1 통합 테스트
@@ -379,11 +395,48 @@ npm run preview
 
 **📋 결론: MARUNI 클라이언트는 Phase 1 핵심 컴포넌트가 완성되어 Phase 2 서버 연동 단계로 진입합니다.**
 
-**🎯 다음 우선순위: [PHASE2_EXECUTION_GUIDE.md](./PHASE2_EXECUTION_GUIDE.md) 가이드에 따라 Phase 2 실행**
+**🎯 다음 우선순위: Phase 3 Day 3 - AI 대화 UI 완성 (감정 아이콘, 노인 친화적 디자인)**
+
+---
+
+## 🚧 Phase 3 진행 상황 (2025-10-05)
+
+### ✅ 완료된 작업 (Day 1-2, 60%)
+1. **features/conversation 폴더 구조 생성**
+2. **타입 정의 완료**
+   - EmotionType, MessageType, Message, ConversationResponse
+3. **API 모듈 구현**
+   - conversationApi.sendMessage (POST /api/conversations/messages)
+4. **TanStack Query 훅**
+   - useSendMessage (기본 mutation, 낙관적 업데이트 미구현)
+5. **UI 컴포넌트 기본 구조**
+   - MessageInput: 메시지 입력 폼
+   - MessageList: 메시지 목록 표시
+6. **페이지 및 라우팅**
+   - ConversationPage 생성
+   - /conversation 경로 추가
+   - 대시보드에서 대화 링크 연결
+7. **빌드 검증**
+   - TypeScript 컴파일 에러 0개
+   - 번들 사이즈: 347.66 KB
+
+### 🔄 진행 중 / 미완성 작업
+- ❌ **EmotionBadge 컴포넌트** - 감정 아이콘 표시
+- ❌ **MessageBubble 리팩토링** - 노인 친화적 말풍선 디자인
+- ❌ **낙관적 업데이트** - 메시지 즉시 UI 반영
+- ❌ **자동 스크롤** - 최신 메시지로 스크롤
+- ❌ **실제 서버 API 테스트** - 응답 검증
+
+### 📝 다음 작업 (Day 3)
+1. EmotionBadge 컴포넌트 구현 (😊😢😐)
+2. MessageBubble 노인 친화적 디자인 개선
+3. 자동 스크롤 구현
+4. 서버 API 실제 테스트
+5. 에러 처리 개선
 
 **📅 마지막 업데이트**: 2025-10-05
-**📈 현재 진행률**: Phase 1-2 완료 + API 문서화 (70%), Phase 3 준비 완료
-**⏰ 예상 완료**: 2-3주 후 MVP 완성 (Phase 3: 2-3주)
+**📈 현재 진행률**: Phase 1-2 완료 + Phase 3 진행 중 (73%)
+**⏰ 예상 완료**: 2주 후 MVP 완성 (Phase 3 Day 1-2 완료, 나머지 12일)
 
 ---
 
