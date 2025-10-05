@@ -1,1605 +1,640 @@
 # Phase 3 실행 가이드: 핵심 기능 구현
 
-> **MARUNI 클라이언트 Phase 3 상세 실행 계획서**
-> **목표**: AI 대화, 보호자 관리, 알림 이력, 회원 정보 기능 구현 (2주 완료)
-> **진행률**: 70% → 90%
-
-## 📋 Phase 3 개요
-
-### 핵심 목표
-- **AI 대화 시스템** (features/conversation) - GPT-4o 기반 대화 및 감정 분석
-- **보호자 관리 시스템** (features/guardian) - 보호자 설정 및 관계 관리
-- **알림 이력 조회** (features/alert) - 이상징후 알림 이력 확인
-- **회원 정보 관리** (features/member) - 프로필 조회 및 수정
-
-### 완료 시 달성 결과
-- AI와 자연스러운 대화 가능 (감정 분석 포함)
-- 보호자 등록 및 알림 설정 완료
-- 알림 이력 조회 및 필터링 기능
-- 회원 정보 조회 및 수정 기능
-- 모든 핵심 기능 서버 API 연동 완료
-- TypeScript 타입 에러 0개
+> **MARUNI 클라이언트 Phase 3 - Agile 실행 계획**
+> **목표**: AI 대화, 보호자 관리, 알림 이력, 회원 정보 기능 완성
+> **기간**: 14일 (12일 개발 + 2일 예비/통합)
+> **진행률 목표**: 70% → 90%
 
 ---
 
-## ✅ 시작 전 준비사항 체크리스트
+## 🎯 핵심 원칙
 
-### Phase 2 완료 확인
-- [ ] React Router 라우팅 시스템 동작
-- [ ] API 클라이언트 및 JWT 자동 갱신 완성
-- [ ] 로그인/로그아웃 기능 정상 동작
-- [ ] 보호된 라우트 및 인증 가드 동작
-- [ ] TypeScript 컴파일 에러 없음
-- [ ] `npm run build` 성공
+### 1. Working Software First
+- **매일 동작하는 것을 만든다**: 완벽한 코드보다 동작하는 기능 우선
+- **매일 빌드 성공**: `npm run build` 통과 필수
+- **End-to-End 완성**: 작은 기능이라도 전체 플로우 동작 확인
 
-### 필수 문서 숙지
-- [ ] **[API_REFERENCE.md](../api/API_REFERENCE.md)** ⭐ 필수 - 서버 API 레퍼런스
-- [ ] **[IMPLEMENTATION_FLOWS.md](../flows/IMPLEMENTATION_FLOWS.md)** ⭐ 필수 - 구현 플로우 가이드
-- [ ] **[TECHNICAL_ARCHITECTURE.md](../architecture/TECHNICAL_ARCHITECTURE.md)** - 시스템 아키텍처
-- [ ] **[COMPONENT_DESIGN_GUIDE.md](../development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 설계 가이드
+### 2. Agile & Iterative
+- **작은 단위로 구현 → 테스트 → 개선**: 한 번에 완벽하게 만들려 하지 않음
+- **빠른 피드백**: 서버 API 연동은 즉시 테스트
+- **유연한 계획**: 예상치 못한 문제 발생 시 우선순위 조정
 
-### 개발 환경 확인
-- [ ] 개발 서버 정상 동작 (`npm run dev`)
-- [ ] 서버 API 엔드포인트 확인 (.env.local 설정)
-- [ ] 로그인 후 JWT 토큰 정상 발급 확인
-- [ ] TanStack Query DevTools 설치 확인
+### 3. Risk Management
+- **Day 1부터 API 검증**: 문서 ≠ 실제 구현일 수 있음 인정
+- **예비 시간 확보**: Day 7, Day 14는 통합/예비일
+- **점진적 복잡도**: 기본 기능 → 최적화 → 고급 기능 순서
 
-### 서버 API 연동 준비
-- [ ] Conversation API 문서 확인 (`POST /api/conversations/messages`)
-- [ ] Guardian API 문서 확인 (`GET /api/guardians/my-guardian` 등)
-- [ ] AlertRule API 문서 확인 (`GET /api/alert-rules/history`)
-- [ ] Member API 문서 확인 (`GET /api/users/me`)
-- [ ] 서버가 로컬에서 실행 중인지 확인 (localhost:8080)
+### 4. Practical Approach
+- **코드 템플릿은 참고용**: 강제 복붙이 아님
+- **시간 배정은 가이드**: 목표 달성이 우선, 시간 엄수가 목적 아님
+- **노인 친화적 UI는 필수**: 60px+ 터치, 18px+ 폰트는 타협 불가
 
 ---
 
-## 📅 14일간 상세 실행 계획
+## 📅 전체 일정 (14일)
 
-### Week 1: AI 대화 시스템 (Day 1-7)
+### Week 1: AI 대화 + 보호자 관리
+| Day | 목표 | 검증 기준 |
+|-----|------|----------|
+| 1 | Conversation API 연동 성공 | Postman 수준 테스트 통과 |
+| 2 | 메시지 전송/수신 UI 동작 | 대화 페이지에서 AI 응답 받기 |
+| 3 | 감정 아이콘 + 노인 친화적 디자인 | 말풍선 UI 완성 |
+| 4 | 대화 기능 전체 플로우 테스트 | 로그인 → 대화 → 응답 확인 |
+| 5 | Guardian API 연동 + 기본 폼 | 보호자 등록 성공 |
+| 6 | Guardian 전체 플로우 완성 | 등록 → 조회 → 해제 동작 |
+| 7 | **Week 1 통합 + 예비일** | 모든 기능 통합 동작 |
 
-#### Day 1: Conversation Feature 구조 및 API 연동
+### Week 2: 알림 이력 + 회원 정보 + 통합
+| Day | 목표 | 검증 기준 |
+|-----|------|----------|
+| 8 | Alert API 연동 + 이력 리스트 | 알림 목록 조회 성공 |
+| 9 | Alert 필터링 + 레벨 배지 | 기간 필터 동작 |
+| 10 | Member API 연동 + 프로필 조회 | 내 정보 조회 성공 |
+| 11 | Member 정보 수정 기능 | 이름/비밀번호 수정 동작 |
+| 12 | 대시보드 통합 + 네비게이션 | 모든 페이지 접근 가능 |
+| 13 | 에러 처리 + 로딩 상태 개선 | 네트워크 에러 처리 |
+| 14 | **최종 테스트 + 문서화** | 전체 플로우 통과 |
 
-**⏰ 예상 소요 시간**: 6-7시간
+---
 
-**🎯 목표**: features/conversation 폴더 구조 및 API 모듈 구현
+## 📋 Week 1 상세 계획
 
-**📋 상세 작업**:
+### Day 1: Conversation API 연동 성공
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 서버 API와 통신 성공 (UI 없어도 됨)
 
+**핵심 작업**:
 1. **폴더 구조 생성** (30분)
    ```
    src/features/conversation/
-   ├── api/
-   │   └── conversationApi.ts   # AI 대화 API
-   ├── hooks/
-   │   └── useConversation.ts   # TanStack Query 훅
-   ├── components/
-   │   ├── ConversationView.tsx      # 대화 뷰 컨테이너
-   │   ├── MessageList.tsx           # 메시지 목록
-   │   ├── MessageBubble.tsx         # 메시지 말풍선
-   │   ├── MessageInput.tsx          # 메시지 입력
-   │   └── EmotionBadge.tsx          # 감정 아이콘
-   ├── types/
-   │   └── conversation.types.ts    # 타입 정의
-   └── index.ts                     # Export
+   ├── api/conversationApi.ts
+   ├── types/conversation.types.ts
+   └── index.ts
    ```
 
-2. **타입 정의 작성** (1시간)
-   ```typescript
-   // features/conversation/types/conversation.types.ts
-   export type EmotionType = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
-   export type MessageType = 'USER_MESSAGE' | 'AI_RESPONSE' | 'SYSTEM_MESSAGE';
-
-   export interface Message {
-     id: number;
-     type: MessageType;
-     content: string;
-     emotion: EmotionType;
-     createdAt: string;
-   }
-
-   export interface ConversationResponse {
-     conversationId: number;
-     userMessage: Message;
-     aiMessage: Message;
-   }
-
-   export interface SendMessageRequest {
-     content: string;
-   }
-   ```
+2. **타입 정의** (1시간)
+   - EmotionType, MessageType, Message 인터페이스
+   - ConversationResponse, SendMessageRequest 정의
+   - 참고: [API_REFERENCE.md - Conversation API](../api/conversation-api.md)
 
 3. **API 모듈 구현** (2시간)
    ```typescript
-   // features/conversation/api/conversationApi.ts
-   import { apiClient } from '@/shared/api/client';
-   import type { ConversationResponse, SendMessageRequest } from '../types';
-
    export const conversationApi = {
-     // 메시지 전송 및 AI 응답 수신
-     sendMessage: async (data: SendMessageRequest): Promise<ConversationResponse> => {
+     sendMessage: async (data: SendMessageRequest) => {
        const response = await apiClient.post('/conversations/messages', data);
        return response.data.data;
-     },
-
-     // 대화 이력 조회 (선택 사항)
-     getConversationHistory: async (conversationId: number) => {
-       const response = await apiClient.get(`/conversations/${conversationId}`);
-       return response.data.data;
-     },
+     }
    };
    ```
 
-4. **TanStack Query 훅 구현** (2-3시간)
-   ```typescript
-   // features/conversation/hooks/useConversation.ts
-   import { useMutation, useQueryClient } from '@tanstack/react-query';
-   import { conversationApi } from '../api/conversationApi';
-   import type { Message } from '../types';
+4. **API 동작 검증** ⭐ **중요**
+   - 개발자 도구 Console에서 직접 호출
+   - 또는 간단한 테스트 페이지 생성
+   - 서버가 실제로 응답하는지 확인
+   - **서버 API 문서와 다른 점 발견 시 기록**
 
-   export const useSendMessage = () => {
-     const queryClient = useQueryClient();
+**완료 기준**:
+- [ ] `conversationApi.sendMessage()` 호출 시 AI 응답 수신
+- [ ] TypeScript 컴파일 에러 없음
+- [ ] 서버 API 실제 동작 확인 완료
 
-     return useMutation({
-       mutationFn: conversationApi.sendMessage,
-
-       // 낙관적 업데이트: 사용자 메시지 즉시 표시
-       onMutate: async (newMessage) => {
-         await queryClient.cancelQueries({ queryKey: ['conversation'] });
-
-         const previousMessages = queryClient.getQueryData<Message[]>(['conversation']);
-
-         const optimisticMessage: Message = {
-           id: Date.now(),
-           type: 'USER_MESSAGE',
-           content: newMessage.content,
-           emotion: 'NEUTRAL',
-           createdAt: new Date().toISOString(),
-         };
-
-         queryClient.setQueryData<Message[]>(['conversation'], (old = []) => [
-           ...old,
-           optimisticMessage,
-         ]);
-
-         return { previousMessages };
-       },
-
-       // 성공: AI 응답 추가
-       onSuccess: (data) => {
-         queryClient.setQueryData<Message[]>(['conversation'], (old = []) => [
-           ...old.slice(0, -1), // 낙관적 메시지 제거
-           data.userMessage,    // 실제 사용자 메시지
-           data.aiMessage,      // AI 응답
-         ]);
-       },
-
-       // 에러: 롤백
-       onError: (err, newMessage, context) => {
-         if (context?.previousMessages) {
-           queryClient.setQueryData(['conversation'], context.previousMessages);
-         }
-       },
-     });
-   };
-   ```
-
-5. **Export 파일 작성** (30분)
-   ```typescript
-   // features/conversation/index.ts
-   export * from './api/conversationApi';
-   export * from './hooks/useConversation';
-   export * from './types/conversation.types';
-   export { ConversationView } from './components/ConversationView';
-   ```
-
-**✅ Day 1 완료 기준**:
-- [ ] features/conversation 폴더 구조 완성
-- [ ] 타입 정의 완료 (TypeScript 에러 없음)
-- [ ] API 모듈 및 훅 구현 완료
-- [ ] Export 파일 정상 동작
+**리스크 대응**:
+- 서버 API가 문서와 다른 경우 → 실제 응답 기준으로 타입 수정
+- 서버 연결 안 되는 경우 → Mock 데이터로 임시 진행
 
 ---
 
-#### Day 2-3: 대화 UI 컴포넌트 구현
+### Day 2: 메시지 전송/수신 UI 동작
+**⏰ 예상 시간**: 5-7시간
+**🎯 목표**: 대화 페이지에서 메시지 입력하고 AI 응답 받기
 
-**⏰ 예상 소요 시간**: 10-12시간 (2일)
+**핵심 작업**:
+1. **TanStack Query 훅** (2시간)
+   - `useSendMessage` 기본 구현 (낙관적 업데이트는 나중에)
+   - 단순 Mutation: 전송 → 응답 → 화면 갱신
 
-**🎯 목표**: 노인 친화적 대화 UI 컴포넌트 완성
+2. **MessageInput 컴포넌트** (2시간)
+   - 기존 `Input`, `Button` 컴포넌트 활용
+   - 전송 중 상태 표시 (`isPending`)
+   - 노인 친화적: 큰 입력창, 큰 전송 버튼
 
-**📋 Day 2 작업** (5-6시간):
+3. **MessageList 기본 구현** (2시간)
+   - 메시지 배열 표시 (간단한 리스트)
+   - 스타일은 나중에, 우선 동작 확인
 
+4. **ConversationPage 생성 및 라우팅** (1시간)
+   - `/conversation` 경로 추가
+   - 대시보드에서 링크 연결
+   - **전체 플로우 테스트**: 로그인 → 대시보드 → 대화 → 응답
+
+**완료 기준**:
+- [ ] 메시지 입력 → 전송 → AI 응답 확인 (전체 플로우 동작)
+- [ ] `npm run build` 성공
+- [ ] 대시보드에서 대화 페이지 접근 가능
+
+**리스크 대응**:
+- Input 컴포넌트에 필요한 Props 없는 경우 → 임시 수정 또는 HTML input 사용
+- 응답 속도 느린 경우 → 로딩 스피너 표시
+
+---
+
+### Day 3: 감정 아이콘 + 노인 친화적 디자인
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 말풍선 UI 완성 (보기 좋은 대화창)
+
+**핵심 작업**:
 1. **MessageBubble 컴포넌트** (2시간)
-   ```typescript
-   // features/conversation/components/MessageBubble.tsx
-   import type { Message } from '../types';
-   import { EmotionBadge } from './EmotionBadge';
-
-   interface MessageBubbleProps {
-     message: Message;
-     isAI?: boolean;
-   }
-
-   export function MessageBubble({ message, isAI = false }: MessageBubbleProps) {
-     return (
-       <div className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
-         <div
-           className={`
-             max-w-[80%] rounded-2xl px-6 py-4
-             ${isAI
-               ? 'bg-blue-50 text-gray-900'
-               : 'bg-blue-600 text-white'
-             }
-           `}
-         >
-           {/* 메시지 내용 */}
-           <p className="text-lg leading-relaxed">{message.content}</p>
-
-           {/* 감정 및 시간 */}
-           <div className="flex items-center justify-between mt-2">
-             <EmotionBadge emotion={message.emotion} />
-             <span className="text-sm opacity-70">
-               {new Date(message.createdAt).toLocaleTimeString('ko-KR', {
-                 hour: '2-digit',
-                 minute: '2-digit',
-               })}
-             </span>
-           </div>
-         </div>
-       </div>
-     );
-   }
-   ```
+   - 사용자/AI 말풍선 구분 (왼쪽/오른쪽)
+   - 큰 폰트 (18px+), 충분한 패딩
+   - 색상 대비 확보 (배경/텍스트)
 
 2. **EmotionBadge 컴포넌트** (1시간)
-   ```typescript
-   // features/conversation/components/EmotionBadge.tsx
-   import type { EmotionType } from '../types';
+   - 😊 긍정, 😢 부정, 😐 중립 아이콘
+   - 접근성: `role="img"`, `aria-label`
 
-   interface EmotionBadgeProps {
-     emotion: EmotionType;
-   }
+3. **MessageList 스타일 개선** (2시간)
+   - 스크롤 가능한 영역
+   - 자동 스크롤 (최신 메시지로)
+   - 빈 상태 처리 (대화 없을 때)
 
-   const EMOTION_CONFIG = {
-     POSITIVE: { icon: '😊', label: '긍정', color: 'text-green-600' },
-     NEGATIVE: { icon: '😢', label: '부정', color: 'text-red-600' },
-     NEUTRAL: { icon: '😐', label: '중립', color: 'text-gray-600' },
-   };
+4. **UI 검증** ⭐
+   - 노인 친화적 체크리스트:
+     - [ ] 폰트 크기 18px 이상
+     - [ ] 터치 영역 명확
+     - [ ] 색상 대비 충분
+     - [ ] 읽기 쉬운 레이아웃
 
-   export function EmotionBadge({ emotion }: EmotionBadgeProps) {
-     const config = EMOTION_CONFIG[emotion];
+**완료 기준**:
+- [ ] 말풍선 UI가 보기 좋고 읽기 쉬움
+- [ ] 감정 아이콘 정상 표시
+- [ ] 노인 친화적 체크리스트 통과
 
-     return (
-       <span className={`text-base ${config.color} flex items-center gap-1`}>
-         <span role="img" aria-label={config.label}>{config.icon}</span>
-         <span>{config.label}</span>
-       </span>
-     );
-   }
-   ```
-
-3. **MessageList 컴포넌트** (2-3시간)
-   ```typescript
-   // features/conversation/components/MessageList.tsx
-   import { useQuery } from '@tanstack/react-query';
-   import { LoadingSpinner } from '@/shared/components';
-   import { MessageBubble } from './MessageBubble';
-   import type { Message } from '../types';
-
-   export function MessageList() {
-     const { data: messages = [], isLoading } = useQuery<Message[]>({
-       queryKey: ['conversation'],
-       initialData: [],
-     });
-
-     if (isLoading) {
-       return (
-         <div className="flex justify-center items-center h-64">
-           <LoadingSpinner size="large" />
-         </div>
-       );
-     }
-
-     if (messages.length === 0) {
-       return (
-         <div className="text-center py-12 text-gray-500">
-           <p className="text-xl">안녕하세요! 무엇을 도와드릴까요?</p>
-         </div>
-       );
-     }
-
-     return (
-       <div className="flex-1 overflow-y-auto px-4 py-6">
-         {messages.map((message) => (
-           <MessageBubble
-             key={message.id}
-             message={message}
-             isAI={message.type === 'AI_RESPONSE'}
-           />
-         ))}
-       </div>
-     );
-   }
-   ```
-
-**📋 Day 3 작업** (5-6시간):
-
-4. **MessageInput 컴포넌트** (3시간)
-   ```typescript
-   // features/conversation/components/MessageInput.tsx
-   import { useState } from 'react';
-   import { Button, Input } from '@/shared/components';
-   import { useSendMessage } from '../hooks/useConversation';
-
-   export function MessageInput() {
-     const [input, setInput] = useState('');
-     const { mutate: sendMessage, isPending } = useSendMessage();
-
-     const handleSubmit = (e: React.FormEvent) => {
-       e.preventDefault();
-
-       if (!input.trim() || isPending) return;
-
-       sendMessage({ content: input });
-       setInput('');
-     };
-
-     return (
-       <form onSubmit={handleSubmit} className="border-t border-gray-200 p-4">
-         <div className="flex gap-3 max-w-md mx-auto">
-           <Input
-             value={input}
-             onChange={(e) => setInput(e.target.value)}
-             placeholder="메시지를 입력하세요..."
-             disabled={isPending}
-             className="flex-1"
-           />
-           <Button
-             type="submit"
-             variant="primary"
-             size="large"
-             disabled={isPending || !input.trim()}
-           >
-             {isPending ? '전송 중...' : '전송'}
-           </Button>
-         </div>
-       </form>
-     );
-   }
-   ```
-
-5. **ConversationView 컨테이너** (2-3시간)
-   ```typescript
-   // features/conversation/components/ConversationView.tsx
-   import { Layout } from '@/shared/components';
-   import { MessageList } from './MessageList';
-   import { MessageInput } from './MessageInput';
-   import { useNavigate } from 'react-router-dom';
-
-   export function ConversationView() {
-     const navigate = useNavigate();
-
-     return (
-       <Layout
-         title="AI 대화"
-         showBack
-         onBack={() => navigate('/')}
-       >
-         <div className="flex flex-col h-[calc(100vh-120px)]">
-           <MessageList />
-           <MessageInput />
-         </div>
-       </Layout>
-     );
-   }
-   ```
-
-**✅ Day 2-3 완료 기준**:
-- [ ] 모든 대화 UI 컴포넌트 완성
-- [ ] 메시지 말풍선 노인 친화적 디자인 (큰 텍스트, 명확한 구분)
-- [ ] 감정 아이콘 표시 정상 동작
-- [ ] 메시지 입력 및 전송 기능 동작
-- [ ] TypeScript 컴파일 에러 없음
+**선택 사항** (시간 남으면):
+- 낙관적 업데이트 추가 (즉시 UI 반영)
+- 메시지 전송 시간 표시
+- 타이핑 애니메이션
 
 ---
 
-#### Day 4: ConversationPage 및 라우팅 연결
+### Day 4: 대화 기능 전체 플로우 테스트
+**⏰ 예상 시간**: 4-5시간
+**🎯 목표**: 버그 수정 + 에러 처리 + 안정화
 
-**⏰ 예상 소요 시간**: 4-5시간
+**핵심 작업**:
+1. **전체 플로우 반복 테스트** (2시간)
+   - 로그인 → 대화 → 로그아웃 → 재로그인 → 대화
+   - 여러 메시지 연속 전송
+   - 네트워크 느릴 때 동작 확인
 
-**🎯 목표**: 대화 페이지 완성 및 전체 플로우 테스트
+2. **에러 처리 구현** (2시간)
+   - 네트워크 에러 시 에러 메시지 표시
+   - 전송 실패 시 재시도 가능하게
+   - Toast 없으면 간단한 alert() 사용
 
-**📋 상세 작업**:
+3. **버그 수정** (1시간)
+   - 발견된 문제 수정
+   - 엣지 케이스 처리
 
-1. **ConversationPage 생성** (1시간)
-   ```typescript
-   // pages/conversation/ConversationPage.tsx
-   import { ConversationView } from '@/features/conversation';
+**완료 기준**:
+- [ ] 연속 10번 메시지 전송 성공
+- [ ] 네트워크 에러 시 사용자에게 피드백
+- [ ] `npm run build` 성공
+- [ ] 코드 리뷰 (본인 또는 Claude)
 
-   export function ConversationPage() {
-     return <ConversationView />;
-   }
-   ```
-
-2. **라우터에 대화 페이지 추가** (30분)
-   ```typescript
-   // app/router.tsx
-   import { ConversationPage } from '@/pages/conversation/ConversationPage';
-
-   // Protected Routes에 추가
-   {
-     path: 'conversation',
-     element: <ConversationPage />,
-   }
-   ```
-
-3. **대시보드에서 대화 페이지 링크 추가** (1시간)
-   ```typescript
-   // pages/dashboard/DashboardPage.tsx
-   import { useNavigate } from 'react-router-dom';
-   import { Button } from '@/shared/components';
-
-   export function DashboardPage() {
-     const navigate = useNavigate();
-
-     return (
-       <Layout title="대시보드">
-         <div className="space-y-4">
-           <Button
-             variant="primary"
-             size="extra-large"
-             fullWidth
-             onClick={() => navigate('/conversation')}
-           >
-             AI와 대화하기
-           </Button>
-           {/* 다른 버튼들... */}
-         </div>
-       </Layout>
-     );
-   }
-   ```
-
-4. **전체 플로우 테스트** (1-2시간)
-   - 로그인 → 대시보드 → 대화 페이지 이동
-   - 메시지 입력 및 AI 응답 확인
-   - 감정 아이콘 표시 확인
-   - 낙관적 업데이트 동작 확인
-   - 에러 처리 확인 (네트워크 끊김 등)
-
-5. **에러 처리 개선** (1시간)
-   - 네트워크 에러 시 Toast 메시지
-   - 메시지 전송 실패 시 재전송 버튼
-   - 로딩 상태 명확한 표시
-
-**✅ Day 4 완료 기준**:
-- [ ] 대화 페이지 라우팅 정상 동작
-- [ ] 메시지 전송 및 AI 응답 정상 수신
-- [ ] 에러 처리 및 로딩 상태 표시
-- [ ] 전체 플로우 테스트 통과
-- [ ] TypeScript 빌드 성공
+**리스크 대응**:
+- 심각한 버그 발견 시 → Day 5 일정 조정
+- 서버 안정성 문제 → Mock 데이터로 임시 대응
 
 ---
 
-#### Day 5-6: 보호자 관리 기능 구현
+### Day 5: Guardian API 연동 + 기본 폼
+**⏰ 예상 시간**: 5-7시간
+**🎯 목표**: 보호자 등록 성공
 
-**⏰ 예상 소요 시간**: 10-12시간 (2일)
-
-**🎯 목표**: features/guardian 모듈 완성
-
-**📋 Day 5 작업** (5-6시간):
-
-1. **Guardian Feature 구조 생성** (30분)
+**핵심 작업**:
+1. **폴더 구조 + 타입 정의** (1시간)
    ```
    src/features/guardian/
-   ├── api/
-   │   └── guardianApi.ts
-   ├── hooks/
-   │   └── useGuardian.ts
-   ├── components/
-   │   ├── GuardianInfo.tsx         # 보호자 정보 표시
-   │   ├── GuardianForm.tsx         # 보호자 등록 폼
-   │   └── GuardianSettings.tsx     # 설정 컨테이너
-   ├── types/
-   │   └── guardian.types.ts
-   └── index.ts
+   ├── api/guardianApi.ts
+   ├── types/guardian.types.ts
+   ├── hooks/useGuardian.ts
+   └── components/GuardianForm.tsx
    ```
 
-2. **타입 정의** (1시간)
-   ```typescript
-   // features/guardian/types/guardian.types.ts
-   export type GuardianRelation = 'FAMILY' | 'FRIEND' | 'CAREGIVER' | 'NEIGHBOR' | 'OTHER';
-   export type NotificationPreference = 'PUSH' | 'EMAIL' | 'SMS' | 'ALL';
+2. **Guardian API 모듈** (2시간)
+   - `createGuardian`, `assignGuardian` 구현
+   - **주의**: 서버가 "생성+할당" 한 번에 제공하는지 확인
+   - `getMyGuardian`, `removeGuardian` 구현
 
-   export interface Guardian {
-     id: number;
-     guardianName: string;
-     guardianEmail: string;
-     guardianPhone: string | null;
-     relation: GuardianRelation;
-     notificationPreference: NotificationPreference;
-     isActive: boolean;
-     createdAt: string;
-     updatedAt: string;
-   }
+3. **GuardianForm 컴포넌트** (3시간)
+   - 이름, 이메일, 전화번호, 관계 입력
+   - 노인 친화적: 큰 입력창, 명확한 라벨
+   - Select 드롭다운 (FAMILY, FRIEND 등)
 
-   export interface CreateGuardianRequest {
-     guardianName: string;
-     guardianEmail: string;
-     guardianPhone?: string;
-     relation: GuardianRelation;
-     notificationPreference: NotificationPreference;
-   }
-   ```
+4. **API 동작 검증** ⭐
+   - 보호자 등록 요청 성공
+   - 서버 응답 확인
 
-3. **API 모듈 구현** (2시간)
-   ```typescript
-   // features/guardian/api/guardianApi.ts
-   import { apiClient } from '@/shared/api/client';
-   import type { Guardian, CreateGuardianRequest } from '../types';
-
-   export const guardianApi = {
-     // 현재 보호자 조회
-     getMyGuardian: async (): Promise<Guardian | null> => {
-       try {
-         const response = await apiClient.get('/guardians/my-guardian');
-         return response.data.data;
-       } catch (error) {
-         if (error.response?.status === 404) {
-           return null; // 보호자 없음
-         }
-         throw error;
-       }
-     },
-
-     // 보호자 생성
-     createGuardian: async (data: CreateGuardianRequest): Promise<Guardian> => {
-       const response = await apiClient.post('/guardians', data);
-       return response.data.data;
-     },
-
-     // 보호자 할당
-     assignGuardian: async (guardianId: number): Promise<void> => {
-       await apiClient.post(`/guardians/${guardianId}/assign`);
-     },
-
-     // 보호자 해제
-     removeGuardian: async (): Promise<void> => {
-       await apiClient.delete('/guardians/remove-guardian');
-     },
-
-     // 보호자 수정
-     updateGuardian: async (guardianId: number, data: Partial<CreateGuardianRequest>): Promise<Guardian> => {
-       const response = await apiClient.put(`/guardians/${guardianId}`, data);
-       return response.data.data;
-     },
-   };
-   ```
-
-4. **TanStack Query 훅 구현** (2-3시간)
-   ```typescript
-   // features/guardian/hooks/useGuardian.ts
-   import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-   import { guardianApi } from '../api/guardianApi';
-
-   // 내 보호자 조회
-   export const useMyGuardian = () => {
-     return useQuery({
-       queryKey: ['guardians', 'me'],
-       queryFn: guardianApi.getMyGuardian,
-       retry: false,
-     });
-   };
-
-   // 보호자 생성 및 할당
-   export const useCreateAndAssignGuardian = () => {
-     const queryClient = useQueryClient();
-
-     return useMutation({
-       mutationFn: async (data: CreateGuardianRequest) => {
-         const guardian = await guardianApi.createGuardian(data);
-         await guardianApi.assignGuardian(guardian.id);
-         return guardian;
-       },
-       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ['guardians', 'me'] });
-       },
-     });
-   };
-
-   // 보호자 해제
-   export const useRemoveGuardian = () => {
-     const queryClient = useQueryClient();
-
-     return useMutation({
-       mutationFn: guardianApi.removeGuardian,
-       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ['guardians', 'me'] });
-       },
-     });
-   };
-   ```
-
-**📋 Day 6 작업** (5-6시간):
-
-5. **GuardianInfo 컴포넌트** (2시간)
-   ```typescript
-   // features/guardian/components/GuardianInfo.tsx
-   import { Card, Button } from '@/shared/components';
-   import type { Guardian } from '../types';
-   import { useRemoveGuardian } from '../hooks/useGuardian';
-
-   interface GuardianInfoProps {
-     guardian: Guardian;
-   }
-
-   const RELATION_LABELS = {
-     FAMILY: '가족',
-     FRIEND: '친구',
-     CAREGIVER: '돌봄제공자',
-     NEIGHBOR: '이웃',
-     OTHER: '기타',
-   };
-
-   export function GuardianInfo({ guardian }: GuardianInfoProps) {
-     const { mutate: removeGuardian, isPending } = useRemoveGuardian();
-
-     return (
-       <Card className="p-6">
-         <h3 className="text-2xl font-bold mb-4">보호자 정보</h3>
-
-         <div className="space-y-3 text-lg">
-           <div>
-             <span className="text-gray-600">이름:</span>
-             <span className="ml-2 font-semibold">{guardian.guardianName}</span>
-           </div>
-           <div>
-             <span className="text-gray-600">관계:</span>
-             <span className="ml-2 font-semibold">
-               {RELATION_LABELS[guardian.relation]}
-             </span>
-           </div>
-           <div>
-             <span className="text-gray-600">이메일:</span>
-             <span className="ml-2">{guardian.guardianEmail}</span>
-           </div>
-           {guardian.guardianPhone && (
-             <div>
-               <span className="text-gray-600">전화번호:</span>
-               <span className="ml-2">{guardian.guardianPhone}</span>
-             </div>
-           )}
-         </div>
-
-         <Button
-           variant="secondary"
-           fullWidth
-           onClick={() => removeGuardian()}
-           disabled={isPending}
-           className="mt-6"
-         >
-           {isPending ? '해제 중...' : '보호자 해제'}
-         </Button>
-       </Card>
-     );
-   }
-   ```
-
-6. **GuardianForm 컴포넌트** (2-3시간)
-   ```typescript
-   // features/guardian/components/GuardianForm.tsx
-   import { useState } from 'react';
-   import { Input, Button, Card } from '@/shared/components';
-   import { useCreateAndAssignGuardian } from '../hooks/useGuardian';
-   import type { GuardianRelation, NotificationPreference } from '../types';
-
-   export function GuardianForm() {
-     const [formData, setFormData] = useState({
-       guardianName: '',
-       guardianEmail: '',
-       guardianPhone: '',
-       relation: 'FAMILY' as GuardianRelation,
-       notificationPreference: 'ALL' as NotificationPreference,
-     });
-
-     const { mutate: createGuardian, isPending } = useCreateAndAssignGuardian();
-
-     const handleSubmit = (e: React.FormEvent) => {
-       e.preventDefault();
-       createGuardian(formData);
-     };
-
-     return (
-       <Card className="p-6">
-         <h3 className="text-2xl font-bold mb-4">보호자 등록</h3>
-
-         <form onSubmit={handleSubmit} className="space-y-4">
-           <Input
-             label="이름"
-             required
-             value={formData.guardianName}
-             onChange={(e) => setFormData({ ...formData, guardianName: e.target.value })}
-             placeholder="보호자 이름"
-           />
-
-           <Input
-             label="이메일"
-             type="email"
-             required
-             value={formData.guardianEmail}
-             onChange={(e) => setFormData({ ...formData, guardianEmail: e.target.value })}
-             placeholder="guardian@example.com"
-           />
-
-           <Input
-             label="전화번호 (선택)"
-             type="tel"
-             value={formData.guardianPhone}
-             onChange={(e) => setFormData({ ...formData, guardianPhone: e.target.value })}
-             placeholder="010-1234-5678"
-           />
-
-           <div>
-             <label className="block text-lg font-medium mb-2">관계</label>
-             <select
-               value={formData.relation}
-               onChange={(e) => setFormData({
-                 ...formData,
-                 relation: e.target.value as GuardianRelation
-               })}
-               className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg"
-             >
-               <option value="FAMILY">가족</option>
-               <option value="FRIEND">친구</option>
-               <option value="CAREGIVER">돌봄제공자</option>
-               <option value="NEIGHBOR">이웃</option>
-               <option value="OTHER">기타</option>
-             </select>
-           </div>
-
-           <Button
-             type="submit"
-             variant="primary"
-             size="large"
-             fullWidth
-             disabled={isPending}
-           >
-             {isPending ? '등록 중...' : '보호자 등록'}
-           </Button>
-         </form>
-       </Card>
-     );
-   }
-   ```
-
-7. **GuardianSettings 컨테이너** (1시간)
-   ```typescript
-   // features/guardian/components/GuardianSettings.tsx
-   import { Layout, LoadingSpinner } from '@/shared/components';
-   import { useMyGuardian } from '../hooks/useGuardian';
-   import { GuardianInfo } from './GuardianInfo';
-   import { GuardianForm } from './GuardianForm';
-
-   export function GuardianSettings() {
-     const { data: guardian, isLoading } = useMyGuardian();
-
-     if (isLoading) {
-       return (
-         <Layout title="보호자 설정">
-           <div className="flex justify-center py-12">
-             <LoadingSpinner size="large" />
-           </div>
-         </Layout>
-       );
-     }
-
-     return (
-       <Layout title="보호자 설정" showBack>
-         <div className="space-y-6">
-           {guardian ? (
-             <GuardianInfo guardian={guardian} />
-           ) : (
-             <GuardianForm />
-           )}
-         </div>
-       </Layout>
-     );
-   }
-   ```
-
-**✅ Day 5-6 완료 기준**:
-- [ ] features/guardian 모듈 완성
-- [ ] 보호자 조회/등록/해제 기능 동작
-- [ ] 노인 친화적 폼 디자인 (큰 입력 필드, 명확한 라벨)
+**완료 기준**:
+- [ ] GuardianForm에서 등록 버튼 클릭 시 성공
+- [ ] 서버에 보호자 데이터 저장 확인
 - [ ] TypeScript 에러 없음
 
+**리스크 대응**:
+- API 2단계(생성→할당) vs 1단계 확인
+- 전화번호 필수/선택 여부 확인
+
 ---
 
-#### Day 7: Week 1 통합 및 테스트
+### Day 6: Guardian 전체 플로우 완성
+**⏰ 예상 시간**: 5-7시간
+**🎯 목표**: 보호자 등록 → 조회 → 해제 전체 동작
 
-**⏰ 예상 소요 시간**: 5-6시간
+**핵심 작업**:
+1. **useGuardian 훅 완성** (2시간)
+   - `useMyGuardian`: 내 보호자 조회
+   - `useCreateAndAssignGuardian`: 등록
+   - `useRemoveGuardian`: 해제
 
-**🎯 목표**: Week 1 기능 통합 및 전체 플로우 테스트
+2. **GuardianInfo 컴포넌트** (2시간)
+   - 보호자 정보 카드 (이름, 관계, 이메일 등)
+   - 해제 버튼 (확인 팝업 권장)
 
-**📋 상세 작업**:
+3. **GuardianSettings 컨테이너** (2시간)
+   - 보호자 있으면 GuardianInfo
+   - 보호자 없으면 GuardianForm
+   - 페이지 생성 + 라우팅 (`/settings/guardian`)
 
-1. **GuardianPage 생성 및 라우팅** (1시간)
-   ```typescript
-   // pages/settings/GuardianPage.tsx
-   import { GuardianSettings } from '@/features/guardian';
+4. **전체 플로우 테스트**
+   - 등록 → 대시보드에서 확인 → 해제 → 재등록
 
-   export function GuardianPage() {
-     return <GuardianSettings />;
-   }
+**완료 기준**:
+- [ ] 보호자 등록/조회/해제 전체 플로우 동작
+- [ ] 대시보드에서 보호자 설정 링크 접근 가능
+- [ ] `npm run build` 성공
 
-   // app/router.tsx에 추가
-   {
-     path: 'settings/guardian',
-     element: <GuardianPage />,
-   }
-   ```
+---
 
-2. **대시보드에 보호자 설정 링크 추가** (30분)
-   ```typescript
-   // pages/dashboard/DashboardPage.tsx
-   <Button
-     variant="secondary"
-     size="large"
-     fullWidth
-     onClick={() => navigate('/settings/guardian')}
-   >
-     보호자 설정
-   </Button>
-   ```
+### Day 7: Week 1 통합 + 예비일
+**⏰ 예상 시간**: 4-8시간 (예비 시간 포함)
+**🎯 목표**: Week 1 전체 안정화 + 문제 해결
 
-3. **전체 플로우 통합 테스트** (2-3시간)
-   - 로그인 → 대시보드
-   - AI 대화 기능 테스트
-   - 보호자 등록 → 정보 확인 → 해제
-   - 에러 처리 확인
-   - 로딩 상태 확인
+**핵심 작업**:
+1. **통합 테스트** (2시간)
+   - AI 대화 기능 재테스트
+   - 보호자 관리 기능 재테스트
+   - 라우팅 전체 확인
 
-4. **코드 품질 검사** (1시간)
+2. **코드 품질 검사** (1시간)
    ```bash
-   # TypeScript 컴파일
-   npm run build
-
-   # ESLint 검사
-   npm run lint
+   npm run build  # TypeScript 검사
+   npm run lint   # ESLint 검사
    ```
 
-5. **문서 업데이트** (1시간)
-   - CURRENT_STATUS.md 업데이트
-   - Week 1 완료 내용 기록
-   - Week 2 준비사항 확인
+3. **예비 작업** (나머지 시간)
+   - Day 1-6 중 미완성 작업 완료
+   - 발견된 버그 수정
+   - UI/UX 개선
+   - 또는 **휴식** (예비일의 목적)
 
-**✅ Week 1 완료 기준**:
-- [ ] AI 대화 시스템 완전 동작
-- [ ] 보호자 관리 기능 완전 동작
-- [ ] 모든 페이지 라우팅 정상
+4. **Week 2 준비**
+   - Alert API, Member API 문서 재확인
+   - 필요한 컴포넌트 목록 정리
+
+**완료 기준**:
+- [ ] AI 대화 + 보호자 관리 모두 안정적 동작
 - [ ] TypeScript 빌드 0 에러
-- [ ] ESLint 0 경고
+- [ ] ESLint 0 경고 (또는 허용 가능한 수준)
+- [ ] Week 2 시작 준비 완료
 
 ---
 
-### Week 2: 알림 이력 및 회원 정보 (Day 8-14)
+## 📋 Week 2 상세 계획
 
-#### Day 8-9: 알림 이력 기능 구현
+### Day 8: Alert API 연동 + 이력 리스트
+**⏰ 예상 시간**: 5-7시간
+**🎯 목표**: 알림 이력 조회 성공
 
-**⏰ 예상 소요 시간**: 10-12시간 (2일)
-
-**🎯 목표**: features/alert 모듈 완성
-
-**📋 Day 8 작업** (5-6시간):
-
-1. **Alert Feature 구조 생성** (30분)
+**핵심 작업**:
+1. **폴더 구조 + 타입** (1시간)
    ```
    src/features/alert/
-   ├── api/
-   │   └── alertApi.ts
-   ├── hooks/
-   │   └── useAlert.ts
-   ├── components/
-   │   ├── AlertHistoryList.tsx
-   │   ├── AlertHistoryCard.tsx
-   │   └── AlertLevelBadge.tsx
-   ├── types/
-   │   └── alert.types.ts
-   └── index.ts
+   ├── api/alertApi.ts
+   ├── types/alert.types.ts
+   ├── hooks/useAlert.ts
+   └── components/AlertHistoryList.tsx
    ```
 
-2. **타입 정의** (1시간)
-   ```typescript
-   // features/alert/types/alert.types.ts
-   export type AlertType = 'EMOTION_PATTERN' | 'NO_RESPONSE' | 'KEYWORD_DETECTION';
-   export type AlertLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'EMERGENCY';
+2. **Alert API 모듈** (2시간)
+   - `getAlertHistory(days: number)` 구현
+   - 기간 파라미터 (7일/30일/90일)
 
-   export interface AlertHistory {
-     id: number;
-     alertType: AlertType;
-     alertLevel: AlertLevel;
-     alertMessage: string;
-     detectionDetails: string;
-     isNotificationSent: boolean;
-     alertDate: string;
-     createdAt: string;
-   }
+3. **AlertHistoryList 기본 구현** (2-3시간)
+   - 알림 목록 간단히 표시 (스타일은 나중에)
+   - LoadingSpinner 사용
+   - 빈 상태 처리
 
-   export interface AlertRule {
-     id: number;
-     alertType: AlertType;
-     alertLevel: AlertLevel;
-     ruleName: string;
-     condition: Record<string, any>;
-     isActive: boolean;
-   }
-   ```
+4. **API 동작 검증**
+   - 실제 알림 이력 조회 성공
 
-3. **API 모듈 및 훅 구현** (3-4시간)
-   ```typescript
-   // features/alert/api/alertApi.ts
-   import { apiClient } from '@/shared/api/client';
-   import type { AlertHistory, AlertRule } from '../types';
-
-   export const alertApi = {
-     getAlertHistory: async (days: number = 30): Promise<AlertHistory[]> => {
-       const response = await apiClient.get('/alert-rules/history', {
-         params: { days },
-       });
-       return response.data.data;
-     },
-
-     getAlertRules: async (): Promise<AlertRule[]> => {
-       const response = await apiClient.get('/alert-rules');
-       return response.data.data;
-     },
-   };
-
-   // features/alert/hooks/useAlert.ts
-   import { useQuery } from '@tanstack/react-query';
-   import { alertApi } from '../api/alertApi';
-
-   export const useAlertHistory = (days: number = 30) => {
-     return useQuery({
-       queryKey: ['alerts', 'history', days],
-       queryFn: () => alertApi.getAlertHistory(days),
-     });
-   };
-
-   export const useAlertRules = () => {
-     return useQuery({
-       queryKey: ['alerts', 'rules'],
-       queryFn: alertApi.getAlertRules,
-     });
-   };
-   ```
-
-**📋 Day 9 작업** (5-6시간):
-
-4. **AlertLevelBadge 컴포넌트** (1시간)
-   ```typescript
-   // features/alert/components/AlertLevelBadge.tsx
-   import type { AlertLevel } from '../types';
-
-   interface AlertLevelBadgeProps {
-     level: AlertLevel;
-   }
-
-   const LEVEL_CONFIG = {
-     EMERGENCY: { label: '긴급', color: 'bg-red-600 text-white' },
-     HIGH: { label: '높음', color: 'bg-orange-500 text-white' },
-     MEDIUM: { label: '보통', color: 'bg-yellow-500 text-gray-900' },
-     LOW: { label: '낮음', color: 'bg-blue-500 text-white' },
-   };
-
-   export function AlertLevelBadge({ level }: AlertLevelBadgeProps) {
-     const config = LEVEL_CONFIG[level];
-
-     return (
-       <span className={`px-3 py-1 rounded-full text-base font-semibold ${config.color}`}>
-         {config.label}
-       </span>
-     );
-   }
-   ```
-
-5. **AlertHistoryCard 컴포넌트** (2시간)
-   ```typescript
-   // features/alert/components/AlertHistoryCard.tsx
-   import { Card } from '@/shared/components';
-   import { AlertLevelBadge } from './AlertLevelBadge';
-   import type { AlertHistory } from '../types';
-
-   interface AlertHistoryCardProps {
-     alert: AlertHistory;
-   }
-
-   const ALERT_TYPE_LABELS = {
-     EMOTION_PATTERN: '감정 패턴',
-     NO_RESPONSE: '미응답',
-     KEYWORD_DETECTION: '키워드 감지',
-   };
-
-   export function AlertHistoryCard({ alert }: AlertHistoryCardProps) {
-     return (
-       <Card clickable className="p-5">
-         <div className="flex justify-between items-start mb-3">
-           <AlertLevelBadge level={alert.alertLevel} />
-           <span className="text-sm text-gray-500">
-             {new Date(alert.alertDate).toLocaleDateString('ko-KR')}
-           </span>
-         </div>
-
-         <h3 className="text-lg font-semibold mb-2">
-           {ALERT_TYPE_LABELS[alert.alertType]}
-         </h3>
-
-         <p className="text-base text-gray-700 mb-3">{alert.alertMessage}</p>
-
-         <div className="flex items-center text-sm">
-           <span className={alert.isNotificationSent ? 'text-green-600' : 'text-gray-500'}>
-             {alert.isNotificationSent ? '✓ 알림 발송됨' : '알림 미발송'}
-           </span>
-         </div>
-       </Card>
-     );
-   }
-   ```
-
-6. **AlertHistoryList 컴포넌트** (2-3시간)
-   ```typescript
-   // features/alert/components/AlertHistoryList.tsx
-   import { useState } from 'react';
-   import { Layout, LoadingSpinner, Button } from '@/shared/components';
-   import { useAlertHistory } from '../hooks/useAlert';
-   import { AlertHistoryCard } from './AlertHistoryCard';
-
-   export function AlertHistoryList() {
-     const [days, setDays] = useState(30);
-     const { data: alerts = [], isLoading } = useAlertHistory(days);
-
-     if (isLoading) {
-       return (
-         <div className="flex justify-center py-12">
-           <LoadingSpinner size="large" />
-         </div>
-       );
-     }
-
-     return (
-       <div>
-         {/* 기간 필터 */}
-         <div className="flex gap-2 mb-6">
-           <Button
-             variant={days === 7 ? 'primary' : 'secondary'}
-             onClick={() => setDays(7)}
-           >
-             7일
-           </Button>
-           <Button
-             variant={days === 30 ? 'primary' : 'secondary'}
-             onClick={() => setDays(30)}
-           >
-             30일
-           </Button>
-           <Button
-             variant={days === 90 ? 'primary' : 'secondary'}
-             onClick={() => setDays(90)}
-           >
-             90일
-           </Button>
-         </div>
-
-         {/* 알림 목록 */}
-         {alerts.length === 0 ? (
-           <div className="text-center py-12 text-gray-500">
-             <p className="text-xl">알림 이력이 없습니다</p>
-           </div>
-         ) : (
-           <div className="space-y-4">
-             {alerts.map((alert) => (
-               <AlertHistoryCard key={alert.id} alert={alert} />
-             ))}
-           </div>
-         )}
-       </div>
-     );
-   }
-   ```
-
-**✅ Day 8-9 완료 기준**:
-- [ ] features/alert 모듈 완성
-- [ ] 알림 이력 조회 및 필터링 동작
-- [ ] 알림 레벨별 색상 구분 명확
-- [ ] TypeScript 에러 없음
+**완료 기준**:
+- [ ] 알림 이력 API 호출 성공
+- [ ] 리스트 UI에 데이터 표시
+- [ ] `npm run build` 성공
 
 ---
 
-#### Day 10-11: 회원 정보 관리 기능
+### Day 9: Alert 필터링 + 레벨 배지
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 기간 필터 동작 + 알림 레벨 색상 구분
 
-**⏰ 예상 소요 시간**: 10-12시간 (2일)
+**핵심 작업**:
+1. **AlertLevelBadge 컴포넌트** (1시간)
+   - EMERGENCY: 빨강, HIGH: 주황, MEDIUM: 노랑, LOW: 파랑
+   - 명확한 색상 대비
 
-**🎯 목표**: features/member 모듈 완성
+2. **AlertHistoryCard 컴포넌트** (2시간)
+   - 알림 레벨 배지
+   - 알림 메시지 표시
+   - 발송 여부 표시
 
-**📋 Day 10 작업** (5-6시간):
+3. **기간 필터 버튼** (1-2시간)
+   - 7일/30일/90일 버튼
+   - 클릭 시 재조회
 
-1. **Member Feature 구조 생성** (30분)
+4. **페이지 생성 + 라우팅**
+   - `/alerts` 경로 추가
+   - 대시보드에서 링크
+
+**완료 기준**:
+- [ ] 기간 필터 동작
+- [ ] 알림 레벨별 색상 구분 명확
+- [ ] 대시보드에서 접근 가능
+
+---
+
+### Day 10: Member API 연동 + 프로필 조회
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 내 정보 조회 성공
+
+**핵심 작업**:
+1. **폴더 구조 + 타입** (1시간)
    ```
    src/features/member/
-   ├── api/
-   │   └── memberApi.ts
-   ├── hooks/
-   │   └── useMember.ts
-   ├── components/
-   │   ├── ProfileView.tsx
-   │   ├── ProfileEditForm.tsx
-   │   └── AccountSettings.tsx
-   ├── types/
-   │   └── member.types.ts
-   └── index.ts
+   ├── api/memberApi.ts
+   ├── types/member.types.ts
+   ├── hooks/useMember.ts
+   └── components/ProfileView.tsx
    ```
 
-2. **타입 정의 및 API** (2시간)
-   ```typescript
-   // features/member/types/member.types.ts
-   export interface User {
-     id: number;
-     memberName: string;
-     memberEmail: string;
-     createdAt: string;
-     updatedAt: string;
-   }
+2. **Member API 모듈** (2시간)
+   - `getMe()`: 내 정보 조회
+   - `updateMe(data)`: 정보 수정
+   - `deleteAccount()`: 계정 삭제
 
-   export interface UpdateUserRequest {
-     memberName?: string;
-     memberPassword?: string;
-   }
+3. **ProfileView 컴포넌트** (2시간)
+   - 이름, 이메일, 가입일 표시
+   - Card 컴포넌트 활용
 
-   // features/member/api/memberApi.ts
-   import { apiClient } from '@/shared/api/client';
-   import type { User, UpdateUserRequest } from '../types';
+4. **API 동작 검증**
+   - 내 정보 조회 성공
 
-   export const memberApi = {
-     getMe: async (): Promise<User> => {
-       const response = await apiClient.get('/users/me');
-       return response.data.data;
-     },
-
-     updateMe: async (data: UpdateUserRequest): Promise<User> => {
-       const response = await apiClient.put('/users/me', data);
-       return response.data.data;
-     },
-
-     deleteAccount: async (): Promise<void> => {
-       await apiClient.delete('/users/me');
-     },
-   };
-   ```
-
-3. **TanStack Query 훅** (2-3시간)
-   ```typescript
-   // features/member/hooks/useMember.ts
-   import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-   import { memberApi } from '../api/memberApi';
-   import { useAuthStore } from '@/features/auth';
-
-   export const useMe = () => {
-     return useQuery({
-       queryKey: ['users', 'me'],
-       queryFn: memberApi.getMe,
-     });
-   };
-
-   export const useUpdateMe = () => {
-     const queryClient = useQueryClient();
-
-     return useMutation({
-       mutationFn: memberApi.updateMe,
-       onSuccess: (data) => {
-         queryClient.setQueryData(['users', 'me'], data);
-       },
-     });
-   };
-
-   export const useDeleteAccount = () => {
-     const logout = useAuthStore((state) => state.logout);
-
-     return useMutation({
-       mutationFn: memberApi.deleteAccount,
-       onSuccess: () => {
-         logout();
-       },
-     });
-   };
-   ```
-
-**📋 Day 11 작업** (5-6시간):
-
-4. **ProfileView 컴포넌트** (2시간)
-   ```typescript
-   // features/member/components/ProfileView.tsx
-   import { Card, Button, LoadingSpinner } from '@/shared/components';
-   import { useMe } from '../hooks/useMember';
-
-   export function ProfileView() {
-     const { data: user, isLoading } = useMe();
-
-     if (isLoading) {
-       return <LoadingSpinner size="large" />;
-     }
-
-     if (!user) return null;
-
-     return (
-       <Card className="p-6">
-         <h3 className="text-2xl font-bold mb-4">내 정보</h3>
-
-         <div className="space-y-3 text-lg">
-           <div>
-             <span className="text-gray-600">이름:</span>
-             <span className="ml-2 font-semibold">{user.memberName}</span>
-           </div>
-           <div>
-             <span className="text-gray-600">이메일:</span>
-             <span className="ml-2">{user.memberEmail}</span>
-           </div>
-           <div>
-             <span className="text-gray-600">가입일:</span>
-             <span className="ml-2">
-               {new Date(user.createdAt).toLocaleDateString('ko-KR')}
-             </span>
-           </div>
-         </div>
-       </Card>
-     );
-   }
-   ```
-
-5. **ProfileEditForm 컴포넌트** (2-3시간)
-   ```typescript
-   // features/member/components/ProfileEditForm.tsx
-   import { useState } from 'react';
-   import { Card, Input, Button } from '@/shared/components';
-   import { useMe, useUpdateMe } from '../hooks/useMember';
-
-   export function ProfileEditForm() {
-     const { data: user } = useMe();
-     const { mutate: updateProfile, isPending } = useUpdateMe();
-
-     const [formData, setFormData] = useState({
-       memberName: user?.memberName || '',
-       memberPassword: '',
-     });
-
-     const handleSubmit = (e: React.FormEvent) => {
-       e.preventDefault();
-       updateProfile(formData);
-     };
-
-     return (
-       <Card className="p-6">
-         <h3 className="text-2xl font-bold mb-4">정보 수정</h3>
-
-         <form onSubmit={handleSubmit} className="space-y-4">
-           <Input
-             label="이름"
-             value={formData.memberName}
-             onChange={(e) => setFormData({ ...formData, memberName: e.target.value })}
-           />
-
-           <Input
-             label="새 비밀번호 (선택)"
-             type="password"
-             value={formData.memberPassword}
-             onChange={(e) => setFormData({ ...formData, memberPassword: e.target.value })}
-             placeholder="변경 시에만 입력"
-           />
-
-           <Button
-             type="submit"
-             variant="primary"
-             size="large"
-             fullWidth
-             disabled={isPending}
-           >
-             {isPending ? '저장 중...' : '저장'}
-           </Button>
-         </form>
-       </Card>
-     );
-   }
-   ```
-
-6. **AccountSettings 컨테이너** (1시간)
-   ```typescript
-   // features/member/components/AccountSettings.tsx
-   import { Layout } from '@/shared/components';
-   import { ProfileView } from './ProfileView';
-   import { ProfileEditForm } from './ProfileEditForm';
-
-   export function AccountSettings() {
-     return (
-       <Layout title="계정 설정" showBack>
-         <div className="space-y-6">
-           <ProfileView />
-           <ProfileEditForm />
-         </div>
-       </Layout>
-     );
-   }
-   ```
-
-**✅ Day 10-11 완료 기준**:
-- [ ] features/member 모듈 완성
-- [ ] 회원 정보 조회/수정 기능 동작
-- [ ] TypeScript 에러 없음
+**완료 기준**:
+- [ ] 프로필 조회 API 성공
+- [ ] ProfileView에 데이터 표시
+- [ ] `npm run build` 성공
 
 ---
 
-#### Day 12-13: 페이지 통합 및 네비게이션 개선
+### Day 11: Member 정보 수정 기능
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 이름/비밀번호 수정 동작
 
-**⏰ 예상 소요 시간**: 10-12시간 (2일)
+**핵심 작업**:
+1. **ProfileEditForm 컴포넌트** (3시간)
+   - 이름 수정
+   - 비밀번호 변경 (선택)
+   - 기존 Input, Button 활용
 
-**🎯 목표**: 모든 페이지 라우팅 연결 및 네비게이션 UX 개선
+2. **useMember 훅 완성** (1시간)
+   - `useMe`: 조회
+   - `useUpdateMe`: 수정
+   - TanStack Query 캐시 무효화
 
-**📋 Day 12 작업** (5-6시간):
+3. **AccountSettings 컨테이너** (1시간)
+   - ProfileView + ProfileEditForm
+   - 페이지 생성 + 라우팅 (`/settings/account`)
 
-1. **페이지 생성 및 라우팅** (2시간)
-   ```typescript
-   // pages/alert/AlertHistoryPage.tsx
-   import { Layout } from '@/shared/components';
-   import { AlertHistoryList } from '@/features/alert';
+4. **전체 플로우 테스트**
+   - 조회 → 수정 → 저장 → 확인
 
-   export function AlertHistoryPage() {
-     return (
-       <Layout title="알림 이력" showBack>
-         <AlertHistoryList />
-       </Layout>
-     );
-   }
-
-   // pages/settings/AccountPage.tsx
-   import { AccountSettings } from '@/features/member';
-
-   export function AccountPage() {
-     return <AccountSettings />;
-   }
-
-   // app/router.tsx에 추가
-   {
-     path: 'alerts',
-     element: <AlertHistoryPage />,
-   },
-   {
-     path: 'settings/account',
-     element: <AccountPage />,
-   }
-   ```
-
-2. **대시보드 개선** (3-4시간)
-   ```typescript
-   // pages/dashboard/DashboardPage.tsx
-   import { useNavigate } from 'react-router-dom';
-   import { Layout, Button, Card } from '@/shared/components';
-   import { useMe } from '@/features/member';
-   import { useMyGuardian } from '@/features/guardian';
-   import { useAuthStore } from '@/features/auth';
-
-   export function DashboardPage() {
-     const navigate = useNavigate();
-     const logout = useAuthStore((state) => state.logout);
-     const { data: user } = useMe();
-     const { data: guardian } = useMyGuardian();
-
-     return (
-       <Layout title={`안녕하세요, ${user?.memberName}님`}>
-         <div className="space-y-4">
-           {/* 주요 기능 버튼 */}
-           <Card className="p-6">
-             <h2 className="text-2xl font-bold mb-4">오늘 뭐 하실래요?</h2>
-             <div className="space-y-3">
-               <Button
-                 variant="primary"
-                 size="extra-large"
-                 fullWidth
-                 onClick={() => navigate('/conversation')}
-               >
-                 AI와 대화하기
-               </Button>
-
-               <Button
-                 variant="secondary"
-                 size="large"
-                 fullWidth
-                 onClick={() => navigate('/alerts')}
-               >
-                 알림 확인하기
-               </Button>
-             </div>
-           </Card>
-
-           {/* 보호자 정보 카드 */}
-           <Card className="p-6">
-             <h3 className="text-xl font-bold mb-3">내 보호자</h3>
-             {guardian ? (
-               <div>
-                 <p className="text-lg">{guardian.guardianName}</p>
-                 <Button
-                   variant="secondary"
-                   onClick={() => navigate('/settings/guardian')}
-                   className="mt-3"
-                 >
-                   설정 변경
-                 </Button>
-               </div>
-             ) : (
-               <Button
-                 variant="primary"
-                 onClick={() => navigate('/settings/guardian')}
-               >
-                 보호자 등록하기
-               </Button>
-             )}
-           </Card>
-
-           {/* 설정 및 로그아웃 */}
-           <div className="space-y-2">
-             <Button
-               variant="secondary"
-               fullWidth
-               onClick={() => navigate('/settings/account')}
-             >
-               계정 설정
-             </Button>
-             <Button
-               variant="secondary"
-               fullWidth
-               onClick={logout}
-             >
-               로그아웃
-             </Button>
-           </div>
-         </div>
-       </Layout>
-     );
-   }
-   ```
-
-**📋 Day 13 작업** (5-6시간):
-
-3. **공통 네비게이션 개선** (3시간)
-   - 뒤로가기 버튼 일관성 확보
-   - 페이지 전환 애니메이션 (선택)
-   - 로딩 상태 개선
-
-4. **에러 처리 통합** (2-3시간)
-   ```typescript
-   // shared/hooks/useErrorHandler.ts
-   import { useEffect } from 'react';
-   import { useNavigate } from 'react-router-dom';
-
-   export const useErrorHandler = (error: any) => {
-     const navigate = useNavigate();
-
-     useEffect(() => {
-       if (error?.response?.status === 401) {
-         navigate('/auth/login');
-       }
-     }, [error, navigate]);
-   };
-   ```
-
-**✅ Day 12-13 완료 기준**:
-- [ ] 모든 페이지 라우팅 연결 완료
-- [ ] 대시보드 UX 개선
-- [ ] 네비게이션 일관성 확보
-- [ ] 에러 처리 통합
+**완료 기준**:
+- [ ] 이름 수정 성공
+- [ ] 비밀번호 변경 성공 (테스트 어려우면 Skip 가능)
+- [ ] 대시보드에서 접근 가능
 
 ---
 
-#### Day 14: Phase 3 최종 검증 및 문서화
+### Day 12: 대시보드 통합 + 네비게이션
+**⏰ 예상 시간**: 5-7시간
+**🎯 목표**: 모든 페이지 대시보드에서 접근 가능
 
-**⏰ 예상 소요 시간**: 6-8시간
+**핵심 작업**:
+1. **대시보드 개선** (3-4시간)
+   - 주요 기능 버튼 카드
+   - 보호자 정보 요약 카드
+   - 설정 메뉴
+   - 로그아웃 버튼
 
-**🎯 목표**: 전체 기능 통합 테스트 및 문서 정리
+2. **네비게이션 일관성** (2시간)
+   - 모든 페이지 뒤로가기 버튼
+   - 페이지 제목 일관성
+   - 접근 플로우 확인
 
-**📋 상세 작업**:
+3. **라우팅 최종 확인** (1시간)
+   - 모든 경로 정상 동작
+   - 404 페이지 처리
+   - 보호된 라우트 확인
 
+**완료 기준**:
+- [ ] 대시보드에서 모든 기능 접근 가능
+- [ ] 네비게이션 UX 일관성
+- [ ] 라우팅 정상 동작
+
+---
+
+### Day 13: 에러 처리 + 로딩 상태 개선
+**⏰ 예상 시간**: 4-6시간
+**🎯 목표**: 안정적인 에러 처리
+
+**핵심 작업**:
+1. **에러 처리 통합** (2-3시간)
+   - 공통 에러 핸들러 (shared/utils/)
+   - 네트워크 에러 → 재시도 가능
+   - 401 에러 → 자동 토큰 갱신 확인
+   - 403/404/500 에러 → 사용자 친화적 메시지
+
+2. **로딩 상태 개선** (1-2시간)
+   - 일관된 LoadingSpinner 사용
+   - 버튼 로딩 상태 (isPending)
+   - Skeleton UI (선택 사항)
+
+3. **전체 에러 시나리오 테스트** (1시간)
+   - 네트워크 끊기 테스트
+   - 서버 에러 시뮬레이션
+   - 토큰 만료 테스트
+
+**완료 기준**:
+- [ ] 네트워크 에러 시 사용자 피드백
+- [ ] 모든 버튼 로딩 상태 표시
+- [ ] 에러 발생해도 앱 크래시 안 함
+
+---
+
+### Day 14: 최종 테스트 + 문서화
+**⏰ 예상 시간**: 6-8시간
+**🎯 목표**: Phase 3 완료 및 검증
+
+**핵심 작업**:
 1. **전체 플로우 통합 테스트** (3-4시간)
-   - [ ] 로그인 → 대시보드
-   - [ ] AI 대화 전체 플로우
-   - [ ] 보호자 등록 → 수정 → 해제
-   - [ ] 알림 이력 조회 및 필터링
+   - [ ] 회원가입 → 로그인
+   - [ ] AI 대화 (여러 메시지)
+   - [ ] 보호자 등록 → 조회 → 해제
+   - [ ] 알림 이력 조회 (필터링)
    - [ ] 회원 정보 수정
    - [ ] 로그아웃 → 재로그인
-   - [ ] 토큰 만료 시 자동 갱신 확인
-   - [ ] 네트워크 에러 처리 확인
+   - [ ] 토큰 자동 갱신 확인
 
 2. **코드 품질 최종 검사** (1-2시간)
    ```bash
-   # TypeScript 컴파일
    npm run build
-
-   # ESLint 검사
    npm run lint
-
-   # 번들 크기 확인
-   npm run preview
+   npm run preview  # 번들 크기 확인
    ```
 
-3. **성능 최적화** (1-2시간)
-   - React.memo 적용 (필요시)
-   - 불필요한 리렌더링 제거
-   - 이미지 최적화 (필요시)
-
-4. **문서 업데이트** (1-2시간)
-   ```markdown
-   # CURRENT_STATUS.md 업데이트
+3. **문서 업데이트** (1-2시간)
+   - [CURRENT_STATUS.md](./CURRENT_STATUS.md) 업데이트
    - Phase 3 완료 내용 기록
-   - 구현된 기능 목록 정리
-   - 다음 단계 (Phase 4) 준비사항
+   - 실제 구현과 계획의 차이점 기록
+   - Phase 4 준비사항 정리
 
-   # PHASE3_EXECUTION_GUIDE.md (본 문서)
-   - 실제 구현 내용과 차이점 기록
-   - 개선 사항 및 배운 점 정리
-   ```
+4. **성능 체크** (선택 사항)
+   - 번들 크기 확인 (목표: 500KB 이하)
+   - React.memo 필요 여부 판단
+   - 불필요한 리렌더링 확인
 
-**✅ Phase 3 최종 완료 기준**:
-- [ ] 모든 핵심 기능 정상 동작
-- [ ] TypeScript 빌드 0 에러
-- [ ] ESLint 0 경고
-- [ ] 번들 크기 500KB 이하 (목표)
+**완료 기준**:
 - [ ] 전체 플로우 테스트 통과
+- [ ] TypeScript 빌드 0 에러
+- [ ] ESLint 경고 허용 범위
 - [ ] 문서 업데이트 완료
+- [ ] **Phase 3 완료 선언 가능**
 
 ---
 
-## 📊 Phase 3 완료 체크리스트
+## ✅ Phase 3 완료 체크리스트
 
-### 기능 구현
-- [ ] AI 대화 시스템 완성 (features/conversation)
-- [ ] 보호자 관리 시스템 완성 (features/guardian)
-- [ ] 알림 이력 조회 완성 (features/alert)
-- [ ] 회원 정보 관리 완성 (features/member)
+### 기능 완성도
+- [ ] **AI 대화**: 메시지 전송 → AI 응답 → 감정 표시
+- [ ] **보호자 관리**: 등록 → 조회 → 해제
+- [ ] **알림 이력**: 조회 → 필터링 → 레벨별 색상
+- [ ] **회원 정보**: 조회 → 수정
 
 ### API 연동
-- [ ] Conversation API 연동 (`POST /api/conversations/messages`)
-- [ ] Guardian API 연동 (`GET /api/guardians/my-guardian` 등)
-- [ ] AlertRule API 연동 (`GET /api/alert-rules/history`)
-- [ ] Member API 연동 (`GET /api/users/me`)
+- [ ] `POST /api/conversations/messages` 성공
+- [ ] `GET /api/guardians/my-guardian` 성공
+- [ ] `POST /api/guardians` + `POST /api/guardians/{id}/assign` 성공
+- [ ] `DELETE /api/guardians/remove-guardian` 성공
+- [ ] `GET /api/alert-rules/history` 성공
+- [ ] `GET /api/users/me` 성공
+- [ ] `PUT /api/users/me` 성공
 
 ### UI/UX
-- [ ] 노인 친화적 디자인 (큰 텍스트, 명확한 버튼)
-- [ ] 감정 아이콘 표시
-- [ ] 알림 레벨별 색상 구분
-- [ ] 로딩 및 에러 상태 처리
+- [ ] 모든 페이지 노인 친화적 (60px+ 터치, 18px+ 폰트)
+- [ ] 감정 아이콘 명확 (😊😢😐)
+- [ ] 알림 레벨 색상 구분 명확
+- [ ] 로딩 상태 표시 (모든 비동기 작업)
+- [ ] 에러 메시지 사용자 친화적
 
 ### 코드 품질
-- [ ] TypeScript 타입 완전 정의
+- [ ] TypeScript 타입 완전 정의 (any 사용 최소화)
+- [ ] `npm run build` 에러 0개
+- [ ] `npm run lint` 경고 허용 범위
 - [ ] TanStack Query 패턴 일관성
-- [ ] 에러 처리 체계화
-- [ ] 코드 재사용성 확보
+- [ ] 컴포넌트 재사용성 확보
 
 ### 테스트
-- [ ] 전체 플로우 테스트 통과
-- [ ] 네트워크 에러 처리 확인
-- [ ] 토큰 갱신 동작 확인
-- [ ] 모바일 반응형 확인
+- [ ] 로그인 → 모든 기능 → 로그아웃 플로우 통과
+- [ ] 네트워크 에러 시나리오 처리 확인
+- [ ] 토큰 자동 갱신 동작 확인
+- [ ] 모바일 반응형 기본 동작 (큰 문제 없음)
 
 ---
 
-## 🎯 다음 단계: Phase 4 (PWA 완성 및 최적화)
+## 🚨 리스크 관리
+
+### 예상 리스크 및 대응책
+
+| 리스크 | 확률 | 영향 | 대응책 |
+|--------|------|------|--------|
+| 서버 API 문서와 실제 구현 불일치 | 중 | 고 | Day 1부터 실제 API 테스트, 발견 즉시 문서화 |
+| Guardian API 생성/할당 2단계 혼란 | 중 | 중 | 서버 개발자와 소통, 1단계 API 요청 고려 |
+| 낙관적 업데이트 복잡도 과소평가 | 중 | 중 | 기본 기능 우선, 최적화는 나중에 |
+| Day 7까지 AI 대화 미완성 | 저 | 고 | Day 7 예비일 활용, Week 2 일정 조정 |
+| 에러 처리 미흡으로 UX 나쁨 | 중 | 중 | Day 13 집중, Toast 없으면 alert() 사용 |
+| 전체 일정 초과 (14일 넘김) | 중 | 중 | 우선순위 재조정, Phase 4로 연기 가능 |
+| 노인 친화적 UI 미흡 | 저 | 고 | 매 Day 체크리스트 확인, 타협 불가 |
+
+### 일정 초과 시 우선순위
+
+**필수 (Phase 3 완료 기준)**:
+1. AI 대화 기능 (Day 1-4)
+2. 보호자 관리 (Day 5-6)
+
+**중요 (가능하면 포함)**:
+3. 알림 이력 (Day 8-9)
+4. 회원 정보 (Day 10-11)
+
+**선택 (Phase 4 연기 가능)**:
+- 낙관적 업데이트
+- Skeleton UI
+- 애니메이션 효과
+- 고급 에러 처리
+
+---
+
+## 📚 참고 문서
+
+### 필수 참고 (개발 중 상시 확인)
+- **[API_REFERENCE.md](../api/API_REFERENCE.md)** - 모든 API 엔드포인트
+- **[Conversation API](../api/conversation-api.md)** - AI 대화 API 상세
+- **[Guardian API](../api/guardian-api.md)** - 보호자 API 상세
+- **[AlertRule API](../api/alertrule-api.md)** - 알림 API 상세
+- **[Member API](../api/member-api.md)** - 회원 API 상세
+
+### 구현 가이드 (막힐 때 참고)
+- **[IMPLEMENTATION_FLOWS.md](../flows/IMPLEMENTATION_FLOWS.md)** - 기능별 구현 플로우
+- **[COMPONENT_DESIGN_GUIDE.md](../development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 설계
+
+### 아키텍처 (이해 필요 시)
+- **[TECHNICAL_ARCHITECTURE.md](../architecture/TECHNICAL_ARCHITECTURE.md)** - 시스템 아키텍처
+- **[DESIGN_SYSTEM.md](../architecture/DESIGN_SYSTEM.md)** - 디자인 시스템
+
+---
+
+## 🎯 다음 단계: Phase 4
 
 Phase 3 완료 후 진행할 Phase 4 핵심 작업:
 
-1. **PWA 기능 완성**
+1. **PWA 완성**
    - 오프라인 지원 (Service Worker)
    - 푸시 알림 (Firebase FCM)
-   - 홈 화면 추가 프롬프트
+   - 홈 화면 추가
 
 2. **성능 최적화**
    - 코드 스플리팅
+   - React.memo 적용
    - 번들 크기 최적화
-   - 이미지 최적화
 
 3. **접근성 최종 점검**
    - 스크린 리더 테스트
@@ -1607,28 +642,152 @@ Phase 3 완료 후 진행할 Phase 4 핵심 작업:
    - WCAG 2.1 AA 준수
 
 4. **배포 준비**
-   - CI/CD 파이프라인
    - 환경별 설정
+   - 빌드 최적화
    - 모니터링 설정
 
 ---
 
-## 📚 참고 문서
+## 부록: 코드 템플릿 (참고용)
 
-### 필수 참고 문서
-- **[API_REFERENCE.md](../api/API_REFERENCE.md)** - 모든 API 엔드포인트 및 응답 형식
-- **[IMPLEMENTATION_FLOWS.md](../flows/IMPLEMENTATION_FLOWS.md)** - 기능별 구현 플로우 가이드
-- **[TECHNICAL_ARCHITECTURE.md](../architecture/TECHNICAL_ARCHITECTURE.md)** - 시스템 아키텍처
-- **[COMPONENT_DESIGN_GUIDE.md](../development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 설계 가이드
+> **주의**: 이 코드는 참고용입니다. 강제로 복붙하지 말고, 실제 상황에 맞게 수정하세요.
 
-### 이전 Phase 문서
-- **[PHASE1_EXECUTION_GUIDE.md](./PHASE1_EXECUTION_GUIDE.md)** - Phase 1 실행 가이드
-- **[PHASE2_EXECUTION_GUIDE.md](./PHASE2_EXECUTION_GUIDE.md)** - Phase 2 실행 가이드
-- **[PHASE2_REFACTORING_REPORT.md](./PHASE2_REFACTORING_REPORT.md)** - Phase 2 리팩토링 보고서
+### A. Conversation API 모듈 예시
+
+```typescript
+// features/conversation/api/conversationApi.ts
+import { apiClient } from '@/shared/api/client';
+import type { ConversationResponse, SendMessageRequest } from '../types';
+
+export const conversationApi = {
+  sendMessage: async (data: SendMessageRequest): Promise<ConversationResponse> => {
+    const response = await apiClient.post('/conversations/messages', data);
+    return response.data.data;
+  },
+};
+```
+
+### B. useSendMessage 기본 예시
+
+```typescript
+// features/conversation/hooks/useConversation.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { conversationApi } from '../api/conversationApi';
+
+export const useSendMessage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: conversationApi.sendMessage,
+    onSuccess: (data) => {
+      // 메시지 추가 (간단한 방식)
+      queryClient.setQueryData(['conversation'], (old: any[] = []) => [
+        ...old,
+        data.userMessage,
+        data.aiMessage,
+      ]);
+    },
+  });
+};
+```
+
+### C. MessageBubble 컴포넌트 예시
+
+```typescript
+// features/conversation/components/MessageBubble.tsx
+import type { Message } from '../types';
+
+interface MessageBubbleProps {
+  message: Message;
+  isAI?: boolean;
+}
+
+export function MessageBubble({ message, isAI = false }: MessageBubbleProps) {
+  return (
+    <div className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
+      <div
+        className={`
+          max-w-[80%] rounded-2xl px-6 py-4 text-lg
+          ${isAI ? 'bg-blue-50 text-gray-900' : 'bg-blue-600 text-white'}
+        `}
+      >
+        <p className="leading-relaxed">{message.content}</p>
+        <div className="mt-2 text-sm opacity-70">
+          {new Date(message.createdAt).toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### D. Guardian API 모듈 예시
+
+```typescript
+// features/guardian/api/guardianApi.ts
+import { apiClient } from '@/shared/api/client';
+import type { Guardian, CreateGuardianRequest } from '../types';
+
+export const guardianApi = {
+  getMyGuardian: async (): Promise<Guardian | null> => {
+    try {
+      const response = await apiClient.get('/guardians/my-guardian');
+      return response.data.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        return null; // 보호자 없음
+      }
+      throw error;
+    }
+  },
+
+  createGuardian: async (data: CreateGuardianRequest): Promise<Guardian> => {
+    const response = await apiClient.post('/guardians', data);
+    return response.data.data;
+  },
+
+  assignGuardian: async (guardianId: number): Promise<void> => {
+    await apiClient.post(`/guardians/${guardianId}/assign`);
+  },
+
+  removeGuardian: async (): Promise<void> => {
+    await apiClient.delete('/guardians/remove-guardian');
+  },
+};
+```
+
+### E. 에러 처리 유틸 예시
+
+```typescript
+// shared/utils/errorHandler.ts
+import { AxiosError } from 'axios';
+
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof AxiosError) {
+    const apiError = error.response?.data;
+
+    // 필드 에러
+    if (apiError?.data?.fieldErrors) {
+      return apiError.data.fieldErrors
+        .map((fe: any) => fe.message)
+        .join(', ');
+    }
+
+    // 일반 에러 메시지
+    return apiError?.message || '알 수 없는 오류가 발생했습니다.';
+  }
+
+  return '네트워크 오류가 발생했습니다.';
+};
+```
 
 ---
 
-**🎉 Phase 3을 성공적으로 완료하면 MARUNI 클라이언트의 모든 핵심 기능이 완성됩니다!**
+**🎉 Phase 3을 성공적으로 완료하면 MARUNI의 모든 핵심 기능이 완성됩니다!**
 
 **📅 마지막 업데이트**: 2025-10-05
-**📝 작성자**: Claude (AI Assistant)
+**📝 버전**: 2.0 (Agile 방식으로 재구성)
+**✍️ 작성**: Claude (AI Assistant) + 객관적 리뷰 반영
