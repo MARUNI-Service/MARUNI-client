@@ -28,7 +28,12 @@ export function DashboardPage() {
             오늘 기분은 어떠세요?
           </p>
           <div className="space-y-3">
-            <Button variant="primary" size="extra-large" fullWidth>
+            <Button
+              variant="primary"
+              size="extra-large"
+              fullWidth
+              onClick={() => navigate('/conversation')}
+            >
               AI와 대화하기
             </Button>
             <Button

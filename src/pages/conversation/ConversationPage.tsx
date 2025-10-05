@@ -3,7 +3,7 @@ import { MessageInput, MessageList } from '@/features/conversation/components';
 
 export const ConversationPage = () => {
   return (
-    <Layout title="AI 대화" showBackButton>
+    <Layout title="AI 대화" showBack>
       <div className="flex flex-col h-full">
         <MessageList />
         <MessageInput />

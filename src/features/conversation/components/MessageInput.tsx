@@ -16,13 +16,14 @@ export const MessageInput = () => {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-3 p-4 bg-white border-t">
-      <Input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="메시지를 입력하세요..."
-        disabled={isPending}
-        className="flex-1"
-      />
+      <div className="flex-1">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="메시지를 입력하세요..."
+          disabled={isPending}
+        />
+      </div>
       <Button type="submit" disabled={isPending || !input.trim()} variant="primary">
         전송
       </Button>
