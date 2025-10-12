@@ -133,7 +133,9 @@ export const useAuthStore = create<AuthState>()(
           // });
 
           // Mock 데이터에 없는 username이면 에러
-          throw new Error('사용자를 찾을 수 없습니다. (soonja, younghee, cheolsu, newuser 중 하나를 입력하세요)');
+          throw new Error(
+            '사용자를 찾을 수 없습니다. (soonja, younghee, cheolsu, newuser 중 하나를 입력하세요)'
+          );
         } catch (error) {
           const errorMessage = getApiErrorMessage(error);
           set({
@@ -163,7 +165,7 @@ export const useAuthStore = create<AuthState>()(
         });
 
         // 서버에 로그아웃 요청 (선택 사항)
-        authApi.logout().catch((error) => {
+        authApi.logout().catch(error => {
           console.error('로그아웃 API 호출 실패:', error);
         });
       },

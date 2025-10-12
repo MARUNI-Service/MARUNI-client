@@ -2,15 +2,13 @@ import { Layout, Card, Button, Input, LoadingSpinner } from '@/shared/components
 import { useLoginForm } from '@/features/auth/hooks';
 
 /**
- * 로그인 페이지
+ * 로그인 페이지 (MVP 단순화 버전)
  * - 노인 친화적 UI (큰 버튼, 큰 글씨, 명확한 메시지)
- * - 사용자 이름과 비밀번호 입력
- * - 유효성 검사 및 에러 표시
+ * - Phase 3-1 ~ 3-7: Mock 로그인 (username만 입력)
  */
 export function LoginPage() {
   const {
     formData,
-    validationErrors,
     isLoading,
     error,
     handleChange,
@@ -41,14 +39,14 @@ export function LoginPage() {
                 type="text"
                 value={formData.username}
                 onChange={(e) => handleChange('username', e.target.value)}
-                error={validationErrors.username}
-                placeholder="사용자 이름을 입력하세요"
+                placeholder="soonja, younghee, cheolsu, newuser"
                 disabled={isLoading}
                 autoComplete="username"
+                helperText="테스트용: soonja, younghee, cheolsu, newuser"
               />
             </div>
 
-            {/* 비밀번호 입력 */}
+            {/* 비밀번호 입력 - MVP에서는 사용 안 함 */}
             <div>
               <Input
                 id="password"
@@ -56,8 +54,7 @@ export function LoginPage() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
-                error={validationErrors.password}
-                placeholder="비밀번호를 입력하세요"
+                placeholder="(Mock 로그인에서는 불필요)"
                 disabled={isLoading}
                 autoComplete="current-password"
               />
