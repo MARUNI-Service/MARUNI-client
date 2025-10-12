@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 1. **[docs/README.md](./docs/README.md)** - 전체 문서 구조 및 진입점
 2. **[docs/flows/user-flow.md](./docs/flows/user-flow.md)** - 새로운 사용자 여정 설계 ⭐
+3. **[docs/PHASE3_EXECUTION_PLAN.md](./docs/PHASE3_EXECUTION_PLAN.md)** - Phase 3 실행 계획 (7개 Phase) ⭐
 
 ## Development Guidelines for Claude Assistant
 
@@ -28,6 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Development Workflow
 
 - **BEFORE ANY CODING**: Read [docs/README.md](./docs/README.md) for project overview
+- **FOR PLANNING**: Read [docs/PHASE3_EXECUTION_PLAN.md](./docs/PHASE3_EXECUTION_PLAN.md) for Phase 3 roadmap ⭐ **NEW**
 - **FOR USER FLOW**: Read [docs/flows/user-flow.md](./docs/flows/user-flow.md) for updated user journey ⭐ **NEW**
 - **FOR API FLOW**: Read [docs/flows/api-flow.md](./docs/flows/api-flow.md) for Postman test scenarios
 - **FOR COMPONENT WORK**: Read [COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md) for design patterns

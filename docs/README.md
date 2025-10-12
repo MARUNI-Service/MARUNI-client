@@ -15,6 +15,11 @@
   - Postman 테스트 시나리오
   - 회원가입, 로그인, AI 대화, 보호자 관리, 회원 관리 플로우
 
+- **[PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md)** ⭐ **개발 계획 필독**
+  - Phase 3 실행 계획 (2025-10-12)
+  - 7개 Phase별 목표 및 작업 항목
+  - 2-3주 타임라인 및 의존성 관리
+
 ---
 
 ## 📚 전체 문서 구조
@@ -91,6 +96,16 @@
   - Tailwind CSS v4, TanStack Query, Zustand
   - 개발 도구 및 환경 설정
 
+### 📅 개발 계획
+
+Phase별 실행 계획 및 작업 로드맵
+
+- **[PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md)** ⭐ **최신 업데이트**
+  - Phase 3-1 ~ 3-7 큰 틀의 계획
+  - Phase별 목표, 핵심 작업, 완성 기준
+  - 의존성 관계 및 2-3주 타임라인
+  - 각 Phase 세부 계획은 시작 시 별도 작성
+
 ---
 
 ## 📋 문서 사용 가이드
@@ -99,9 +114,10 @@
 
 1. **[TECH_STACK.md](./TECH_STACK.md)** - 기술 스택 상세 정보
 2. **[flows/user-flow.md](./flows/user-flow.md)** ⭐ **NEW** - 최신 사용자 여정
-3. **[flows/api-flow.md](./flows/api-flow.md)** - Postman API 테스트 가이드
-4. **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** - 완성된 컴포넌트 카탈로그
-5. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 개발 가이드
+3. **[PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md)** ⭐ **NEW** - 개발 계획 로드맵
+4. **[flows/api-flow.md](./flows/api-flow.md)** - Postman API 테스트 가이드
+5. **[COMPONENT_CATALOG.md](./components/COMPONENT_CATALOG.md)** - 완성된 컴포넌트 카탈로그
+6. **[COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md)** - 컴포넌트 개발 가이드
 
 ### 🎯 상황별 문서 찾기
 
@@ -124,6 +140,11 @@
 - **[flows/user-flow.md](./flows/user-flow.md)** ⭐ **NEW** - 최신 사용자 플로우
 - **[USER_FLOW_DESIGN.md](./architecture/USER_FLOW_DESIGN.md)** - 사용자 플로우 세부 설계
 - **[DESIGN_SYSTEM.md](./architecture/DESIGN_SYSTEM.md)** - 노인 친화적 디자인
+
+#### 📅 **개발 계획 수립할 때**
+- **[PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md)** ⭐ **필수** - Phase 3 실행 계획
+- **[flows/user-flow.md](./flows/user-flow.md)** - 구현해야 할 사용자 여정
+- **[TECHNICAL_ARCHITECTURE.md](./architecture/TECHNICAL_ARCHITECTURE.md)** - 시스템 구조
 
 ---
 
@@ -174,6 +195,7 @@
 
 - [ ] [TECH_STACK.md](./TECH_STACK.md) 읽기
 - [ ] [flows/user-flow.md](./flows/user-flow.md) 읽기 ⭐ **NEW**
+- [ ] [PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md) 읽기 ⭐ **NEW**
 - [ ] [COMPONENT_DESIGN_GUIDE.md](./development/COMPONENT_DESIGN_GUIDE.md) 가이드라인 숙지
 - [ ] 개발 환경 설정 확인 (`npm run dev` 실행)
 
@@ -191,6 +213,7 @@
 | **기능 구현** | 🔄 진행 중   | Phase 3 - 핵심 기능 구현 (AI 대화, 보호자 관리)     |
 
 **📅 마지막 업데이트**: 2025-10-12
-**📈 현재 진행률**: Phase 2 완료 (70%)
-**🎯 다음 단계**: Phase 3 실행 - 핵심 기능 구현
-**⏰ 예상 완료**: 2주 후 MVP 완성
+**📈 현재 진행률**: Phase 2 완료 (25%)
+**🎯 다음 단계**: Phase 3-1 시작 - 기반 확립 (User 모델 확장 + 메인 화면 동적 구성)
+**⏰ 예상 완료**: 2-3주 후 MVP 완성
+**📋 상세 계획**: [PHASE3_EXECUTION_PLAN.md](./PHASE3_EXECUTION_PLAN.md)
