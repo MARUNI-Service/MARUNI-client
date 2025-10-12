@@ -6,6 +6,25 @@ import type { BaseEntity } from '@/shared/types/common';
 export type UserRole = 'SENIOR' | 'GUARDIAN';
 
 /**
+ * 보호자 정보 (최소 필드만)
+ */
+export interface Guardian {
+  id: number;
+  name: string;
+  relationship: string; // "딸", "아들", "간병인" 등
+}
+
+/**
+ * 보호 대상 정보 (최소 필드만)
+ */
+export interface ManagedMember {
+  id: number;
+  name: string;
+  lastCheckTime: string; // ISO 8601 문자열
+  emotionStatus: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'WARNING';
+}
+
+/**
  * 사용자 정보
  */
 export interface User extends BaseEntity {
@@ -14,6 +33,11 @@ export interface User extends BaseEntity {
   role: UserRole;
   phoneNumber?: string;
   email?: string;
+
+  // 🆕 Phase 3-1: 역할별 동적 화면을 위한 추가 필드
+  dailyCheckEnabled: boolean;
+  guardian: Guardian | null;
+  managedMembers: ManagedMember[];
 }
 
 /**
