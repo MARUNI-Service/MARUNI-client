@@ -4,6 +4,83 @@ import { getApiErrorMessage } from '@/shared/api/client';
 import * as authApi from '../api';
 import type { AuthState, LoginRequest, User } from '../types';
 
+// 🔴 Phase 3-1 ~ 3-7: Mock 데이터로 페이지 구현
+// Phase 3-8에서 API 연결 시 이 코드 전체 제거
+const MOCK_USERS: Record<string, User> = {
+  soonja: {
+    id: 1,
+    username: 'soonja',
+    name: '김순자',
+    role: 'SENIOR',
+    phoneNumber: '010-9999-8888',
+    email: 'soonja@example.com',
+    dailyCheckEnabled: true,
+    guardian: { id: 2, name: '김영희', relationship: '딸' },
+    managedMembers: [],
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+  },
+  younghee: {
+    id: 2,
+    username: 'younghee',
+    name: '김영희',
+    role: 'GUARDIAN',
+    phoneNumber: '010-1234-5678',
+    email: 'younghee@example.com',
+    dailyCheckEnabled: false,
+    guardian: null,
+    managedMembers: [
+      {
+        id: 1,
+        name: '김순자',
+        lastCheckTime: '2025-10-12T10:00:00Z',
+        emotionStatus: 'POSITIVE',
+      },
+    ],
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+  },
+  cheolsu: {
+    id: 3,
+    username: 'cheolsu',
+    name: '박철수',
+    role: 'SENIOR',
+    phoneNumber: '010-5555-6666',
+    email: 'cheolsu@example.com',
+    dailyCheckEnabled: true,
+    guardian: null,
+    managedMembers: [
+      {
+        id: 4,
+        name: '박아버지',
+        lastCheckTime: '2025-10-12T08:00:00Z',
+        emotionStatus: 'POSITIVE',
+      },
+      {
+        id: 5,
+        name: '박어머니',
+        lastCheckTime: '2025-10-12T09:00:00Z',
+        emotionStatus: 'WARNING',
+      },
+    ],
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+  },
+  newuser: {
+    id: 6,
+    username: 'newuser',
+    name: '신규사용자',
+    role: 'SENIOR',
+    phoneNumber: '010-7777-8888',
+    email: 'newuser@example.com',
+    dailyCheckEnabled: false,
+    guardian: null,
+    managedMembers: [],
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+  },
+};
+
 /**
  * Auth Store (Zustand with persist)
  * - 인증 상태 관리 (persist middleware로 자동 복원)
@@ -28,17 +105,35 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
 
         try {
-          const response = await authApi.login(credentials);
+          // 🔴 Phase 3-1 ~ 3-7: Mock 데이터 반환
+          // Phase 3-8에서 API 연결 시 이 if문 제거
+          const mockUser = MOCK_USERS[credentials.username];
+          if (mockUser) {
+            // Mock 로그인 성공 (비밀번호 체크 안 함)
+            set({
+              user: mockUser,
+              accessToken: 'mock-access-token',
+              refreshToken: 'mock-refresh-token',
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return;
+          }
 
-          // 상태 업데이트 (persist가 자동으로 localStorage에 저장)
-          set({
-            user: response.user,
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
+          // 🔴 Phase 3-8에서 활성화: 실제 API 호출
+          // const response = await authApi.login(credentials);
+          // set({
+          //   user: response.user,
+          //   accessToken: response.accessToken,
+          //   refreshToken: response.refreshToken,
+          //   isAuthenticated: true,
+          //   isLoading: false,
+          //   error: null,
+          // });
+
+          // Mock 데이터에 없는 username이면 에러
+          throw new Error('사용자를 찾을 수 없습니다. (soonja, younghee, cheolsu, newuser 중 하나를 입력하세요)');
         } catch (error) {
           const errorMessage = getApiErrorMessage(error);
           set({
