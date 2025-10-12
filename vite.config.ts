@@ -2,13 +2,14 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    tsconfigPaths(), // tsconfig.json의 paths를 자동으로 Vite alias로 변환
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -28,11 +29,6 @@ export default defineConfig({
       }
     })
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
   server: {
     port: 3000,
     open: true,
