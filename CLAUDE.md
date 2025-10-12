@@ -8,8 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **작업 시작 전 필수 확인:**
 
-1. **[CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md)** - 현재 프로젝트 상태 파악
-2. **[docs/README.md](./docs/README.md)** - 전체 문서 구조 및 진입점
+1. **[docs/README.md](./docs/README.md)** - 전체 문서 구조 및 진입점
+2. **[docs/flows/user-flow.md](./docs/flows/user-flow.md)** - 새로운 사용자 여정 설계 ⭐
 
 ## Development Guidelines for Claude Assistant
 
@@ -27,10 +27,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development Workflow
 
-- **BEFORE ANY CODING**: Read [CURRENT_STATUS.md](./docs/project/CURRENT_STATUS.md) for current project state
+- **BEFORE ANY CODING**: Read [docs/README.md](./docs/README.md) for project overview
+- **FOR USER FLOW**: Read [docs/flows/user-flow.md](./docs/flows/user-flow.md) for updated user journey ⭐ **NEW**
+- **FOR API FLOW**: Read [docs/flows/api-flow.md](./docs/flows/api-flow.md) for Postman test scenarios
 - **FOR COMPONENT WORK**: Read [COMPONENT_DESIGN_GUIDE.md](./docs/development/COMPONENT_DESIGN_GUIDE.md) for design patterns
 - **FOR ARCHITECTURE**: Read [TECHNICAL_ARCHITECTURE.md](./docs/architecture/TECHNICAL_ARCHITECTURE.md) for system design
-- **FOR API INTEGRATION**: Read [API_REFERENCE.md](./docs/api/API_REFERENCE.md) and [IMPLEMENTATION_FLOWS.md](./docs/flows/IMPLEMENTATION_FLOWS.md)
 
 ### Elderly-Friendly Development Guidelines
 
@@ -50,7 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **프로젝트명**: MARUNI (마음이 닿는 안부)
 - **설명**: 노인 돌봄을 위한 AI 기반 소통 서비스 - PWA 클라이언트
-- **타겟 사용자**: 노인층 (단순하고 직관적인 UI 필요)
+- **타겟 사용자**: 노인층 (단순하고 직관적한 UI 필요)
 - **개발 기간**: MVP 2-3주
 
 ## 기술 스택
@@ -91,6 +92,21 @@ src/
 ├── App.tsx                    # 메인 앱 컴포넌트
 ├── main.tsx                   # React 19 엔트리 포인트
 ├── index.css                  # Tailwind v4 + 노인 친화적 기본 스타일
+├── app/                       # 앱 설정 및 라우팅
+│   ├── App.tsx
+│   ├── router.tsx
+│   └── providers/
+├── features/                  # Feature 기반 구조
+│   └── auth/                  # 인증 기능 (완료)
+│       ├── api/
+│       ├── components/
+│       ├── hooks/
+│       ├── store/
+│       └── types/
+├── pages/                     # 페이지 컴포넌트
+│   ├── auth/                  # 로그인, 회원가입
+│   ├── dashboard/             # 대시보드
+│   └── NotFoundPage.tsx
 └── shared/                    # 공유 리소스
     ├── constants/             # 상수 정의
     │   ├── api.ts            # API 엔드포인트
@@ -126,12 +142,12 @@ src/
 
 - **서버 주소**: (환경변수로 설정 예정)
 - **인증**: JWT 토큰 기반
-- **상세 API 문서**: [API_REFERENCE.md](./docs/api/API_REFERENCE.md)
+- **상세 API 문서**: [docs/flows/api-flow.md](./docs/flows/api-flow.md)
 
 ## 노인 친화적 UI 가이드라인
 
 - **폰트 크기**: 최소 18px (기본), 버튼은 20px+
-- **터치 영역**: 최소 48x48px, 권장 60px+
+- **터치 영역**: 최소 48px, 권장 60px+
 - **대비**: 높은 명도 대비 사용
 - **색상**: 단순하고 명확한 색상 팔레트
 - **레이아웃**: 단순하고 직관적인 구조
@@ -168,4 +184,4 @@ VITE_APP_NAME=MARUNI
 
 ---
 
-_마지막 업데이트: 2025-10-05_
+_마지막 업데이트: 2025-10-12_

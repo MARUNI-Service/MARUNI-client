@@ -18,455 +18,160 @@
 ## 🎨 색상 시스템
 
 ### 주 색상 (Primary Colors)
-```css
-/* 신뢰감과 안정감을 주는 파란색 계열 */
---primary-50: #eff6ff;   /* 매우 연한 배경 */
---primary-100: #dbeafe;  /* 연한 배경 */
---primary-200: #bfdbfe;  /* 비활성 상태 */
---primary-300: #93c5fd;  /* 보조 요소 */
---primary-400: #60a5fa;  /* 호버 상태 */
---primary-500: #3b82f6;  /* 기본 주 색상 */
---primary-600: #2563eb;  /* 클릭 상태 */
---primary-700: #1d4ed8;  /* 진한 주 색상 */
---primary-800: #1e40af;  /* 매우 진한 */
---primary-900: #1e3a8a;  /* 가장 진한 */
-```
+- **Primary-500**: `#3b82f6` - 기본 주 색상 (파란색)
+- **Primary-600**: `#2563eb` - 클릭 상태
+- **Primary-700**: `#1d4ed8` - 진한 주 색상
+- 신뢰감과 안정감을 주는 파란색 계열
 
-### 보조 색상 (Secondary Colors)
-```css
-/* 차분하고 중립적인 회색 계열 */
---gray-50: #f9fafb;     /* 배경 */
---gray-100: #f3f4f6;    /* 연한 배경 */
---gray-200: #e5e7eb;    /* 구분선 */
---gray-300: #d1d5db;    /* 비활성 텍스트 */
---gray-400: #9ca3af;    /* 보조 텍스트 */
---gray-500: #6b7280;    /* 일반 텍스트 */
---gray-600: #4b5563;    /* 진한 텍스트 */
---gray-700: #374151;    /* 제목 텍스트 */
---gray-800: #1f2937;    /* 매우 진한 텍스트 */
---gray-900: #111827;    /* 가장 진한 텍스트 */
-```
+### 보조 색상 (Gray)
+- **Gray-50**: `#f9fafb` - 배경
+- **Gray-100**: `#f3f4f6` - 연한 배경
+- **Gray-200**: `#e5e7eb` - 구분선
+- **Gray-700**: `#374151` - 제목 텍스트
+- **Gray-900**: `#111827` - 가장 진한 텍스트
 
 ### 상태 색상 (Status Colors)
-```css
-/* 성공 - 초록색 */
---success-50: #f0fdf4;
---success-500: #22c55e;  /* 긍정적 피드백 */
---success-600: #16a34a;
-
-/* 경고 - 주황색 */
---warning-50: #fffbeb;
---warning-500: #f59e0b;  /* 주의 필요 */
---warning-600: #d97706;
-
-/* 위험 - 빨간색 */
---danger-50: #fef2f2;
---danger-500: #ef4444;   /* 긴급 상황 */
---danger-600: #dc2626;
-
-/* 정보 - 하늘색 */
---info-50: #f0f9ff;
---info-500: #06b6d4;     /* 일반 정보 */
---info-600: #0891b2;
-```
+- **Success**: `#22c55e` - 긍정적 피드백 (초록색)
+- **Warning**: `#f59e0b` - 주의 필요 (주황색)
+- **Danger**: `#ef4444` - 긴급 상황 (빨간색)
+- **Info**: `#06b6d4` - 일반 정보 (하늘색)
 
 ### 감정 표현 색상
-```css
-/* 기분 좋음 */
---mood-happy: #22c55e;   /* 밝은 초록 */
-
-/* 보통 */
---mood-neutral: #f59e0b; /* 따뜻한 노랑 */
-
-/* 기분 안 좋음 */
---mood-sad: #f97316;     /* 부드러운 주황 (빨강보다 덜 자극적) */
-
-/* AI 대화 */
---ai-color: #8b5cf6;     /* 보라색 - AI 구분용 */
-```
+- **Mood Happy**: `#22c55e` - 기분 좋음 (밝은 초록)
+- **Mood Neutral**: `#f59e0b` - 보통 (따뜻한 노랑)
+- **Mood Sad**: `#f97316` - 기분 안 좋음 (부드러운 주황)
+- **AI Color**: `#8b5cf6` - AI 구분용 (보라색)
 
 ## 📝 타이포그래피
 
-### 폰트 스케일
-```css
-/* 노인 친화적 큰 폰트 사이즈 */
---text-xs: 14px;    /* 보조 정보 (최소 크기) */
---text-sm: 16px;    /* 작은 텍스트 */
---text-base: 18px;  /* 기본 텍스트 (일반 앱의 16px 대신) */
---text-lg: 20px;    /* 중요한 텍스트 */
---text-xl: 24px;    /* 버튼 텍스트 */
---text-2xl: 30px;   /* 제목 */
---text-3xl: 36px;   /* 큰 제목 */
---text-4xl: 48px;   /* 메인 제목 */
-```
+### 폰트 스케일 (노인 친화적 큰 폰트)
+- **text-xs**: 14px - 보조 정보 (최소 크기)
+- **text-sm**: 16px - 작은 텍스트
+- **text-base**: 18px - 기본 텍스트 ⭐
+- **text-lg**: 20px - 중요한 텍스트
+- **text-xl**: 24px - 버튼 텍스트
+- **text-2xl**: 30px - 제목
+- **text-3xl**: 36px - 큰 제목
+- **text-4xl**: 48px - 메인 제목
 
 ### 폰트 패밀리
-```css
-/* 기본 폰트 - 가독성 우선 */
---font-family:
-  'Noto Sans KR',
-  -apple-system,
-  BlinkMacSystemFont,
-  'Apple SD Gothic Neo',
-  'Malgun Gothic',
-  sans-serif;
-
-/* 숫자 전용 폰트 - 명확한 구분 */
---font-number:
-  'SF Mono',
-  'Monaco',
-  'Cascadia Code',
-  monospace;
-```
+- **기본 폰트**: `Noto Sans KR`, `-apple-system`, `Apple SD Gothic Neo`, `Malgun Gothic`
+- **숫자 전용**: `SF Mono`, `Monaco`, `Cascadia Code`
 
 ### 폰트 굵기
-```css
---font-light: 300;     /* 보조 정보 */
---font-normal: 400;    /* 일반 텍스트 */
---font-medium: 500;    /* 중요한 텍스트 */
---font-semibold: 600;  /* 버튼, 제목 */
---font-bold: 700;      /* 강조 텍스트 */
-```
+- **font-light** (300): 보조 정보
+- **font-normal** (400): 일반 텍스트
+- **font-medium** (500): 중요한 텍스트
+- **font-semibold** (600): 버튼, 제목
+- **font-bold** (700): 강조 텍스트
 
 ### 행간 (Line Height)
-```css
---leading-tight: 1.25;   /* 제목용 */
---leading-normal: 1.5;   /* 일반 텍스트 */
---leading-relaxed: 1.75; /* 긴 텍스트 */
-```
+- **leading-tight** (1.25): 제목용
+- **leading-normal** (1.5): 일반 텍스트
+- **leading-relaxed** (1.75): 긴 텍스트
 
 ## 📐 간격 시스템 (Spacing)
 
-### 기본 간격 단위
-```css
-/* 8px 기준 - 터치 친화적 */
---space-1: 0.25rem;  /* 4px */
---space-2: 0.5rem;   /* 8px */
---space-3: 0.75rem;  /* 12px */
---space-4: 1rem;     /* 16px */
---space-5: 1.25rem;  /* 20px */
---space-6: 1.5rem;   /* 24px */
---space-8: 2rem;     /* 32px */
---space-10: 2.5rem;  /* 40px */
---space-12: 3rem;    /* 48px */
---space-16: 4rem;    /* 64px */
---space-20: 5rem;    /* 80px */
-```
+### 기본 간격 단위 (8px 기준)
+- **space-2**: 8px
+- **space-4**: 16px
+- **space-6**: 24px
+- **space-8**: 32px
+- **space-12**: 48px
+- **space-16**: 64px
 
 ### 컴포넌트별 간격
-```css
-/* 버튼 내부 패딩 */
---button-padding-sm: 12px 20px;   /* 작은 버튼 */
---button-padding-md: 16px 24px;   /* 기본 버튼 */
---button-padding-lg: 20px 32px;   /* 큰 버튼 */
-
-/* 카드 패딩 */
---card-padding: 24px;
-
-/* 페이지 여백 */
---page-padding: 20px;
-
-/* 컴포넌트 간격 */
---component-gap: 24px;
-```
+- **버튼 내부 패딩**:
+  - Small: 12px 20px
+  - Medium: 16px 24px
+  - Large: 20px 32px
+- **카드 패딩**: 24px
+- **페이지 여백**: 20px
+- **컴포넌트 간격**: 24px
 
 ## 🎯 터치 타겟 크기
 
-### 최소 터치 영역
-```css
-/* WCAG 기준보다 큰 크기 적용 */
---touch-target-min: 48px;   /* 최소 크기 */
---touch-target-comfort: 60px; /* 권장 크기 */
---touch-target-primary: 72px; /* 주요 버튼 */
+### 최소 터치 영역 (WCAG 기준보다 큰 크기)
+- **touch-target-min**: 48px - 최소 크기
+- **touch-target-comfort**: 60px - 권장 크기 ⭐
+- **touch-target-primary**: 72px - 주요 버튼
 
-/* 터치 간격 */
---touch-gap-min: 8px;       /* 최소 간격 */
---touch-gap-comfort: 16px;  /* 권장 간격 */
-```
+### 터치 간격
+- **touch-gap-min**: 8px - 최소 간격
+- **touch-gap-comfort**: 16px - 권장 간격
 
 ## 🔘 컴포넌트 스타일
 
 ### 버튼 시스템
-```css
-/* 주 버튼 (Primary Button) */
-.btn-primary {
-  background: var(--primary-500);
-  color: white;
-  font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-  padding: var(--button-padding-lg);
-  min-height: var(--touch-target-primary);
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-  background: var(--primary-600);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-primary:active {
-  background: var(--primary-700);
-  transform: translateY(1px);
-}
-
-/* 보조 버튼 (Secondary Button) */
-.btn-secondary {
-  background: var(--gray-100);
-  color: var(--gray-700);
-  font-size: var(--text-lg);
-  font-weight: var(--font-medium);
-  padding: var(--button-padding-md);
-  min-height: var(--touch-target-comfort);
-  border-radius: 8px;
-  border: 1px solid var(--gray-200);
-}
-
-/* 감정 응답 버튼 */
-.btn-mood {
-  min-height: 80px;
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  border-radius: 16px;
-  font-size: var(--text-lg);
-  font-weight: var(--font-medium);
-}
-
-.btn-mood-happy {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  color: var(--success-600);
-  border: 2px solid var(--success-200);
-}
-
-.btn-mood-neutral {
-  background: linear-gradient(135deg, #fef3c7, #fed7aa);
-  color: var(--warning-600);
-  border: 2px solid var(--warning-200);
-}
-
-.btn-mood-sad {
-  background: linear-gradient(135deg, #fed7d7, #fecaca);
-  color: var(--danger-500);
-  border: 2px solid var(--danger-200);
-}
-```
+- **주 버튼 (Primary)**: 파란색 배경, 흰색 텍스트, 72px 높이
+- **보조 버튼 (Secondary)**: 회색 배경, 회색 텍스트, 60px 높이
+- **감정 응답 버튼**: 80px 높이, 120px 너비, 아이콘 + 텍스트
 
 ### 입력 필드
-```css
-.input-field {
-  font-size: var(--text-lg);
-  padding: 16px 20px;
-  min-height: var(--touch-target-comfort);
-  border: 2px solid var(--gray-200);
-  border-radius: 8px;
-  background: white;
-  width: 100%;
-}
-
-.input-field:focus {
-  border-color: var(--primary-400);
-  box-shadow: 0 0 0 3px var(--primary-100);
-  outline: none;
-}
-
-.input-field::placeholder {
-  color: var(--gray-400);
-  font-size: var(--text-base);
-}
-```
+- **높이**: 60px
+- **폰트 크기**: 18px
+- **패딩**: 16px 20px
+- **테두리**: 2px solid
+- **포커스**: 3px 그림자
 
 ### 카드 컴포넌트
-```css
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: var(--card-padding);
-  border: 1px solid var(--gray-100);
-}
-
-.card-hover {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.card-hover:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-```
+- **배경**: 흰색
+- **둥근 모서리**: 16px
+- **그림자**: 0 2px 8px rgba(0, 0, 0, 0.1)
+- **패딩**: 24px
+- **호버 효과**: 살짝 위로 이동 + 진한 그림자
 
 ## 📱 반응형 디자인
 
 ### 브레이크포인트
-```css
-/* 모바일 우선 설계 */
---mobile: 320px;     /* 최소 지원 크기 */
---mobile-lg: 480px;  /* 큰 모바일 */
---tablet: 768px;     /* 태블릿 */
---desktop: 1024px;   /* 데스크톱 */
---desktop-lg: 1280px; /* 큰 데스크톱 */
-```
+- **mobile**: 320px - 최소 지원 크기
+- **mobile-lg**: 480px - 큰 모바일
+- **tablet**: 768px - 태블릿
+- **desktop**: 1024px - 데스크톱
+- **desktop-lg**: 1280px - 큰 데스크톱
 
-### 반응형 패딩
-```css
-/* 화면 크기별 여백 조정 */
-.responsive-padding {
-  padding: 16px; /* 모바일 */
-}
-
-@media (min-width: 768px) {
-  .responsive-padding {
-    padding: 24px; /* 태블릿 */
-  }
-}
-
-@media (min-width: 1024px) {
-  .responsive-padding {
-    padding: 32px; /* 데스크톱 */
-  }
-}
-```
-
-### 반응형 폰트
-```css
-/* 화면 크기별 폰트 조정 */
-.responsive-text {
-  font-size: 18px; /* 모바일 기본 */
-}
-
-@media (min-width: 768px) {
-  .responsive-text {
-    font-size: 20px; /* 태블릿 */
-  }
-}
-```
-
-## 🌗 다크 모드 (선택적)
-
-### 다크 모드 색상
-```css
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #111827;
-    --bg-secondary: #1f2937;
-    --text-primary: #f9fafb;
-    --text-secondary: #d1d5db;
-    --border-color: #374151;
-  }
-}
-
-/* 다크 모드 버튼 */
-.btn-primary-dark {
-  background: var(--primary-600);
-  color: white;
-}
-
-.btn-secondary-dark {
-  background: var(--gray-700);
-  color: var(--gray-100);
-  border-color: var(--gray-600);
-}
-```
+### 반응형 원칙
+- **모바일 우선**: 320px부터 설계
+- **터치 최적화**: 모든 터치 타겟 48px 이상
+- **단일 컬럼 레이아웃**: 스크롤 최소화
 
 ## ♿ 접근성 가이드라인
 
 ### 색상 대비
-```css
-/* WCAG AA 기준 4.5:1 이상 */
-.high-contrast {
-  color: var(--gray-900);
-  background: white;
-}
-
-.high-contrast-reverse {
-  color: white;
-  background: var(--gray-900);
-}
-```
+- **WCAG AA 기준**: 4.5:1 이상 준수
+- **고대비**: 텍스트-배경 대비 최대화
+- **색맹 고려**: 색상만으로 정보 전달 금지
 
 ### 포커스 표시
-```css
-.focus-visible {
-  outline: 3px solid var(--primary-400);
-  outline-offset: 2px;
-}
-
-/* 키보드 네비게이션 */
-.keyboard-focusable:focus-visible {
-  box-shadow: 0 0 0 3px var(--primary-200);
-  border-color: var(--primary-500);
-}
-```
+- **outline**: 3px solid (주 색상)
+- **outline-offset**: 2px
+- **키보드 포커스**: 명확한 시각적 표시
 
 ### 스크린 리더 지원
-```css
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-```
+- **aria-label**: 모든 인터랙티브 요소
+- **role**: 의미적 역할 명시
+- **aria-describedby**: 도움말 연결
 
 ## 🎭 애니메이션
 
 ### 기본 트랜지션
-```css
-/* 부드럽고 자연스러운 애니메이션 */
-.transition-smooth {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+- **transition-smooth**: 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+- **transition-slow**: 0.3s ease-in-out
 
-.transition-slow {
-  transition: all 0.3s ease-in-out;
-}
-
-/* 페이지 전환 */
-.page-enter {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.page-enter-active {
-  opacity: 1;
-  transform: translateX(0);
-  transition: all 0.3s ease-out;
-}
-```
+### 페이지 전환
+- **진입**: opacity 0 → 1, translateX 20px → 0
+- **시간**: 0.3s ease-out
 
 ### 로딩 애니메이션
-```css
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.loading-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-```
+- **pulse**: opacity 1 → 0.5 → 1 (2초 반복)
 
 ## 🎨 아이콘 시스템
 
 ### 아이콘 크기
-```css
---icon-xs: 16px;   /* 작은 아이콘 */
---icon-sm: 20px;   /* 일반 아이콘 */
---icon-md: 24px;   /* 기본 아이콘 */
---icon-lg: 32px;   /* 큰 아이콘 */
---icon-xl: 48px;   /* 매우 큰 아이콘 */
-```
+- **icon-sm**: 20px
+- **icon-md**: 24px
+- **icon-lg**: 32px
+- **icon-xl**: 48px
 
 ### 감정 이모지
 - 😊 좋음 (happy)
@@ -480,3 +185,5 @@
 ---
 
 **🎯 이 디자인 시스템은 노인 사용자의 특성을 고려하여 가독성, 접근성, 사용성을 최우선으로 설계되었습니다.**
+
+**📅 마지막 업데이트**: 2025-10-12

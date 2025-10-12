@@ -16,24 +16,6 @@
 - `fullWidth`: boolean (기본값: false)
 - `disabled`: boolean (기본값: false)
 
-**사용 예제**:
-```typescript
-// Primary 버튼
-<Button variant="primary" size="large">
-  확인
-</Button>
-
-// 전체 너비 버튼
-<Button variant="primary" size="extra-large" fullWidth>
-  로그인
-</Button>
-
-// 비활성 버튼
-<Button variant="secondary" disabled>
-  비활성
-</Button>
-```
-
 **노인 친화적 특징**:
 - ✅ 터치 영역: Large 60px, Extra-large 72px
 - ✅ 명확한 포커스 링 (4px)
@@ -51,19 +33,6 @@
 - `showBack`: boolean (기본값: false)
 - `onBack`: () => void (선택)
 - `children`: ReactNode
-
-**사용 예제**:
-```typescript
-// 기본 레이아웃
-<Layout title="페이지 제목">
-  <div>콘텐츠</div>
-</Layout>
-
-// 뒤로가기 버튼이 있는 레이아웃
-<Layout title="상세 페이지" showBack onBack={() => navigate(-1)}>
-  <div>콘텐츠</div>
-</Layout>
-```
 
 **특징**:
 - ✅ 모바일 최적화 (max-width: 480px)
@@ -85,30 +54,6 @@
 - `disabled`: boolean (기본값: false)
 - `type`: string (기본값: 'text')
 
-**사용 예제**:
-```typescript
-// 기본 입력 필드
-<Input
-  label="이름"
-  placeholder="이름을 입력하세요"
-  required
-/>
-
-// 에러 상태
-<Input
-  label="전화번호"
-  type="tel"
-  error="올바른 전화번호를 입력하세요"
-/>
-
-// 도움말 텍스트
-<Input
-  label="이메일"
-  type="email"
-  helperText="예: example@email.com"
-/>
-```
-
 **노인 친화적 특징**:
 - ✅ 높이: 60px
 - ✅ 폰트 크기: 18px
@@ -128,25 +73,6 @@
 - `rounded`: 'small' | 'medium' | 'large' (기본값: 'medium')
 - `onClick`: () => void (clickable일 때)
 
-**사용 예제**:
-```typescript
-// 기본 카드
-<Card padding="large">
-  <h3>카드 제목</h3>
-  <p>카드 내용</p>
-</Card>
-
-// 클릭 가능한 카드
-<Card
-  clickable
-  padding="medium"
-  shadow="medium"
-  onClick={() => navigate('/detail')}
->
-  <h3>클릭하세요</h3>
-</Card>
-```
-
 **특징**:
 - ✅ 클릭 가능/불가능 모드 자동 전환
 - ✅ 호버 효과 및 포커스 링
@@ -164,21 +90,6 @@
 - `label`: string (기본값: '로딩 중...')
 - `className`: string (선택)
 
-**사용 예제**:
-```typescript
-// 기본 스피너
-<LoadingSpinner />
-
-// 큰 스피너
-<LoadingSpinner
-  size="large"
-  label="데이터를 불러오는 중..."
-/>
-
-// 레이블 없는 스피너
-<LoadingSpinner size="small" label="" />
-```
-
 **접근성 특징**:
 - ✅ role="status"
 - ✅ aria-live="polite"
@@ -195,32 +106,6 @@
 - `children`: ReactNode
 - `fallback`: ReactNode (선택)
 - `onError`: (error, errorInfo) => void (선택)
-
-**사용 예제**:
-```typescript
-// 기본 사용법 (main.tsx)
-<ErrorBoundary
-  onError={(error, errorInfo) => {
-    console.error('Error caught:', error, errorInfo);
-  }}
->
-  <App />
-</ErrorBoundary>
-
-// 커스텀 fallback UI
-<ErrorBoundary
-  fallback={
-    <div>
-      <h1>앗, 문제가 발생했어요</h1>
-      <button onClick={() => window.location.reload()}>
-        새로고침
-      </button>
-    </div>
-  }
->
-  <MyComponent />
-</ErrorBoundary>
-```
 
 **특징**:
 - ✅ React Error Boundary 패턴
@@ -243,16 +128,6 @@ import {
   Layout,
   LoadingSpinner,
   ErrorBoundary,
-} from './shared/components';
-
-// 타입도 함께 import 가능
-import type {
-  ButtonProps,
-  InputProps,
-  CardProps,
-  LayoutProps,
-  LoadingSpinnerProps,
-  ErrorBoundaryProps,
 } from './shared/components';
 ```
 
@@ -309,5 +184,5 @@ Phase 1 완료 후 다음 단계:
 
 **✅ Phase 1 완료: 모든 핵심 컴포넌트가 품질 기준을 충족하며 실제 사용 가능한 상태입니다.**
 
-**📅 마지막 업데이트**: 2025-09-30
+**📅 마지막 업데이트**: 2025-10-12
 **🎯 완성도**: Phase 1 완료 (100%)
