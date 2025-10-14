@@ -1,0 +1,1 @@
+export { ManagedMemberCard } from './ManagedMemberCard';
