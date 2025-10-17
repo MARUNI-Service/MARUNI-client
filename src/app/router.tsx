@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoginPage, RegisterPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
+import { GuardiansPage, GuardianSearchPage, GuardianRequestsPage } from '@/pages/guardians';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
@@ -41,6 +42,32 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+
+      // 🆕 Phase 3-3: 보호자 관리 라우트
+      {
+        path: ROUTES.GUARDIANS,
+        element: (
+          <ProtectedRoute>
+            <GuardiansPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.GUARDIANS_SEARCH,
+        element: (
+          <ProtectedRoute>
+            <GuardianSearchPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.GUARDIANS_REQUESTS,
+        element: (
+          <ProtectedRoute>
+            <GuardianRequestsPage />
           </ProtectedRoute>
         ),
       },

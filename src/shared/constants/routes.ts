@@ -8,7 +8,12 @@ export const ROUTES = {
   // 보호된 라우트
   DASHBOARD: '/dashboard',
   CONVERSATION: '/conversation',
+
+  // 보호자 관리 (Phase 3-3)
   GUARDIANS: '/guardians',
+  GUARDIANS_SEARCH: '/guardians/search',
+  GUARDIANS_REQUESTS: '/guardians/requests',
+
   SETTINGS: '/settings',
 } as const;
 
