@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Layout, Card, Button, Input, LoadingSpinner } from '@/shared/components';
 import { useLoginForm } from '@/features/auth/hooks';
 
@@ -88,10 +89,13 @@ export function LoginPage() {
             </Button>
           </div>
 
-          {/* 안내 메시지 */}
+          {/* 회원가입 링크 */}
           <div className="mt-8 text-center">
-            <p className="text-base text-gray-500">
-              처음 사용하시나요? 관리자에게 문의하세요.
+            <p className="text-lg text-gray-600">
+              계정이 없으신가요?{' '}
+              <Link to="/register" className="text-blue-600 font-semibold hover:underline">
+                회원가입
+              </Link>
             </p>
           </div>
         </Card>

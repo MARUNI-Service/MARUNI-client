@@ -12,6 +12,7 @@ export function useAuth() {
     isAuthenticated,
     isLoading,
     login,
+    signup,
     logout,
     setUser,
     setTokens,
@@ -27,6 +28,7 @@ export function useAuth() {
 
     // 액션
     login,
+    signup,
     logout,
     setUser,
     setTokens,

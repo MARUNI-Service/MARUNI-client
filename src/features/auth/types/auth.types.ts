@@ -49,6 +49,16 @@ export interface LoginRequest {
 }
 
 /**
+ * 회원가입 요청
+ */
+export interface SignupRequest {
+  email: string;
+  name: string;
+  password: string;
+  phoneNumber?: string;
+}
+
+/**
  * 로그인 응답
  */
 export interface LoginResponse {
@@ -79,6 +89,7 @@ export interface AuthState {
 
   // 액션
   login: (credentials: LoginRequest) => Promise<void>;
+  signup: (credentials: SignupRequest) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
   setUser: (user: User | null) => void;

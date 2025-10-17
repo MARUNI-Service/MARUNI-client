@@ -4,6 +4,7 @@ export type {
   Guardian,
   ManagedMember,
   LoginRequest,
+  SignupRequest,
   LoginResponse,
   RefreshTokenResponse,
   AuthState,
