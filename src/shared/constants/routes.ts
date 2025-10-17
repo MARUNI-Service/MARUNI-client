@@ -3,6 +3,7 @@ export const ROUTES = {
   // 공개 라우트
   HOME: '/',
   LOGIN: '/login',
+  REGISTER: '/register',
 
   // 보호된 라우트
   DASHBOARD: '/dashboard',
