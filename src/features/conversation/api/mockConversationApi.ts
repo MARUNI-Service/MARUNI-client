@@ -1,0 +1,188 @@
+import type { Message, EmotionStatus } from '../types/conversation.types';
+
+const STORAGE_KEY_PREFIX = 'conversation-messages-';
+const MAX_MESSAGES = 100; // 최대 저장 메시지 수
+
+/**
+ * 🧪 개발/테스트용 에러 시뮬레이션
+ *
+ * 사용법:
+ * - "[error]" 포함 메시지 → 네트워크 에러 발생
+ * - "[timeout]" 포함 메시지 → 타임아웃 에러 발생
+ *
+ * 예: "안녕하세요 [error]" 입력 시 에러 처리 UI 테스트 가능
+ */
+const ENABLE_ERROR_SIMULATION = true; // Phase 3-8에서 false로 변경
+
+// Mock AI 응답 규칙
+const AI_RESPONSES = {
+  GREETING: [
+    '안녕하세요! 오늘 하루 어떠셨어요? 😊',
+    '좋은 아침이에요! 잘 주무셨나요?',
+    '반가워요! 오늘 기분이 어떠세요?',
+  ],
+  POSITIVE: [
+    '정말 좋으시네요! 기분 좋은 하루를 보내시길 바래요 🌞',
+    '그거 참 좋네요! 행복한 하루 되세요!',
+    '와, 정말 기쁘시겠어요! 앞으로도 좋은 일만 가득하시길!',
+  ],
+  NEGATIVE: [
+    '힘드시군요... 괜찮으신가요? 😢',
+    '걱정이 되네요. 조금 쉬시는 건 어떠세요?',
+    '많이 힘드셨겠어요. 천천히 이야기해주세요.',
+  ],
+  NEUTRAL: [
+    '그렇군요. 더 말씀해주시겠어요?',
+    '알겠습니다. 오늘 특별히 하고 싶은 일이 있으신가요?',
+    '네, 잘 들었어요. 편안하게 이야기 나눠요.',
+  ],
+  DEFAULT: [
+    '오늘 하루는 어떠셨어요?',
+    '요즘 건강은 어떠세요?',
+    '오늘 날씨가 좋네요. 산책 가실 계획이 있으신가요?',
+  ],
+};
+
+// 감정 분석 키워드
+const EMOTION_KEYWORDS = {
+  POSITIVE: ['좋', '행복', '즐거', '기쁘', '건강', '좋아', '재밌', '웃', '감사', '사랑'],
+  NEGATIVE: ['슬프', '아프', '힘들', '외롭', '싫', '나빠', '우울', '걱정', '불안', '아파'],
+};
+
+/**
+ * 감정 분석 (간단한 키워드 기반)
+ */
+function analyzeEmotion(content: string): EmotionStatus {
+  const lowerContent = content.toLowerCase();
+
+  // 긍정 키워드 검사
+  const hasPositive = EMOTION_KEYWORDS.POSITIVE.some((keyword) =>
+    lowerContent.includes(keyword)
+  );
+  if (hasPositive) return 'POSITIVE';
+
+  // 부정 키워드 검사
+  const hasNegative = EMOTION_KEYWORDS.NEGATIVE.some((keyword) =>
+    lowerContent.includes(keyword)
+  );
+  if (hasNegative) return 'NEGATIVE';
+
+  // 기본값: 중립
+  return 'NEUTRAL';
+}
+
+/**
+ * AI 응답 생성 (간단한 규칙 기반)
+ */
+function generateAIResponse(userMessage: string, emotionStatus: EmotionStatus): string {
+  // 첫 메시지 감지 (인사말)
+  if (
+    userMessage.includes('안녕') ||
+    userMessage.includes('처음') ||
+    userMessage.length < 10
+  ) {
+    const responses = AI_RESPONSES.GREETING;
+    return responses[Math.floor(Math.random() * responses.length)];
+  }
+
+  // 감정 상태에 따른 응답
+  let responses: string[];
+  switch (emotionStatus) {
+    case 'POSITIVE':
+      responses = AI_RESPONSES.POSITIVE;
+      break;
+    case 'NEGATIVE':
+      responses = AI_RESPONSES.NEGATIVE;
+      break;
+    case 'NEUTRAL':
+      responses = AI_RESPONSES.NEUTRAL;
+      break;
+    default:
+      responses = AI_RESPONSES.DEFAULT;
+  }
+
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
+/**
+ * 메시지 목록 조회
+ */
+export async function mockGetMessages(userId: number): Promise<Message[]> {
+  await new Promise((resolve) => setTimeout(resolve, 300)); // 네트워크 지연 시뮬레이션
+
+  const key = `${STORAGE_KEY_PREFIX}${userId}`;
+  const stored = localStorage.getItem(key);
+
+  if (!stored) {
+    return [];
+  }
+
+  const messages: Message[] = JSON.parse(stored);
+  return messages;
+}
+
+/**
+ * 메시지 전송 (사용자 메시지 + AI 응답 생성)
+ */
+export async function mockSendMessage(
+  userId: number,
+  content: string
+): Promise<{ userMessage: Message; aiMessage: Message }> {
+  // 🧪 에러 시뮬레이션 (개발/테스트용)
+  if (ENABLE_ERROR_SIMULATION) {
+    const lowerContent = content.toLowerCase();
+
+    // [error] 키워드: 네트워크 에러 발생
+    if (lowerContent.includes('[error]')) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      throw new Error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+
+    // [timeout] 키워드: 타임아웃 에러 발생 (10초 대기 후)
+    if (lowerContent.includes('[timeout]')) {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      throw new Error('요청 시간이 초과되었습니다. 다시 시도해주세요.');
+    }
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
+
+  const key = `${STORAGE_KEY_PREFIX}${userId}`;
+  const stored = localStorage.getItem(key);
+  const messages: Message[] = stored ? JSON.parse(stored) : [];
+
+  // 감정 분석
+  const emotionStatus = analyzeEmotion(content);
+
+  // 사용자 메시지 생성
+  const userMessage: Message = {
+    id: Date.now(),
+    sender: 'USER',
+    content,
+    emotionStatus,
+    createdAt: new Date().toISOString(),
+  };
+
+  messages.push(userMessage);
+
+  // AI 응답 생성 (1초 delay)
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const aiResponse = generateAIResponse(content, emotionStatus);
+  const aiMessage: Message = {
+    id: Date.now() + 1,
+    sender: 'AI',
+    content: aiResponse,
+    createdAt: new Date().toISOString(),
+  };
+
+  messages.push(aiMessage);
+
+  // 최대 메시지 수 제한
+  const trimmedMessages = messages.slice(-MAX_MESSAGES);
+
+  // 저장
+  localStorage.setItem(key, JSON.stringify(trimmedMessages));
+
+  return { userMessage, aiMessage };
+}
