@@ -244,6 +244,17 @@ src/shared/components/business/
     └── index.ts
 ```
 
+> **📝 컴포넌트 위치 선정 근거**
+>
+> 현재 `shared/components/business/`에 배치하는 이유:
+> - GuardianCard, ManagedMemberCard 선례 따름
+> - Phase 3-6에서 보호자가 대화 이력 조회 시 재사용 가능성
+> - Phase 4에서 대화 공유 기능 구현 시 재사용 예상
+>
+> **TODO: Phase 3-6 완료 후 재검토**
+> - 실제로 1개 feature에서만 사용된다면 `features/conversation/components/`로 이동
+> - 2개 이상 feature에서 사용 확인되면 현재 위치 유지
+
 **체크리스트**:
 
 - [ ] `ChatMessage.tsx` - 메시지 말풍선 컴포넌트
@@ -268,7 +279,7 @@ src/pages/conversation/
 **체크리스트**:
 
 - [ ] `ConversationPage.tsx` - 대화 화면
-- [ ] 대화 이력 표시 (날짜별 그룹화)
+- [ ] 대화 이력 표시 (시간 순 정렬)
 - [ ] 메시지 전송 처리
 - [ ] AI 응답 대기 로딩 표시
 - [ ] 자동 스크롤 (최신 메시지로)
@@ -337,16 +348,6 @@ export interface Message {
 }
 
 /**
- * 대화 (전체 대화 이력)
- */
-export interface Conversation {
-  id: number;
-  memberId: number;
-  messages: Message[];
-  lastMessageAt: string | null;
-}
-
-/**
  * 메시지 전송 요청
  */
 export interface SendMessageRequest {
@@ -361,6 +362,17 @@ import type { Message, Conversation } from '../types/conversation.types';
 
 const STORAGE_KEY_PREFIX = 'conversation-messages-';
 const MAX_MESSAGES = 100; // 최대 저장 메시지 수
+
+/**
+ * 🧪 개발/테스트용 에러 시뮬레이션
+ *
+ * 사용법:
+ * - "[error]" 포함 메시지 → 네트워크 에러 발생
+ * - "[timeout]" 포함 메시지 → 타임아웃 에러 발생
+ *
+ * 예: "안녕하세요 [error]" 입력 시 에러 처리 UI 테스트 가능
+ */
+const ENABLE_ERROR_SIMULATION = true; // Phase 3-8에서 false로 변경
 
 // Mock AI 응답 규칙
 const AI_RESPONSES = {
@@ -476,6 +488,23 @@ export async function mockSendMessage(
   userId: number,
   content: string
 ): Promise<{ userMessage: Message; aiMessage: Message }> {
+  // 🧪 에러 시뮬레이션 (개발/테스트용)
+  if (ENABLE_ERROR_SIMULATION) {
+    const lowerContent = content.toLowerCase();
+
+    // [error] 키워드: 네트워크 에러 발생
+    if (lowerContent.includes('[error]')) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      throw new Error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+
+    // [timeout] 키워드: 타임아웃 에러 발생 (10초 대기 후)
+    if (lowerContent.includes('[timeout]')) {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      throw new Error('요청 시간이 초과되었습니다. 다시 시도해주세요.');
+    }
+  }
+
   await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
 
   const key = `${STORAGE_KEY_PREFIX}${userId}`;
@@ -517,16 +546,6 @@ export async function mockSendMessage(
 
   return { userMessage, aiMessage };
 }
-
-/**
- * 대화 이력 삭제
- */
-export async function mockClearMessages(userId: number): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 200));
-
-  const key = `${STORAGE_KEY_PREFIX}${userId}`;
-  localStorage.removeItem(key);
-}
 ```
 
 #### 1.3 Conversation 훅 (`useConversation.ts`)
@@ -537,6 +556,16 @@ import { useAuthStore } from '@/features/auth';
 import type { Message } from '../types/conversation.types';
 import { mockGetMessages, mockSendMessage } from '../api/mockConversationApi';
 
+/**
+ * 대화 관리 훅
+ *
+ * TODO: Phase 3-6 (알림 기능)에서 대시보드 뱃지 구현 시 검토 필요
+ * - "읽지 않은 메시지 수" 기능 추가 시
+ * - 여러 컴포넌트에서 대화 상태 공유 필요 시
+ * - Zustand store로 마이그레이션 고려
+ *
+ * 현재는 ConversationPage에서만 사용하므로 useState로 충분
+ */
 export function useConversation() {
   const user = useAuthStore((state) => state.user);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -594,13 +623,13 @@ export function useConversation() {
 
 ```typescript
 // Types
-export type { Message, Conversation, MessageSender, EmotionStatus } from './types/conversation.types';
+export type { Message, MessageSender, EmotionStatus } from './types/conversation.types';
 
 // Hooks
 export { useConversation } from './hooks/useConversation';
 
 // API (테스트용)
-export { mockGetMessages, mockSendMessage, mockClearMessages } from './api/mockConversationApi';
+export { mockGetMessages, mockSendMessage } from './api/mockConversationApi';
 ```
 
 ---
@@ -1003,6 +1032,57 @@ export const router = createBrowserRouter([
 
 ---
 
+#### 🧪 에러 처리 테스트: 네트워크 에러
+
+**목적**: Phase 3-8 API 연결 전에 에러 처리 UI/UX 검증
+
+**시나리오**:
+
+1. 대화 페이지 진입
+2. "안녕하세요 [error]" 입력 후 전송
+3. 0.5초 후 에러 발생 확인
+4. alert 표시 확인: "메시지 전송에 실패했습니다"
+5. 입력창에 메시지 그대로 남아있는지 확인
+
+**예상 결과**:
+
+- ✅ 네트워크 에러 발생
+- ✅ alert로 에러 메시지 표시 (Phase 3-7에서 Toast로 교체)
+- ✅ 메시지 전송 안 됨
+- ✅ 입력창 비워짐 (또는 남아있음 - UX 검토 필요)
+
+**비고**:
+- `ENABLE_ERROR_SIMULATION = true` 설정 필요
+- Phase 3-8 API 연결 시 실제 네트워크 에러로 동일하게 작동 확인
+
+---
+
+#### 🧪 에러 처리 테스트: 타임아웃 에러
+
+**목적**: 장시간 대기 상황에서의 UX 검증
+
+**시나리오**:
+
+1. 대화 페이지 진입
+2. "오늘 날씨가 좋네요 [timeout]" 입력 후 전송
+3. 10초 대기 (로딩 상태 확인)
+4. 10초 후 에러 발생 확인
+5. alert 표시 확인: "메시지 전송에 실패했습니다"
+
+**예상 결과**:
+
+- ✅ 10초 동안 로딩 표시 (placeholder: "AI가 응답 중...")
+- ✅ 10초 후 타임아웃 에러 발생
+- ✅ alert로 에러 메시지 표시
+- ✅ 메시지 전송 안 됨
+- ✅ 로딩 상태 해제됨
+
+**비고**:
+- 실제 환경에서는 5초 이내 타임아웃 권장
+- 로딩 중 사용자가 다른 메시지 전송 못하도록 입력창 비활성화 확인
+
+---
+
 ### 빌드 및 품질 검증
 
 | 검증 항목          | 목표  | 비고                  |
@@ -1013,6 +1093,8 @@ export const router = createBrowserRouter([
 | 개발 서버 실행     | ✅ 정상 | 모든 페이지 렌더링 성공 |
 | 대화 전송 테스트   | ✅ 통과 | 메시지 전송 및 AI 응답 |
 | 감정 분석 테스트   | ✅ 통과 | 키워드 기반 분석 작동  |
+| 🧪 네트워크 에러 테스트 | ✅ 통과 | [error] 키워드로 테스트 |
+| 🧪 타임아웃 에러 테스트 | ✅ 통과 | [timeout] 키워드로 테스트 |
 
 ---
 
@@ -1028,6 +1110,7 @@ export const router = createBrowserRouter([
 - [ ] Mock AI 응답 생성 작동
 - [ ] 감정 분석 키워드 기반 작동
 - [ ] 대화 이력 localStorage 저장/조회
+- [ ] 🧪 Mock API 에러 시뮬레이션 구현 ([error], [timeout] 키워드)
 
 ### 코드 품질
 
@@ -1050,6 +1133,8 @@ export const router = createBrowserRouter([
 - [ ] Journey 2 (첫 대화) 시나리오 통과
 - [ ] 회귀 테스트: 빈 메시지 방지
 - [ ] 회귀 테스트: 대화 이력 표시
+- [ ] 🧪 에러 처리 테스트: 네트워크 에러 ([error] 키워드)
+- [ ] 🧪 에러 처리 테스트: 타임아웃 에러 ([timeout] 키워드)
 - [ ] 빌드 성공
 - [ ] 개발 서버 정상 실행
 
@@ -1070,7 +1155,20 @@ Phase 3-4 (AI 대화 기능) 완료 시:
    - Phase 3-4 상태를 "완료"로 변경
    - 진행률 업데이트 (43% → 57%)
 
-2. **다음 단계**
+2. **에러 시뮬레이션 비활성화 (Phase 3-8 시)**
+
+   ```typescript
+   // mockConversationApi.ts
+   const ENABLE_ERROR_SIMULATION = false; // Phase 3-8에서 false로 변경
+   ```
+
+3. **TODO 주석 리뷰 포인트**
+   - Phase 3-6: Zustand 마이그레이션 검토 (useConversation.ts)
+   - Phase 3-6: 컴포넌트 위치 재검토 (ChatMessage, MessageInput)
+   - Phase 3-7: alert → Toast 교체 (ConversationPage.tsx)
+   - Phase 3-8: Mock API → 실제 API 교체, GPT-4o 연동
+
+4. **다음 단계**
    - Phase 3-5 (설정 관리) 세부 계획 작성
    - 또는 Phase 3-7 (공통 기능 보완) 먼저 구현 (Toast, Modal)
 
