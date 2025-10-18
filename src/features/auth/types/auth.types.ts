@@ -20,7 +20,9 @@ export interface Guardian {
 export interface ManagedMember {
   id: number;
   name: string;
-  lastCheckTime: string; // ISO 8601 문자열
+  email: string;
+  lastCheckIn: string | null; // ISO 8601 문자열 또는 null (아직 체크인 없음)
+  lastCheckTime?: string; // 호환성을 위해 유지 (deprecated)
   emotionStatus: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'WARNING';
 }
 

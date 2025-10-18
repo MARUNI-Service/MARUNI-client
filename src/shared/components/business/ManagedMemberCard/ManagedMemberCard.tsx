@@ -37,7 +37,9 @@ export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
     }
   };
 
-  const formatLastCheckTime = (isoString: string) => {
+  const formatLastCheckTime = (isoString?: string) => {
+    if (!isoString) return '대화 없음';
+
     const date = new Date(isoString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();

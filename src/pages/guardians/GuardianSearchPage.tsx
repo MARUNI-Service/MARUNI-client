@@ -67,6 +67,9 @@ export function GuardianSearchPage() {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="예: younghee@example.com"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSearch();
+            }}
           />
           <Button
             variant="primary"

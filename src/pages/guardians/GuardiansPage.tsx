@@ -66,6 +66,7 @@ export function GuardiansPage() {
               fullWidth
               onClick={() => {
                 /* Phase 3-5에서 구현 */
+                alert('보호자 제거 기능은 Phase 3-5에서 구현됩니다');
               }}
             >
               보호자 제거

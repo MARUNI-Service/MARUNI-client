@@ -33,6 +33,8 @@ const MOCK_USERS: Record<string, User> = {
       {
         id: 1,
         name: '김순자',
+        email: 'soonja@example.com',
+        lastCheckIn: '2025-10-12T10:00:00Z',
         lastCheckTime: '2025-10-12T10:00:00Z',
         emotionStatus: 'POSITIVE',
       },
@@ -53,12 +55,16 @@ const MOCK_USERS: Record<string, User> = {
       {
         id: 4,
         name: '박아버지',
+        email: 'father@example.com',
+        lastCheckIn: '2025-10-12T08:00:00Z',
         lastCheckTime: '2025-10-12T08:00:00Z',
         emotionStatus: 'POSITIVE',
       },
       {
         id: 5,
         name: '박어머니',
+        email: 'mother@example.com',
+        lastCheckIn: '2025-10-12T09:00:00Z',
         lastCheckTime: '2025-10-12T09:00:00Z',
         emotionStatus: 'WARNING',
       },

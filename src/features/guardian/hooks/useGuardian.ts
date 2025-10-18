@@ -96,7 +96,9 @@ export function useGuardian() {
       const newManagedMember = {
         id: request.seniorId,
         name: request.seniorName,
-        lastCheckTime: new Date().toISOString(),
+        email: request.seniorEmail,
+        lastCheckIn: null,
+        lastCheckTime: undefined,
         emotionStatus: 'NEUTRAL' as const,
       };
 
