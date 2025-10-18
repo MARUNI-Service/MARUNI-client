@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
-import { useGuardian } from '@/features/guardian';
-import type { GuardianRequest } from '@/features/guardian';
+import { useGuardian, type GuardianRequest } from '@/features/guardian';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -21,6 +20,7 @@ export function GuardianRequestsPage() {
 
   useEffect(() => {
     loadRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadRequests = async () => {
@@ -46,7 +46,7 @@ export function GuardianRequestsPage() {
           navigate(ROUTES.DASHBOARD);
         }, 1500); // Toast 확인 시간 제공 (Phase 3-7에서 Toast duration으로 대체)
       }
-    } catch (error) {
+    } catch {
       // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
       alert('수락에 실패했습니다');
     }
@@ -68,7 +68,7 @@ export function GuardianRequestsPage() {
           navigate(ROUTES.DASHBOARD);
         }, 1500);
       }
-    } catch (error) {
+    } catch {
       // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
       alert('거절에 실패했습니다');
     }

@@ -69,7 +69,7 @@ export function RegisterPage() {
 
       // 회원가입 성공 → 대시보드로 이동 (온보딩은 MVP 제외)
       navigate('/dashboard');
-    } catch (error) {
+    } catch {
       setErrors({ submit: '회원가입에 실패했습니다' });
     } finally {
       setIsLoading(false);

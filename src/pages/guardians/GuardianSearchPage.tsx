@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Input, Button, Card } from '@/shared/components';
-import { useGuardian } from '@/features/guardian';
-import type { GuardianSearchResult } from '@/features/guardian';
+import { useGuardian, type GuardianSearchResult } from '@/features/guardian';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -42,7 +41,7 @@ export function GuardianSearchPage() {
       // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
       alert('보호자 등록 요청을 보냈습니다!');
       navigate(ROUTES.GUARDIANS);
-    } catch (error) {
+    } catch {
       // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
       alert('요청에 실패했습니다');
     }
