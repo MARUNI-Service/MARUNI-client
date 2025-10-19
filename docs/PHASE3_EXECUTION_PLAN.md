@@ -1,10 +1,10 @@
 # MARUNI Phase 3 실행 계획
 
 **작성일**: 2025-10-12
-**버전**: 1.3.0
-**상태**: Phase 3-3 완료 ✅ | Phase 3-4 진행 대기 중
+**버전**: 1.4.0
+**상태**: Phase 3-4 완료 ✅ | Phase 3-5 또는 Phase 3-7 진행 대기 중
 **목표**: 새로운 유저 흐름 설계 반영 및 핵심 기능 구현
-**최종 업데이트**: 2025-10-18
+**최종 업데이트**: 2025-10-19
 
 ---
 
@@ -58,7 +58,7 @@ MARUNI 클라이언트를 새로운 유저 흐름 설계(user-flow.md, USER_FLOW
 | 역할별 동적 메인 화면 | ✅ 100%   | ✅ 100% | 3-1 ✅ |
 | 회원가입 (MVP)        | ✅ 100%   | ✅ 100% | 3-2 ✅ |
 | 보호자 관리           | ✅ 100%   | ✅ 100% | 3-3 ✅ |
-| AI 대화               | ❌ 0%     | ✅ 100% | 3-4    |
+| AI 대화               | ✅ 100%   | ✅ 100% | 3-4 ✅ |
 | 설정 관리             | ❌ 0%     | ✅ 80%  | 3-5    |
 | 알림 기능             | ❌ 0%     | ⏳ 50%  | 3-6    |
 | 공통 기능 보완        | ❌ 0%     | ✅ 100% | 3-7    |
@@ -211,39 +211,56 @@ MARUNI 클라이언트를 새로운 유저 흐름 설계(user-flow.md, USER_FLOW
 
 ---
 
-### Phase 3-4: AI 대화 (Conversation)
+### Phase 3-4: AI 대화 (Conversation) ✅ 완료
 
+**상태**: ✅ 완료 (2025-10-19)
 **목표**: 노인이 AI와 자연스러운 대화를 나누는 핵심 기능 구현
 
-**핵심 작업**:
+**핵심 작업 (완료)**:
 
 1. features/conversation 모듈 생성
-
-   - API: 메시지 전송, 대화 이력 조회
-   - Hooks: useConversation, useMessageSend
-   - Types: Message, Conversation, EmotionStatus
+   - ✅ API: mockConversationApi (메시지 전송, 이력 조회, 에러 시뮬레이션)
+   - ✅ Hooks: useConversation (메시지 로드, 전송, 로컬 상태 관리)
+   - ✅ Types: Message, MessageSender, EmotionStatus, SendMessageRequest
 
 2. 대화 화면
-
-   - 대화 페이지 (/conversation)
-   - ChatMessage 컴포넌트 (사용자/AI 메시지 구분)
-   - MessageInput 컴포넌트 (텍스트 입력)
-   - 대화 이력 표시
+   - ✅ ConversationPage (/conversation) - 자동 스크롤, 로딩 상태
+   - ✅ ChatMessage 컴포넌트 (사용자/AI 메시지 구분, 감정 이모지 표시)
+   - ✅ MessageInput 컴포넌트 (노인 친화적 큰 입력창, Enter 키 전송)
+   - ✅ 대화 이력 localStorage 저장
 
 3. AI 대화 기능
-   - 메시지 전송 및 AI 응답 수신
-   - 감정 분석 결과 표시 (POSITIVE/NEGATIVE/NEUTRAL)
-   - 대화 이력 저장 및 조회
+   - ✅ 메시지 전송 및 AI 응답 수신 (Mock)
+   - ✅ 감정 분석 결과 표시 (POSITIVE/NEGATIVE/NEUTRAL 이모지)
+   - ✅ 에러 시뮬레이션 ([error], [timeout] 키워드)
+   - ✅ 대화 이력 저장 및 조회 (localStorage 기반)
 
 **완성 기준**:
 
 - ✅ 노인이 AI와 실시간 대화 가능
 - ✅ AI 응답이 자연스럽게 표시됨
-- ✅ user-flow.md Journey 2 (첫 안부 메시지 받기) 재현 가능
+- ✅ user-flow.md Journey 2 (안부 메시지) 재현 가능
+- ✅ TypeScript 빌드 에러 0건
+- ✅ 에러 시뮬레이션 기능 작동
 
-**예상 소요 시간**: 2일 (8-10시간)
+**실제 소요 시간**: 1일 (약 6시간)
 
 **우선순위**: 🟠 높음
+
+**완료 산출물**:
+- `src/features/conversation/` - Conversation 모듈 전체
+- `src/shared/components/business/ChatMessage/` - 채팅 메시지 컴포넌트
+- `src/shared/components/business/MessageInput/` - 메시지 입력 컴포넌트
+- `src/pages/conversation/ConversationPage.tsx` - 대화 페이지
+- `src/app/router.tsx` - /conversation 라우트 추가
+- `src/shared/constants/routes.ts` - ROUTES.CONVERSATION
+- `src/shared/components/business/MessageCard/` - 대시보드에서 대화 페이지로 이동
+
+**세부 계획 문서**: `docs/phases/phase3-4-conversation.md`
+
+**TODO (Phase 3-6 검토 필요)**:
+- ⏳ Zustand로 상태 관리 마이그레이션 고려 (대시보드 뱃지 구현 시)
+- ⏳ ChatMessage, MessageInput 컴포넌트 위치 재검토 (재사용성 평가 후)
 
 ---
 
@@ -385,13 +402,13 @@ Phase 3-1 (기반 확립)
 
 ## 성공 기준
 
-### Phase 3 완료 시 달성 상태 (현재 진행률: 43%)
+### Phase 3 완료 시 달성 상태 (현재 진행률: 57%)
 
 #### 기능 완성도
 
 - ✅ **회원가입 (MVP)**: 새 사용자가 회원가입하고 대시보드 진입 가능 (Phase 3-2 완료)
 - ✅ **역할별 메인 화면**: soonja, younghee, cheolsu, newuser 각자 다른 화면 (Phase 3-1 완료)
-- ⏳ **AI 대화**: 노인이 AI와 실시간 대화 가능
+- ✅ **AI 대화**: 노인이 AI와 실시간 대화 가능 (Phase 3-4 완료)
 - ✅ **보호자 관계**: 노인 ↔ 보호자 관계 성립 및 관리 (Phase 3-3 완료)
 - ⏳ **설정 관리**: 내 정보 수정, 안부 메시지 ON/OFF
 - ⏳ **알림 기능**: 알림 목록 조회 및 상세 확인
@@ -399,16 +416,16 @@ Phase 3-1 (기반 확립)
 #### 사용자 여정 재현
 
 - ✅ **Journey 1 (MVP)** (첫 시작): 회원가입 → ✅ 대시보드 (Phase 3-2 완료)
-- ⏳ **Journey 2** (안부 메시지): 푸시 알림 → AI 대화
+- ✅ **Journey 2** (안부 메시지): 푸시 알림 → ✅ AI 대화 (Phase 3-4 완료, 푸시 알림 제외)
 - ✅ **Journey 3** (보호자 등록): 검색 → 요청 → 수락 (Phase 3-3 완료)
 - ⏳ **Journey 4** (보호자 알림): 이상 징후 감지 → 알림 수신
 
 #### 기술 지표
 
-- ⏳ **코드 커버리지**: 핵심 기능 80% 이상 (현재: 인증 + 메인 화면 + 보호자 관계 완료)
-- ✅ **TypeScript 에러**: 0건 (Phase 3-1, 3-2, 3-3 유지)
+- ⏳ **코드 커버리지**: 핵심 기능 80% 이상 (현재: 인증 + 메인 화면 + 보호자 관계 + AI 대화 완료)
+- ✅ **TypeScript 에러**: 0건 (Phase 3-1, 3-2, 3-3, 3-4 유지)
 - ✅ **ESLint 경고**: 0건 (Phase 3-3에서 모든 경고 해결)
-- ✅ **빌드 성공**: npm run build 성공 (Phase 3-1, 3-2, 3-3 유지)
+- ✅ **빌드 성공**: npm run build 성공 (Phase 3-1, 3-2, 3-3, 3-4 유지)
 
 #### 사용성
 
@@ -421,17 +438,20 @@ Phase 3-1 (기반 확립)
 
 ## 다음 단계
 
-### 즉시 진행 (Phase 3-4)
+### 즉시 진행 가능 (Phase 3-5 또는 Phase 3-7)
 
-**Phase 3-4: AI 대화 기능** 시작 준비 완료
+**Phase 3-5: 설정 관리** 또는 **Phase 3-7: 공통 기능 보완** 진행 가능
 
 - ✅ Phase 3-1 완료로 기반 확립됨
 - ✅ Phase 3-2 완료로 회원가입 플로우 완성
 - ✅ Phase 3-3 완료로 보호자 관계 관리 완성
-- ✅ 동적 메인 화면 구현으로 대화 표시 준비 완료
-- 🎯 다음 작업: AI 대화 페이지, 메시지 전송, 감정 분석 표시 구현
+- ✅ Phase 3-4 완료로 AI 대화 기능 완성
+- 🎯 **권장 순서**: Phase 3-7 먼저 진행 (하단 네비게이션 바, Toast, 에러 처리) → Phase 3-5 (설정 관리)
+- 🎯 **이유**: 공통 컴포넌트(Toast, Modal)가 설정 관리 페이지에서 재사용됨
 
-**세부 계획 문서**: `docs/phases/phase3-4-conversation.md` (작성 필요)
+**세부 계획 문서**:
+- `docs/phases/phase3-5-settings.md` (작성 필요)
+- `docs/phases/phase3-7-polish.md` (작성 필요)
 
 ---
 
@@ -448,7 +468,7 @@ Phase 3-1 (기반 확립)
 
 **Phase 4 시작 조건**:
 
-- ⏳ Phase 3-1 ~ 3-6 모두 완료 (현재 3-1, 3-2, 3-3 완료)
+- ⏳ Phase 3-1 ~ 3-6 모두 완료 (현재 3-1, 3-2, 3-3, 3-4 완료)
 - ⏳ 주요 버그 수정 완료
 - ⏳ 통합 테스트 통과
 
@@ -476,8 +496,8 @@ Phase 3-1 (기반 확립)
 ---
 
 **📅 문서 작성일**: 2025-10-12
-**📅 최종 업데이트**: 2025-10-18
+**📅 최종 업데이트**: 2025-10-19
 **✏️ 작성자**: Claude Code
-**🔄 버전**: 1.3.0
-**✅ 완료**: Phase 3-1 (기반 확립), Phase 3-2 (회원가입 MVP), Phase 3-3 (보호자 관계 관리)
-**📍 다음 단계**: Phase 3-4 세부 계획 작성 및 구현 시작 (AI 대화 기능)
+**🔄 버전**: 1.4.0
+**✅ 완료**: Phase 3-1 (기반 확립), Phase 3-2 (회원가입 MVP), Phase 3-3 (보호자 관계 관리), Phase 3-4 (AI 대화 기능)
+**📍 다음 단계**: Phase 3-7 (공통 기능 보완) 또는 Phase 3-5 (설정 관리) 세부 계획 작성 및 구현 시작
