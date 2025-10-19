@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoginPage, RegisterPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
+import { ConversationPage } from '@/pages/conversation';
 import { GuardiansPage, GuardianSearchPage, GuardianRequestsPage } from '@/pages/guardians';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/features/auth';
@@ -12,7 +13,7 @@ import { ROUTES } from '@/shared/constants/routes';
  * 구조:
  * - 루트: / → /login으로 리다이렉트
  * - 공개 라우트: /login, /register
- * - 보호 라우트: /dashboard (ProtectedRoute로 보호)
+ * - 보호 라우트: /dashboard, /conversation (ProtectedRoute로 보호)
  * - 404: 존재하지 않는 모든 경로
  */
 export const router = createBrowserRouter([

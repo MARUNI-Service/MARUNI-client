@@ -1,14 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '@/shared/components';
+import { ROUTES } from '@/shared/constants/routes';
 
 /**
  * 안부 메시지 카드
  * - 노인이 받은 안부 메시지를 표시
  * - "답장하기" 버튼 제공
+ * - Phase 3-4: AI 대화 화면으로 이동
  */
 export function MessageCard() {
+  const navigate = useNavigate();
+
   const handleReply = () => {
-    // Phase 3-4에서 AI 대화 화면으로 이동
-    console.log('답장하기 클릭');
+    navigate(ROUTES.CONVERSATION);
   };
 
   return (
