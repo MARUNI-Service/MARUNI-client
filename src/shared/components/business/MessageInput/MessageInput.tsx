@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button } from '@/shared/components/ui';
+import { Button } from '@/shared/components';
 import type { MessageInputProps } from './MessageInput.types';
 
 /**
@@ -52,7 +52,6 @@ export function MessageInput({
         variant="primary"
         size="extra-large"
         disabled={disabled || !value.trim()}
-        className="h-[72px] px-8"
       >
         전송
       </Button>

@@ -47,6 +47,16 @@ export const router = createBrowserRouter([
         ),
       },
 
+      // 🆕 Phase 3-4: AI 대화 라우트
+      {
+        path: ROUTES.CONVERSATION,
+        element: (
+          <ProtectedRoute>
+            <ConversationPage />
+          </ProtectedRoute>
+        ),
+      },
+
       // 🆕 Phase 3-3: 보호자 관리 라우트
       {
         path: ROUTES.GUARDIANS,

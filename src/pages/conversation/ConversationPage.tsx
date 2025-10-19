@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { Layout } from '@/shared/components/layout';
-import { ChatMessage, MessageInput } from '@/shared/components/business';
+import { Layout } from '@/shared/components';
+import { ChatMessage } from '@/shared/components/business/ChatMessage';
+import { MessageInput } from '@/shared/components/business/MessageInput';
 import { useConversation } from '@/features/conversation';
 
 /**
