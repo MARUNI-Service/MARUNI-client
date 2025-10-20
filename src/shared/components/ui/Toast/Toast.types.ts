@@ -22,8 +22,5 @@ export interface ToastProps {
 }
 
 /**
- * ToastContainer Props
+ * ToastContainer는 props가 필요 없음 (Portal로 렌더링)
  */
-export interface ToastContainerProps {
-  // Portal로 렌더링되므로 props 불필요
-}
