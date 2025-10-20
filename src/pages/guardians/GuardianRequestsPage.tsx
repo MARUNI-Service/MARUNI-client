@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
 import { useGuardian, type GuardianRequest } from '@/features/guardian';
+import { useToast } from '@/shared/hooks/useToast';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -15,6 +16,7 @@ export function GuardianRequestsPage() {
   const navigate = useNavigate();
   const { getGuardianRequests, acceptGuardianRequest, rejectGuardianRequest, isLoading } =
     useGuardian();
+  const toast = useToast();
 
   const [requests, setRequests] = useState<GuardianRequest[]>([]);
 
@@ -32,8 +34,7 @@ export function GuardianRequestsPage() {
     try {
       await acceptGuardianRequest(requestId);
 
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('보호자 요청을 수락했습니다!');
+      toast.success('보호자 요청을 수락했습니다!');
 
       await loadRequests(); // 목록 새로고침
 
@@ -44,11 +45,10 @@ export function GuardianRequestsPage() {
         // 모든 요청 처리 완료 → 대시보드로 이동하여 변경된 메인 화면 확인
         setTimeout(() => {
           navigate(ROUTES.DASHBOARD);
-        }, 1500); // Toast 확인 시간 제공 (Phase 3-7에서 Toast duration으로 대체)
+        }, 3000); // Toast 확인 시간 제공 (default 3초)
       }
     } catch {
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('수락에 실패했습니다');
+      toast.error('수락에 실패했습니다');
     }
   };
 
@@ -56,8 +56,7 @@ export function GuardianRequestsPage() {
     try {
       await rejectGuardianRequest(requestId);
 
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('보호자 요청을 거절했습니다');
+      toast.info('보호자 요청을 거절했습니다');
 
       await loadRequests(); // 목록 새로고침
 
@@ -66,11 +65,10 @@ export function GuardianRequestsPage() {
       if (remainingRequests.length === 0) {
         setTimeout(() => {
           navigate(ROUTES.DASHBOARD);
-        }, 1500);
+        }, 3000); // Toast 확인 시간 제공 (default 3초)
       }
     } catch {
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('거절에 실패했습니다');
+      toast.error('거절에 실패했습니다');
     }
   };
 

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Input, Button, Card } from '@/shared/components';
+import { Modal } from '@/shared/components/ui/Modal';
 import { useGuardian, type GuardianSearchResult } from '@/features/guardian';
+import { useToast } from '@/shared/hooks/useToast';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -13,6 +15,7 @@ import { ROUTES } from '@/shared/constants/routes';
 export function GuardianSearchPage() {
   const navigate = useNavigate();
   const { searchGuardians, requestGuardian, isLoading } = useGuardian();
+  const toast = useToast();
 
   const [keyword, setKeyword] = useState('');
   const [results, setResults] = useState<GuardianSearchResult[]>([]);
@@ -38,12 +41,10 @@ export function GuardianSearchPage() {
       await requestGuardian({ guardianId: selectedGuardian.id });
       setShowConfirmDialog(false);
 
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('보호자 등록 요청을 보냈습니다!');
+      toast.success('보호자 등록 요청을 보냈습니다!');
       navigate(ROUTES.GUARDIANS);
     } catch {
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('요청에 실패했습니다');
+      toast.error('요청에 실패했습니다');
     }
   };
 
@@ -116,44 +117,41 @@ export function GuardianSearchPage() {
         )}
 
         {/* 확인 다이얼로그 (Modal) */}
-        {/* TODO: Phase 3-7에서 공통 Modal 컴포넌트로 교체 예정 */}
-        {showConfirmDialog && selectedGuardian && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <Card padding="large" className="max-w-md w-full space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900">보호자 등록</h2>
-              <div className="space-y-2">
-                <p className="text-lg text-gray-700">
-                  <span className="font-semibold">{selectedGuardian.name}</span>님을
-                  <br />
-                  보호자로 등록할까요?
-                </p>
-                <div className="text-base text-gray-600 space-y-1">
-                  <p>• 이상 징후 발생 시 알림</p>
-                  <p>• 대화 내역 공유</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="secondary"
-                  size="large"
-                  fullWidth
-                  onClick={() => setShowConfirmDialog(false)}
-                >
-                  취소
-                </Button>
-                <Button
-                  variant="primary"
-                  size="large"
-                  fullWidth
-                  onClick={handleConfirmRequest}
-                  disabled={isLoading}
-                >
-                  {isLoading ? '요청 중...' : '등록하기'}
-                </Button>
-              </div>
-            </Card>
+        <Modal
+          isOpen={showConfirmDialog}
+          onClose={() => setShowConfirmDialog(false)}
+          title="보호자 등록"
+        >
+          <div className="space-y-4">
+            <p className="text-lg">
+              <span className="font-semibold">{selectedGuardian?.name}</span>님을
+              보호자로 등록할까요?
+            </p>
+            <div className="text-base text-gray-600 space-y-1">
+              <p>• 이상 징후 발생 시 알림</p>
+              <p>• 대화 내역 공유</p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="secondary"
+                size="large"
+                fullWidth
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                취소
+              </Button>
+              <Button
+                variant="primary"
+                size="large"
+                fullWidth
+                onClick={handleConfirmRequest}
+                disabled={isLoading}
+              >
+                {isLoading ? '요청 중...' : '등록하기'}
+              </Button>
+            </div>
           </div>
-        )}
+        </Modal>
       </div>
     </Layout>
   );

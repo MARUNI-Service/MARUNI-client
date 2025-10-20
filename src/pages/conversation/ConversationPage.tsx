@@ -3,6 +3,7 @@ import { Layout } from '@/shared/components';
 import { ChatMessage } from '@/shared/components/business/ChatMessage';
 import { MessageInput } from '@/shared/components/business/MessageInput';
 import { useConversation } from '@/features/conversation';
+import { useToast } from '@/shared/hooks/useToast';
 
 /**
  * AI 대화 페이지
@@ -12,6 +13,7 @@ import { useConversation } from '@/features/conversation';
 export function ConversationPage() {
   const { messages, isLoading, isSending, loadMessages, sendMessage } = useConversation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const toast = useToast();
 
   // 초기 메시지 로드
   useEffect(() => {
@@ -28,8 +30,7 @@ export function ConversationPage() {
     try {
       await sendMessage(content);
     } catch {
-      // TODO: Phase 3-7에서 공통 Toast 컴포넌트로 교체 예정
-      alert('메시지 전송에 실패했습니다');
+      toast.error('메시지 전송에 실패했습니다');
     }
   };
 
