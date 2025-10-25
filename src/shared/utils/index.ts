@@ -3,3 +3,4 @@
  */
 
 export { formatTimeAgo, formatLastCheckTime } from './date';
+export { cn } from './cn';

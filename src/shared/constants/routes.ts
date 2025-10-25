@@ -19,6 +19,10 @@ export const ROUTES = {
   SETTINGS_PROFILE: '/settings/profile',
   SETTINGS_NOTIFICATIONS: '/settings/notifications',
   SETTINGS_PASSWORD: '/settings/password',
+
+  // 알림 기능 (Phase 3-6)
+  NOTIFICATIONS: '/notifications',
+  NOTIFICATION_DETAIL: '/notifications/:id',
 } as const;
 
 // 타입 정의
