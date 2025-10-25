@@ -1,5 +1,6 @@
 import type { ManagedMember } from '@/features/auth/types';
 import { Card, Button } from '@/shared/components';
+import { formatLastCheckTime } from '@/shared/utils/date';
 
 interface ManagedMemberCardProps {
   member: ManagedMember;
@@ -35,19 +36,6 @@ export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
       default:
         return '보통';
     }
-  };
-
-  const formatLastCheckTime = (isoString?: string) => {
-    if (!isoString) return '대화 없음';
-
-    const date = new Date(isoString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffHours < 1) return '방금 전';
-    if (diffHours < 24) return `${diffHours}시간 전`;
-    return `${Math.floor(diffHours / 24)}일 전`;
   };
 
   const handleViewConversation = () => {
