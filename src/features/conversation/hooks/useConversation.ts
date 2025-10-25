@@ -1,66 +1,97 @@
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
+import { useToast } from '@/shared/hooks/useToast';
 import type { Message } from '../types/conversation.types';
 import { mockGetMessages, mockSendMessage } from '../api/mockConversationApi';
 
 /**
  * 대화 관리 훅
- *
- * TODO: Phase 3-6 (알림 기능)에서 대시보드 뱃지 구현 시 검토 필요
- * - "읽지 않은 메시지 수" 기능 추가 시
- * - 여러 컴포넌트에서 대화 상태 공유 필요 시
- * - Zustand store로 마이그레이션 고려
- *
- * 현재는 ConversationPage에서만 사용하므로 useState로 충분
+ * - TanStack Query를 사용한 서버 상태 관리
+ * - 자동 캐싱, 낙관적 업데이트, 에러 처리
  */
 export function useConversation() {
   const user = useAuthStore((state) => state.user);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const queryClient = useQueryClient();
+  const toast = useToast();
 
-  /**
-   * 메시지 목록 조회
-   */
-  const loadMessages = async () => {
-    if (!user) return;
+  // 메시지 목록 조회 (자동 캐싱, 자동 갱신)
+  const {
+    data: messages = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ['conversation', 'messages', user?.id],
+    queryFn: () => mockGetMessages(user?.id || 0),
+    enabled: !!user,
+  });
 
-    setIsLoading(true);
-    try {
-      const data = await mockGetMessages(user.id);
-      setMessages(data);
-    } catch (error) {
-      console.error('Failed to load messages:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 메시지 전송 (낙관적 업데이트)
+  const {
+    mutateAsync: sendMessage,
+    isPending: isSending,
+  } = useMutation({
+    mutationFn: (content: string) => mockSendMessage(user?.id || 0, content.trim()),
 
-  /**
-   * 메시지 전송
-   */
-  const sendMessage = async (content: string) => {
-    if (!user || !content.trim()) return;
+    // 낙관적 업데이트: UI 즉시 반영
+    onMutate: async (content) => {
+      if (!user) return;
 
-    setIsSending(true);
-    try {
-      const { userMessage, aiMessage } = await mockSendMessage(user.id, content.trim());
+      await queryClient.cancelQueries({
+        queryKey: ['conversation', 'messages', user.id],
+      });
 
-      // 메시지 추가
-      setMessages((prev) => [...prev, userMessage, aiMessage]);
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      throw error;
-    } finally {
-      setIsSending(false);
-    }
-  };
+      const previousMessages = queryClient.getQueryData<Message[]>([
+        'conversation',
+        'messages',
+        user.id,
+      ]);
+
+      // 임시 사용자 메시지 추가
+      queryClient.setQueryData<Message[]>(
+        ['conversation', 'messages', user.id],
+        (old = []) => [
+          ...old,
+          {
+            id: Date.now(),
+            sender: 'USER' as const,
+            content,
+            createdAt: new Date().toISOString(),
+          },
+        ]
+      );
+
+      return { previousMessages };
+    },
+
+    // 성공 시 AI 응답 추가
+    onSuccess: ({ userMessage, aiMessage }) => {
+      if (!user) return;
+
+      queryClient.setQueryData<Message[]>(
+        ['conversation', 'messages', user.id],
+        (old = []) => {
+          // 임시 메시지 제거 후 실제 메시지 추가
+          const withoutTemp = old.filter((m) => m.id !== userMessage.id);
+          return [...withoutTemp, userMessage, aiMessage];
+        }
+      );
+    },
+
+    // 실패 시 롤백
+    onError: (_err, _content, context) => {
+      if (!user) return;
+
+      queryClient.setQueryData(
+        ['conversation', 'messages', user.id],
+        context?.previousMessages
+      );
+      toast.error('메시지 전송에 실패했습니다');
+    },
+  });
 
   return {
     messages,
     isLoading,
     isSending,
-    loadMessages,
     sendMessage,
   };
 }
