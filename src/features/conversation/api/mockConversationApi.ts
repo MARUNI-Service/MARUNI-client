@@ -1,6 +1,6 @@
 import type { Message, EmotionStatus } from '../types/conversation.types';
+import { storage } from '@/shared/services/storage';
 
-const STORAGE_KEY_PREFIX = 'conversation-messages-';
 const MAX_MESSAGES = 100; // 최대 저장 메시지 수
 
 /**
@@ -110,8 +110,7 @@ function generateAIResponse(userMessage: string, emotionStatus: EmotionStatus): 
 export async function mockGetMessages(userId: number): Promise<Message[]> {
   await new Promise((resolve) => setTimeout(resolve, 300)); // 네트워크 지연 시뮬레이션
 
-  const key = `${STORAGE_KEY_PREFIX}${userId}`;
-  const stored = localStorage.getItem(key);
+  const stored = storage.getConversationMessages(userId);
 
   if (!stored) {
     return [];
@@ -147,8 +146,7 @@ export async function mockSendMessage(
 
   await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
 
-  const key = `${STORAGE_KEY_PREFIX}${userId}`;
-  const stored = localStorage.getItem(key);
+  const stored = storage.getConversationMessages(userId);
   const messages: Message[] = stored ? JSON.parse(stored) : [];
 
   // 감정 분석
@@ -182,7 +180,7 @@ export async function mockSendMessage(
   const trimmedMessages = messages.slice(-MAX_MESSAGES);
 
   // 저장
-  localStorage.setItem(key, JSON.stringify(trimmedMessages));
+  storage.setConversationMessages(userId, JSON.stringify(trimmedMessages));
 
   return { userMessage, aiMessage };
 }

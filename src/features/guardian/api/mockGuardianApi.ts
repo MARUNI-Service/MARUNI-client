@@ -4,6 +4,7 @@ import type {
   CreateGuardianRequestInput,
   GuardianRequestAction,
 } from '../types';
+import { storage } from '@/shared/services/storage';
 
 /**
  * Mock 사용자 데이터
@@ -66,9 +67,9 @@ export const mockCreateGuardianRequest = (
       };
 
       // localStorage에 저장
-      const requests = JSON.parse(localStorage.getItem('guardian-requests') || '[]');
+      const requests = JSON.parse(storage.getGuardianRequests() || '[]');
       requests.push(request);
-      localStorage.setItem('guardian-requests', JSON.stringify(requests));
+      storage.setGuardianRequests(JSON.stringify(requests));
 
       resolve(request);
     }, 500);
@@ -82,7 +83,7 @@ export const mockCreateGuardianRequest = (
 export const mockGetGuardianRequests = (userId: number): Promise<GuardianRequest[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const requests = JSON.parse(localStorage.getItem('guardian-requests') || '[]');
+      const requests = JSON.parse(storage.getGuardianRequests() || '[]');
       const filtered = requests.filter((req: GuardianRequest) => req.guardianId === userId);
       resolve(filtered);
     }, 300);
@@ -98,9 +99,7 @@ export const mockHandleGuardianRequest = (
 ): Promise<GuardianRequest> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const requests: GuardianRequest[] = JSON.parse(
-        localStorage.getItem('guardian-requests') || '[]'
-      );
+      const requests: GuardianRequest[] = JSON.parse(storage.getGuardianRequests() || '[]');
       const index = requests.findIndex((req) => req.id === action.requestId);
 
       if (index === -1) {
@@ -109,7 +108,7 @@ export const mockHandleGuardianRequest = (
       }
 
       requests[index].status = action.action === 'ACCEPT' ? 'ACCEPTED' : 'REJECTED';
-      localStorage.setItem('guardian-requests', JSON.stringify(requests));
+      storage.setGuardianRequests(JSON.stringify(requests));
 
       resolve(requests[index]);
     }, 500);
