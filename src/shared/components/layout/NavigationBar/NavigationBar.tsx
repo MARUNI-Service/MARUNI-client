@@ -15,12 +15,12 @@ const NAV_ITEMS: NavigationItem[] = [
     icon: <MessageCircle size={32} />,
   },
   {
-    path: '/alerts', // Phase 3-6에서 추가
+    path: ROUTES.NOTIFICATIONS,
     label: '알림',
     icon: <Bell size={32} />,
   },
   {
-    path: '/settings', // Phase 3-5에서 추가
+    path: ROUTES.SETTINGS,
     label: '설정',
     icon: <Settings size={32} />,
   },
