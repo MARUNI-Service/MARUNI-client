@@ -3,7 +3,8 @@ import { LoginPage, RegisterPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
 import { ConversationPage } from '@/pages/conversation';
 import { GuardiansPage, GuardianSearchPage, GuardianRequestsPage } from '@/pages/guardians';
-import { SettingsPage, ProfilePage, NotificationsPage, PasswordPage } from '@/pages/settings';
+import { SettingsPage, ProfilePage, NotificationsPage as NotificationSettingsPage, PasswordPage } from '@/pages/settings';
+import { NotificationsPage, NotificationDetailPage } from '@/pages/notifications';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
@@ -105,7 +106,7 @@ export const router = createBrowserRouter([
         path: ROUTES.SETTINGS_NOTIFICATIONS,
         element: (
           <ProtectedRoute>
-            <NotificationsPage />
+            <NotificationSettingsPage />
           </ProtectedRoute>
         ),
       },
@@ -114,6 +115,24 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <PasswordPage />
+          </ProtectedRoute>
+        ),
+      },
+
+      // 🆕 Phase 3-6: 알림 기능 라우트
+      {
+        path: ROUTES.NOTIFICATIONS,
+        element: (
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.NOTIFICATION_DETAIL,
+        element: (
+          <ProtectedRoute>
+            <NotificationDetailPage />
           </ProtectedRoute>
         ),
       },
