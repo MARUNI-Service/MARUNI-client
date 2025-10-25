@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getProfile, updateProfile, changePassword } from '../api/memberApi';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/shared/hooks/useToast';
-import type { ProfileUpdateRequest, PasswordChangeRequest } from '../types';
 
 /**
  * Member 관련 훅

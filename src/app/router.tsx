@@ -3,6 +3,7 @@ import { LoginPage, RegisterPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard';
 import { ConversationPage } from '@/pages/conversation';
 import { GuardiansPage, GuardianSearchPage, GuardianRequestsPage } from '@/pages/guardians';
+import { SettingsPage, ProfilePage, NotificationsPage, PasswordPage } from '@/pages/settings';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
@@ -79,6 +80,40 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <GuardianRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+
+      // 🆕 Phase 3-5: 설정 관리 라우트
+      {
+        path: ROUTES.SETTINGS,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.SETTINGS_PROFILE,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.SETTINGS_NOTIFICATIONS,
+        element: (
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.SETTINGS_PASSWORD,
+        element: (
+          <ProtectedRoute>
+            <PasswordPage />
           </ProtectedRoute>
         ),
       },
