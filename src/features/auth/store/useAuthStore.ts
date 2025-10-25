@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getApiErrorMessage } from '@/shared/api/client';
 import * as authApi from '../api';
-import type { AuthState, LoginRequest, User } from '../types';
+import type { AuthState, LoginRequest, SignupRequest, User } from '../types';
 
 // 🔴 Phase 3-1 ~ 3-7: Mock 데이터로 페이지 구현
 // Phase 3-8에서 API 연결 시 이 코드 전체 제거
@@ -33,6 +33,8 @@ const MOCK_USERS: Record<string, User> = {
       {
         id: 1,
         name: '김순자',
+        email: 'soonja@example.com',
+        lastCheckIn: '2025-10-12T10:00:00Z',
         lastCheckTime: '2025-10-12T10:00:00Z',
         emotionStatus: 'POSITIVE',
       },
@@ -53,12 +55,16 @@ const MOCK_USERS: Record<string, User> = {
       {
         id: 4,
         name: '박아버지',
+        email: 'father@example.com',
+        lastCheckIn: '2025-10-12T08:00:00Z',
         lastCheckTime: '2025-10-12T08:00:00Z',
         emotionStatus: 'POSITIVE',
       },
       {
         id: 5,
         name: '박어머니',
+        email: 'mother@example.com',
+        lastCheckIn: '2025-10-12T09:00:00Z',
         lastCheckTime: '2025-10-12T09:00:00Z',
         emotionStatus: 'WARNING',
       },
@@ -136,6 +142,55 @@ export const useAuthStore = create<AuthState>()(
           throw new Error(
             '사용자를 찾을 수 없습니다. (soonja, younghee, cheolsu, newuser 중 하나를 입력하세요)'
           );
+        } catch (error) {
+          const errorMessage = getApiErrorMessage(error);
+          set({
+            user: null,
+            accessToken: null,
+            refreshToken: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: errorMessage,
+          });
+          throw error;
+        }
+      },
+
+      /**
+       * 회원가입
+       */
+      signup: async (credentials: SignupRequest) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          // 🔴 Phase 3-2: Mock 회원가입
+          // Phase 3-8에서 실제 API 호출로 변경
+          const newUser: User = {
+            id: Date.now(),
+            username: credentials.email.split('@')[0], // 이메일의 @ 앞부분을 username으로
+            name: credentials.name,
+            role: 'SENIOR', // 기본값: 노인
+            phoneNumber: credentials.phoneNumber,
+            email: credentials.email,
+            dailyCheckEnabled: false, // 기본값: 비활성
+            guardian: null,
+            managedMembers: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          set({
+            user: newUser,
+            accessToken: `mock-token-${Date.now()}`,
+            refreshToken: `mock-refresh-${Date.now()}`,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+
+          // 🔴 Phase 3-8에서 활성화: 실제 API 호출
+          // const response = await authApi.signup(credentials);
+          // set({ user: response.user, ... });
         } catch (error) {
           const errorMessage = getApiErrorMessage(error);
           set({

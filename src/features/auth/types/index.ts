@@ -1,1 +1,11 @@
-export type { User, UserRole, LoginRequest, LoginResponse, RefreshTokenResponse, AuthState } from './auth.types';
+export type {
+  User,
+  UserRole,
+  Guardian,
+  ManagedMember,
+  LoginRequest,
+  SignupRequest,
+  LoginResponse,
+  RefreshTokenResponse,
+  AuthState,
+} from './auth.types';

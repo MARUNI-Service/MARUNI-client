@@ -20,7 +20,9 @@ export interface Guardian {
 export interface ManagedMember {
   id: number;
   name: string;
-  lastCheckTime: string; // ISO 8601 문자열
+  email: string;
+  lastCheckIn: string | null; // ISO 8601 문자열 또는 null (아직 체크인 없음)
+  lastCheckTime?: string; // 호환성을 위해 유지 (deprecated)
   emotionStatus: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'WARNING';
 }
 
@@ -46,6 +48,16 @@ export interface User extends BaseEntity {
 export interface LoginRequest {
   username: string;
   password: string;
+}
+
+/**
+ * 회원가입 요청
+ */
+export interface SignupRequest {
+  email: string;
+  name: string;
+  password: string;
+  phoneNumber?: string;
 }
 
 /**
@@ -79,6 +91,7 @@ export interface AuthState {
 
   // 액션
   login: (credentials: LoginRequest) => Promise<void>;
+  signup: (credentials: SignupRequest) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
   setUser: (user: User | null) => void;
