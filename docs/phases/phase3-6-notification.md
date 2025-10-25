@@ -1,9 +1,9 @@
 # Phase 3-6: 알림 기능 - 세부 구현 계획
 
 **작성일**: 2025-10-25
-**최종 업데이트**: 2025-10-25 (v1.0.0)
-**예상 소요 시간**: 1-2일 (6-10시간)
-**상태**: 📋 준비 완료
+**최종 업데이트**: 2025-10-25 (v1.1.0)
+**예상 소요 시간**: 1-2일 (9-13.5시간)
+**상태**: 📋 준비 완료 (검토 의견 반영)
 **우선순위**: 🟠 높음
 **구현 원칙**: Mock 데이터 기반 구현 - 알림 목록 및 상세 확인 플로우 완성
 **API 연결**: ❌ 이 Phase에서는 연결 안 함 - Phase 3-8에서 일괄 연결
@@ -167,8 +167,21 @@ export async function getNotifications(): Promise<Notification[]> {
   // Mock 데이터 반환
 }
 
+// TODO: [Phase 3-8] API 연결 시 useNotification(id) 훅 추가로 확장성 개선
+// 현재는 전체 목록에서 find()로 검색, API 연결 시 개별 조회 API 사용
+export function useNotification(id: string) {
+  return useQuery({
+    queryKey: ['notifications', id],
+    queryFn: () => getNotificationById(id),
+  });
+}
+
 // TODO: [Phase 4] FCM 푸시 알림 연동
 // 현재는 Mock 데이터만 표시, 실시간 알림은 Phase 4에서 구현
+
+// TODO: [Phase 4] UX 개선 - 알림에서 특정 항목으로 바로 이동
+// 예: navigate(`/guardians/requests?highlight=${notification.data.guardianRequestId}`)
+// GuardianRequestsPage에서 highlight 쿼리 파라미터 읽어 해당 요청 강조
 ```
 
 ### Phase 3-8에서 개선할 사항
@@ -188,6 +201,97 @@ export async function getNotifications(): Promise<Notification[]> {
 ---
 
 ## 작업 분해
+
+### Task 0: 시간 포맷 유틸리티 함수 생성 및 리팩토링 (1-1.5시간)
+
+**목표**: 시간 차이를 "N분 전", "N시간 전" 형식으로 변환하는 공용 유틸리티 함수 생성 및 기존 코드 중복 제거
+
+**배경**:
+- 현재 `ManagedMemberCard.tsx`에 `formatLastCheckTime()` 함수가 개별적으로 구현됨
+- Phase 3-6에서 추가할 `NotificationCard`에도 동일한 로직 필요
+- 코드 중복 방지 및 유지보수성 향상 필요
+
+**구현 파일**:
+
+```
+src/shared/utils/
+├── date.ts                     # 시간 포맷 유틸리티
+└── index.ts
+```
+
+**유틸리티 함수 구현**:
+
+```typescript
+// date.ts
+/**
+ * ISO 8601 날짜를 "N분 전", "N시간 전" 형식으로 변환
+ * @param isoDate - ISO 8601 형식의 날짜 문자열
+ * @returns 상대 시간 문자열 (예: "30분 전", "2시간 전", "3일 전")
+ */
+export function formatTimeAgo(isoDate: string): string {
+  const date = new Date(isoDate);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return '방금';
+  if (diffMins < 60) return `${diffMins}분 전`;
+  if (diffHours < 24) return `${diffHours}시간 전`;
+  if (diffDays < 7) return `${diffDays}일 전`;
+
+  // 7일 이상은 날짜 표시
+  return date.toLocaleDateString('ko-KR');
+}
+
+/**
+ * ISO 8601 날짜를 "N시간 전", "N일 전" 형식으로 변환 (간소화 버전)
+ * @param isoDate - ISO 8601 형식의 날짜 문자열 (선택)
+ * @param fallback - 날짜가 없을 때 표시할 문자열 (기본값: '대화 없음')
+ * @returns 상대 시간 문자열
+ */
+export function formatLastCheckTime(isoDate?: string, fallback = '대화 없음'): string {
+  if (!isoDate) return fallback;
+
+  const date = new Date(isoDate);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffHours < 1) return '방금 전';
+  if (diffHours < 24) return `${diffHours}시간 전`;
+  return `${Math.floor(diffHours / 24)}일 전`;
+}
+```
+
+**리팩토링 대상**:
+
+1. `src/shared/components/business/ManagedMemberCard/ManagedMemberCard.tsx`
+   - 기존 `formatLastCheckTime` 함수 제거
+   - `import { formatLastCheckTime } from '@/shared/utils/date'` 추가
+
+**수정 예시**:
+
+```typescript
+// Before
+const formatLastCheckTime = (isoString?: string) => {
+  if (!isoString) return '대화 없음';
+  // ... 중복 코드
+};
+
+// After
+import { formatLastCheckTime } from '@/shared/utils/date';
+```
+
+**완료 기준**:
+- ✅ `src/shared/utils/date.ts` 생성 및 2개 함수 구현
+- ✅ `src/shared/utils/index.ts`에서 export
+- ✅ `ManagedMemberCard.tsx` 리팩토링 완료
+- ✅ TypeScript 빌드 에러 0건
+- ✅ 기존 기능 정상 작동 확인
+
+---
 
 ### Task 1: features/notification 모듈 생성 (2-3시간)
 
@@ -373,6 +477,11 @@ export function NotificationsPage() {
 
 ```typescript
 // src/shared/components/business/NotificationCard/NotificationCard.tsx
+import { formatTimeAgo } from '@/shared/utils/date';
+import type { Notification, NotificationType, NotificationLevel } from '@/features/notification/types';
+import { Card } from '@/shared/components';
+import { cn } from '@/shared/utils';
+
 interface NotificationCardProps {
   notification: Notification;
   onClick: () => void;
@@ -444,20 +553,7 @@ function getLevelColor(level: NotificationLevel) {
   }
 }
 
-function formatTimeAgo(isoDate: string): string {
-  const date = new Date(isoDate);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMins < 1) return '방금';
-  if (diffMins < 60) return `${diffMins}분 전`;
-  if (diffHours < 24) return `${diffHours}시간 전`;
-  if (diffDays < 7) return `${diffDays}일 전`;
-  return date.toLocaleDateString('ko-KR');
-}
+// formatTimeAgo 함수는 Task 0에서 생성한 src/shared/utils/date.ts에서 import
 ```
 
 ---
@@ -818,6 +914,11 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
 
 ### 기능
 
+- [ ] 시간 포맷 유틸리티 생성 및 리팩토링 (Task 0)
+  - [ ] src/shared/utils/date.ts 생성 (formatTimeAgo, formatLastCheckTime)
+  - [ ] src/shared/utils/index.ts에서 export
+  - [ ] ManagedMemberCard.tsx 리팩토링
+  - [ ] 기존 기능 정상 작동 확인
 - [ ] features/notification 모듈 생성
   - [ ] notification.types.ts (Notification, NotificationType, NotificationLevel)
   - [ ] notificationApi.ts (getNotifications, markAsRead)
@@ -871,6 +972,7 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
 
 | Task | 예상 시간 | 비고 |
 |------|----------|------|
+| Task 0: 시간 포맷 유틸리티 | 1-1.5시간 | date.ts 생성, ManagedMemberCard 리팩토링 |
 | Task 1: features/notification 모듈 | 2-3시간 | 타입, API, 훅 |
 | Task 2: 알림 목록 페이지 | 2-3시간 | NotificationsPage, NotificationCard |
 | Task 3: 알림 상세 페이지 | 1-2시간 | 선택적 (Modal 대체 가능) |
@@ -878,7 +980,7 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
 | Task 5: NavigationBar 확인 | 30분 | 이미 구현됨, 확인만 |
 | Task 6: Mock 데이터 생성 | 1시간 | 다양한 알림 데이터 |
 | 테스트 및 버그 수정 | 1-2시간 | 4개 시나리오 |
-| **총 예상 시간** | **8-12시간** | **1-2일** |
+| **총 예상 시간** | **9-13.5시간** | **1-2일** |
 
 ---
 
@@ -892,5 +994,19 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
 
 **📅 문서 작성일**: 2025-10-25
 **✏️ 작성자**: Claude Code
-**🔄 버전**: 1.0.0
+**🔄 버전**: 1.1.0 (검토 의견 반영)
 **📍 다음 단계**: Phase 3-6 구현 시작 → Phase 3-8 (API 연결)
+
+---
+
+## 변경 이력
+
+### v1.1.0 (2025-10-25)
+- **Task 0 추가**: 시간 포맷 유틸리티 함수 생성 및 리팩토링
+  - ManagedMemberCard의 코드 중복 제거
+  - formatTimeAgo, formatLastCheckTime 공용 함수화
+- **TODO 주석 추가**: useNotification(id) 훅, highlight 기능 개선 사항 기록
+- **예상 시간 재조정**: 8-12시간 → 9-13.5시간
+
+### v1.0.0 (2025-10-25)
+- 초안 작성
