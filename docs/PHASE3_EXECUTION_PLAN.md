@@ -1,10 +1,10 @@
 # MARUNI Phase 3 실행 계획
 
 **작성일**: 2025-10-12
-**버전**: 1.5.0
-**상태**: Phase 3-7 완료 ✅ | Phase 3-5 또는 Phase 3-6 진행 가능
+**버전**: 1.6.0
+**상태**: Phase 3-5 완료 ✅ | Phase 3-6 진행 가능
 **목표**: 새로운 유저 흐름 설계 반영 및 핵심 기능 구현
-**최종 업데이트**: 2025-10-21
+**최종 업데이트**: 2025-10-25
 
 ---
 
@@ -60,7 +60,7 @@ MARUNI 클라이언트를 새로운 유저 흐름 설계(user-flow.md, USER_FLOW
 | 보호자 관리           | ✅ 100%   | ✅ 100% | 3-3 ✅ |
 | AI 대화               | ✅ 100%   | ✅ 100% | 3-4 ✅ |
 | 공통 기능 보완        | ✅ 100%   | ✅ 100% | 3-7 ✅ |
-| 설정 관리             | ❌ 0%     | ✅ 80%  | 3-5    |
+| 설정 관리             | ✅ 100%   | ✅ 100% | 3-5 ✅ |
 | 알림 기능             | ❌ 0%     | ⏳ 50%  | 3-6    |
 
 ---
@@ -264,40 +264,58 @@ MARUNI 클라이언트를 새로운 유저 흐름 설계(user-flow.md, USER_FLOW
 
 ---
 
-### Phase 3-5: 설정 관리 (Settings)
+### Phase 3-5: 설정 관리 (Settings) ✅ 완료
 
+**상태**: ✅ 완료 (2025-10-25)
 **목표**: 사용자가 앱 설정 및 개인정보를 관리할 수 있는 기능 구현
 
-**핵심 작업**:
+**핵심 작업 (완료)**:
 
-1. features/member 모듈 확장
+1. features/member 모듈 생성
+   - ✅ API: getProfile, updateProfile, changePassword (Mock, localStorage 기반)
+   - ✅ Hooks: useMember (프로필 조회, 수정, 비밀번호 변경)
+   - ✅ Types: ProfileUpdateRequest, PasswordChangeRequest, MemberSettings
 
-   - API: 내 정보 수정, 비밀번호 변경
-   - Hooks: useProfile, useSettings
-   - Types: ProfileUpdateRequest, SettingsData
-
-2. 설정 화면
-
-   - 설정 메뉴 페이지 (/settings)
-   - 내 정보 수정 페이지 (/settings/profile)
-   - 알림 설정 페이지 (/settings/notifications)
-   - 안부 메시지 ON/OFF 설정
+2. 설정 화면 (4개 페이지)
+   - ✅ 설정 메뉴 페이지 (/settings) - 3개 메뉴 카드 (Lucide 아이콘)
+   - ✅ 내 정보 수정 페이지 (/settings/profile) - 이름, 전화번호 수정
+   - ✅ 알림 설정 페이지 (/settings/notifications) - dailyCheckEnabled 토글
+   - ✅ 비밀번호 변경 페이지 (/settings/password) - 현재/새 비밀번호 입력
 
 3. 설정 기능
-   - 이름, 전화번호 수정
-   - 비밀번호 변경
-   - dailyCheckEnabled 토글
-   - 알림 수신 설정
+   - ✅ 프로필 수정 → AuthStore 즉시 업데이트 (localStorage 동기화)
+   - ✅ 비밀번호 변경 → 현재 비밀번호 검증 후 변경
+   - ✅ dailyCheckEnabled 토글 → 대시보드 "내 안부 메시지" 섹션 자동 업데이트
+   - ✅ Toast 피드백 (Phase 3-7 컴포넌트 재사용)
 
 **완성 기준**:
 
 - ✅ 설정 메뉴에서 모든 항목 접근 가능
-- ✅ 내 정보 수정 후 즉시 반영
+- ✅ 내 정보 수정 후 즉시 반영 (AuthStore 업데이트)
 - ✅ 안부 메시지 ON/OFF 시 메인 화면 섹션 변화
+- ✅ 비밀번호 변경 시 현재 비밀번호 검증
+- ✅ TypeScript 빌드 에러 0건
+- ✅ ESLint 경고 0건
 
-**예상 소요 시간**: 1-2일 (6-8시간)
+**실제 소요 시간**: 1일 (약 6시간)
 
-**우선순위**: 🟡 중간
+**우선순위**: 🟠 높음
+
+**완료 산출물**:
+- `src/features/member/` - Member 모듈 전체 (API, hooks, types)
+- `src/pages/settings/SettingsPage.tsx` - 설정 메뉴 페이지
+- `src/pages/settings/ProfilePage.tsx` - 내 정보 수정 페이지
+- `src/pages/settings/NotificationsPage.tsx` - 알림 설정 페이지
+- `src/pages/settings/PasswordPage.tsx` - 비밀번호 변경 페이지
+- `src/app/router.tsx` - Settings 라우트 4개 추가
+- `src/shared/constants/routes.ts` - SETTINGS_PROFILE, SETTINGS_NOTIFICATIONS, SETTINGS_PASSWORD
+
+**세부 계획 문서**: `docs/phases/phase3-5-settings.md`
+
+**TODO (Phase 3-8 API 연결 시 개선)**:
+- ⏳ Mock API → 실제 API 연결 (PATCH /api/members/me)
+- ⏳ 비밀번호 변경 보안 강화 (bcrypt 암호화, 세션 무효화)
+- ⏳ 프로필 이미지 업로드 (Phase 4)
 
 ---
 
@@ -417,7 +435,7 @@ Phase 3-1 (기반 확립)
 
 ## 성공 기준
 
-### Phase 3 완료 시 달성 상태 (현재 진행률: 71%)
+### Phase 3 완료 시 달성 상태 (현재 진행률: 86%)
 
 #### 기능 완성도
 
@@ -426,7 +444,7 @@ Phase 3-1 (기반 확립)
 - ✅ **AI 대화**: 노인이 AI와 실시간 대화 가능 (Phase 3-4 완료)
 - ✅ **보호자 관계**: 노인 ↔ 보호자 관계 성립 및 관리 (Phase 3-3 완료)
 - ✅ **공통 컴포넌트**: Toast, Modal, EmptyState, NavigationBar (Phase 3-7 완료)
-- ⏳ **설정 관리**: 내 정보 수정, 안부 메시지 ON/OFF
+- ✅ **설정 관리**: 내 정보 수정, 안부 메시지 ON/OFF, 비밀번호 변경 (Phase 3-5 완료)
 - ⏳ **알림 기능**: 알림 목록 조회 및 상세 확인
 
 #### 사용자 여정 재현
@@ -455,20 +473,21 @@ Phase 3-1 (기반 확립)
 
 ## 다음 단계
 
-### 즉시 진행 가능 (Phase 3-5 또는 Phase 3-6)
+### 즉시 진행 가능 (Phase 3-6)
 
-**Phase 3-5: 설정 관리** 또는 **Phase 3-6: 알림 기능** 진행 가능
+**Phase 3-6: 알림 기능** 진행 가능
 
 - ✅ Phase 3-1 완료로 기반 확립됨
 - ✅ Phase 3-2 완료로 회원가입 플로우 완성
 - ✅ Phase 3-3 완료로 보호자 관계 관리 완성
 - ✅ Phase 3-4 완료로 AI 대화 기능 완성
+- ✅ Phase 3-5 완료로 설정 관리 완성
 - ✅ Phase 3-7 완료로 공통 컴포넌트 구축 완성
-- 🎯 **권장 순서**: Phase 3-5 (설정 관리) → Phase 3-6 (알림 기능)
-- 🎯 **이유**: 공통 컴포넌트(Toast, Modal, NavigationBar, EmptyState)를 Phase 3-5, 3-6에서 재사용 가능
+- 🎯 **다음 단계**: Phase 3-6 (알림 기능) 진행
+- 🎯 **이유**: 공통 컴포넌트(Toast, Modal, NavigationBar, EmptyState)를 Phase 3-6에서 재사용 가능
 
 **세부 계획 문서**:
-- `docs/phases/phase3-5-settings.md` (작성 필요)
+- ✅ `docs/phases/phase3-5-settings.md` (완료)
 - `docs/phases/phase3-6-notification.md` (작성 필요)
 
 ---

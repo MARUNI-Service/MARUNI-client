@@ -41,7 +41,7 @@ export function PasswordPage() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err) {
+    } catch {
       // 에러는 useMember에서 Toast로 표시
     }
   };
