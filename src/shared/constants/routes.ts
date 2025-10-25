@@ -14,7 +14,11 @@ export const ROUTES = {
   GUARDIANS_SEARCH: '/guardians/search',
   GUARDIANS_REQUESTS: '/guardians/requests',
 
+  // 설정 관리 (Phase 3-5)
   SETTINGS: '/settings',
+  SETTINGS_PROFILE: '/settings/profile',
+  SETTINGS_NOTIFICATIONS: '/settings/notifications',
+  SETTINGS_PASSWORD: '/settings/password',
 } as const;
 
 // 타입 정의
