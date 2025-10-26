@@ -1,12 +1,14 @@
+import type { EmotionStatus } from '@/shared/utils/emotion';
+
 /**
  * 메시지 발신자 타입
  */
 export type MessageSender = 'USER' | 'AI';
 
 /**
- * 감정 상태 (ManagedMember와 동일)
+ * 감정 상태 (중앙화된 타입 재export)
  */
-export type EmotionStatus = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+export type { EmotionStatus };
 
 /**
  * 메시지

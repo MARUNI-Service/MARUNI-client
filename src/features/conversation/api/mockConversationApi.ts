@@ -1,5 +1,6 @@
 import type { Message, EmotionStatus } from '../types/conversation.types';
 import { storage } from '@/shared/services/storage';
+import { analyzeEmotion } from '@/shared/utils/emotion';
 
 const MAX_MESSAGES = 100; // 최대 저장 메시지 수
 
@@ -42,34 +43,6 @@ const AI_RESPONSES = {
     '오늘 날씨가 좋네요. 산책 가실 계획이 있으신가요?',
   ],
 };
-
-// 감정 분석 키워드
-const EMOTION_KEYWORDS = {
-  POSITIVE: ['좋', '행복', '즐거', '기쁘', '건강', '좋아', '재밌', '웃', '감사', '사랑'],
-  NEGATIVE: ['슬프', '아프', '힘들', '외롭', '싫', '나빠', '우울', '걱정', '불안', '아파'],
-};
-
-/**
- * 감정 분석 (간단한 키워드 기반)
- */
-function analyzeEmotion(content: string): EmotionStatus {
-  const lowerContent = content.toLowerCase();
-
-  // 긍정 키워드 검사
-  const hasPositive = EMOTION_KEYWORDS.POSITIVE.some((keyword) =>
-    lowerContent.includes(keyword)
-  );
-  if (hasPositive) return 'POSITIVE';
-
-  // 부정 키워드 검사
-  const hasNegative = EMOTION_KEYWORDS.NEGATIVE.some((keyword) =>
-    lowerContent.includes(keyword)
-  );
-  if (hasNegative) return 'NEGATIVE';
-
-  // 기본값: 중립
-  return 'NEUTRAL';
-}
 
 /**
  * AI 응답 생성 (간단한 규칙 기반)

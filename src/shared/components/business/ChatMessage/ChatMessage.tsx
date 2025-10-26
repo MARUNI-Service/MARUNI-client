@@ -22,6 +22,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         POSITIVE: '😊',
         NEGATIVE: '😢',
         NEUTRAL: '😐',
+        WARNING: '⚠️',
       }[message.emotionStatus]
     : null;
 

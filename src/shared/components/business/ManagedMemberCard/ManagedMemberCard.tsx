@@ -1,6 +1,7 @@
 import type { ManagedMember } from '@/features/auth/types';
 import { Card, Button } from '@/shared/components';
 import { formatLastCheckTime } from '@/shared/utils/date';
+import { getEmotionConfig } from '@/shared/utils/emotion';
 
 interface ManagedMemberCardProps {
   member: ManagedMember;
@@ -12,31 +13,7 @@ interface ManagedMemberCardProps {
  * - "대화보기" 버튼 제공
  */
 export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
-  const getEmotionEmoji = (status: ManagedMember['emotionStatus']) => {
-    switch (status) {
-      case 'POSITIVE':
-        return '😊';
-      case 'NEGATIVE':
-        return '😢';
-      case 'WARNING':
-        return '⚠️';
-      default:
-        return '😐';
-    }
-  };
-
-  const getEmotionText = (status: ManagedMember['emotionStatus']) => {
-    switch (status) {
-      case 'POSITIVE':
-        return '좋음';
-      case 'NEGATIVE':
-        return '안 좋음';
-      case 'WARNING':
-        return '주의';
-      default:
-        return '보통';
-    }
-  };
+  const { emoji, text } = getEmotionConfig(member.emotionStatus);
 
   const handleViewConversation = () => {
     // Phase 3-4에서 대화 이력 화면으로 이동
@@ -63,8 +40,8 @@ export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
 
           {/* 상태 */}
           <div className="text-center">
-            <div className="text-3xl mb-1">{getEmotionEmoji(member.emotionStatus)}</div>
-            <p className="text-sm text-gray-600">{getEmotionText(member.emotionStatus)}</p>
+            <div className="text-3xl mb-1">{emoji}</div>
+            <p className="text-sm text-gray-600">{text}</p>
           </div>
         </div>
 
