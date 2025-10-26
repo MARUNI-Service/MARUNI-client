@@ -31,7 +31,6 @@ export type {
 
 // Toast
 export { Toast, ToastContainer } from './ui/Toast';
-export type { ToastProps } from './ui/Toast';
 
 // Modal
 export { Modal } from './ui/Modal';
