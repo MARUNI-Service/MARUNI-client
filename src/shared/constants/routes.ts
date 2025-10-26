@@ -24,7 +24,3 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   NOTIFICATION_DETAIL: '/notifications/:id',
 } as const;
-
-// 타입 정의
-export type RouteKey = keyof typeof ROUTES;
-export type RoutePath = (typeof ROUTES)[RouteKey];

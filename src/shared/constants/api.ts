@@ -7,10 +7,4 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REFRESH: '/auth/refresh',
   },
-  MEMBERS: {
-    BASE: '/members',
-  },
-  CONVERSATIONS: {
-    BASE: '/conversations',
-  },
 } as const;
