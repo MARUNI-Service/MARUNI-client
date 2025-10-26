@@ -20,10 +20,3 @@ export interface Message {
   emotionStatus?: EmotionStatus; // 사용자 메시지만
   createdAt: string; // ISO 8601
 }
-
-/**
- * 메시지 전송 요청
- */
-export interface SendMessageRequest {
-  content: string;
-}
