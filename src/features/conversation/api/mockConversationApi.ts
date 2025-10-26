@@ -1,19 +1,9 @@
 import type { Message, EmotionStatus } from '../types/conversation.types';
 import { storage } from '@/shared/services/storage';
 import { analyzeEmotion } from '@/shared/utils/emotion';
+import { simulateError } from '@/__dev__/errorSimulator';
 
 const MAX_MESSAGES = 100; // 최대 저장 메시지 수
-
-/**
- * 🧪 개발/테스트용 에러 시뮬레이션
- *
- * 사용법:
- * - "[error]" 포함 메시지 → 네트워크 에러 발생
- * - "[timeout]" 포함 메시지 → 타임아웃 에러 발생
- *
- * 예: "안녕하세요 [error]" 입력 시 에러 처리 UI 테스트 가능
- */
-const ENABLE_ERROR_SIMULATION = true; // Phase 3-8에서 false로 변경
 
 // Mock AI 응답 규칙
 const AI_RESPONSES = {
@@ -100,22 +90,8 @@ export async function mockSendMessage(
   userId: number,
   content: string
 ): Promise<{ userMessage: Message; aiMessage: Message }> {
-  // 🧪 에러 시뮬레이션 (개발/테스트용)
-  if (ENABLE_ERROR_SIMULATION) {
-    const lowerContent = content.toLowerCase();
-
-    // [error] 키워드: 네트워크 에러 발생
-    if (lowerContent.includes('[error]')) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      throw new Error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
-    }
-
-    // [timeout] 키워드: 타임아웃 에러 발생 (10초 대기 후)
-    if (lowerContent.includes('[timeout]')) {
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      throw new Error('요청 시간이 초과되었습니다. 다시 시도해주세요.');
-    }
-  }
+  // 🧪 에러 시뮬레이션 (개발 환경에서만 자동 동작)
+  simulateError(content);
 
   await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
 
