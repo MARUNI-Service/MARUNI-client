@@ -15,7 +15,6 @@ export const storage = {
   // Auth 관련
   getAuth: () => localStorage.getItem(STORAGE_KEYS.AUTH),
   setAuth: (data: string) => localStorage.setItem(STORAGE_KEYS.AUTH, data),
-  removeAuth: () => localStorage.removeItem(STORAGE_KEYS.AUTH),
 
   // Guardian 요청
   getGuardianRequests: () => localStorage.getItem(STORAGE_KEYS.GUARDIAN_REQUESTS),
