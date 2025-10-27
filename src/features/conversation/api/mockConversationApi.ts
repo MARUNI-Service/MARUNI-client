@@ -1,18 +1,9 @@
 import type { Message, EmotionStatus } from '../types/conversation.types';
+import { storage } from '@/shared/services/storage';
+import { analyzeEmotion } from '@/shared/utils/emotion';
+import { simulateError } from '@/__dev__/errorSimulator';
 
-const STORAGE_KEY_PREFIX = 'conversation-messages-';
 const MAX_MESSAGES = 100; // 최대 저장 메시지 수
-
-/**
- * 🧪 개발/테스트용 에러 시뮬레이션
- *
- * 사용법:
- * - "[error]" 포함 메시지 → 네트워크 에러 발생
- * - "[timeout]" 포함 메시지 → 타임아웃 에러 발생
- *
- * 예: "안녕하세요 [error]" 입력 시 에러 처리 UI 테스트 가능
- */
-const ENABLE_ERROR_SIMULATION = true; // Phase 3-8에서 false로 변경
 
 // Mock AI 응답 규칙
 const AI_RESPONSES = {
@@ -42,34 +33,6 @@ const AI_RESPONSES = {
     '오늘 날씨가 좋네요. 산책 가실 계획이 있으신가요?',
   ],
 };
-
-// 감정 분석 키워드
-const EMOTION_KEYWORDS = {
-  POSITIVE: ['좋', '행복', '즐거', '기쁘', '건강', '좋아', '재밌', '웃', '감사', '사랑'],
-  NEGATIVE: ['슬프', '아프', '힘들', '외롭', '싫', '나빠', '우울', '걱정', '불안', '아파'],
-};
-
-/**
- * 감정 분석 (간단한 키워드 기반)
- */
-function analyzeEmotion(content: string): EmotionStatus {
-  const lowerContent = content.toLowerCase();
-
-  // 긍정 키워드 검사
-  const hasPositive = EMOTION_KEYWORDS.POSITIVE.some((keyword) =>
-    lowerContent.includes(keyword)
-  );
-  if (hasPositive) return 'POSITIVE';
-
-  // 부정 키워드 검사
-  const hasNegative = EMOTION_KEYWORDS.NEGATIVE.some((keyword) =>
-    lowerContent.includes(keyword)
-  );
-  if (hasNegative) return 'NEGATIVE';
-
-  // 기본값: 중립
-  return 'NEUTRAL';
-}
 
 /**
  * AI 응답 생성 (간단한 규칙 기반)
@@ -110,8 +73,7 @@ function generateAIResponse(userMessage: string, emotionStatus: EmotionStatus): 
 export async function mockGetMessages(userId: number): Promise<Message[]> {
   await new Promise((resolve) => setTimeout(resolve, 300)); // 네트워크 지연 시뮬레이션
 
-  const key = `${STORAGE_KEY_PREFIX}${userId}`;
-  const stored = localStorage.getItem(key);
+  const stored = storage.getConversationMessages(userId);
 
   if (!stored) {
     return [];
@@ -128,27 +90,12 @@ export async function mockSendMessage(
   userId: number,
   content: string
 ): Promise<{ userMessage: Message; aiMessage: Message }> {
-  // 🧪 에러 시뮬레이션 (개발/테스트용)
-  if (ENABLE_ERROR_SIMULATION) {
-    const lowerContent = content.toLowerCase();
-
-    // [error] 키워드: 네트워크 에러 발생
-    if (lowerContent.includes('[error]')) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      throw new Error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
-    }
-
-    // [timeout] 키워드: 타임아웃 에러 발생 (10초 대기 후)
-    if (lowerContent.includes('[timeout]')) {
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      throw new Error('요청 시간이 초과되었습니다. 다시 시도해주세요.');
-    }
-  }
+  // 🧪 에러 시뮬레이션 (개발 환경에서만 자동 동작)
+  simulateError(content);
 
   await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
 
-  const key = `${STORAGE_KEY_PREFIX}${userId}`;
-  const stored = localStorage.getItem(key);
+  const stored = storage.getConversationMessages(userId);
   const messages: Message[] = stored ? JSON.parse(stored) : [];
 
   // 감정 분석
@@ -182,7 +129,7 @@ export async function mockSendMessage(
   const trimmedMessages = messages.slice(-MAX_MESSAGES);
 
   // 저장
-  localStorage.setItem(key, JSON.stringify(trimmedMessages));
+  storage.setConversationMessages(userId, JSON.stringify(trimmedMessages));
 
   return { userMessage, aiMessage };
 }

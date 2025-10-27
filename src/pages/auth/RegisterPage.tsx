@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Layout, Input, Button } from '@/shared/components';
 import { useAuth } from '@/features/auth/hooks';
+import { useToast } from '@/shared/hooks/useToast';
 
 /**
  * 회원가입 페이지
@@ -11,6 +12,7 @@ import { useAuth } from '@/features/auth/hooks';
 export function RegisterPage() {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const toast = useToast();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -67,8 +69,9 @@ export function RegisterPage() {
         phoneNumber: formData.phoneNumber,
       });
 
-      // 회원가입 성공 → 대시보드로 이동 (온보딩은 MVP 제외)
-      navigate('/dashboard');
+      // 회원가입 성공 → 로그인 페이지로 이동
+      toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
+      navigate('/login');
     } catch {
       setErrors({ submit: '회원가입에 실패했습니다' });
     } finally {

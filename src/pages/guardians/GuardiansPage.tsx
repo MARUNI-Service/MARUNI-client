@@ -19,8 +19,8 @@ export function GuardiansPage() {
   };
 
   return (
-    <Layout title="보호자 관리" showBack={true}>
-      <div className="space-y-6 p-4">
+    <Layout title="보호자 관리" showBack={true} onBack={() => navigate(-1)}>
+      <div className="space-y-6 pb-24">
         {/* 현재 보호자 */}
         {currentGuardian ? (
           <div>

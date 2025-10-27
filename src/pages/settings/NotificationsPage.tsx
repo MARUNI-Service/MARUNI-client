@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/shared/hooks/useToast';
@@ -8,6 +9,7 @@ import { useToast } from '@/shared/hooks/useToast';
  * - 푸시 알림 설정 (Phase 3-6 연동)
  */
 export function NotificationsPage() {
+  const navigate = useNavigate();
   const { user, setUser } = useAuth();
   const toast = useToast();
 
@@ -26,7 +28,7 @@ export function NotificationsPage() {
   };
 
   return (
-    <Layout title="알림 설정" showBack={true}>
+    <Layout title="알림 설정" showBack={true} onBack={() => navigate(-1)}>
       <div className="space-y-6">
         {/* 안부 메시지 설정 */}
         <Card padding="medium">

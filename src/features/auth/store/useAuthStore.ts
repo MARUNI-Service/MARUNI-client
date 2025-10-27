@@ -159,38 +159,24 @@ export const useAuthStore = create<AuthState>()(
       /**
        * 회원가입
        */
-      signup: async (credentials: SignupRequest) => {
+      signup: async (_credentials: SignupRequest) => {
         set({ isLoading: true, error: null });
 
         try {
           // 🔴 Phase 3-2: Mock 회원가입
           // Phase 3-8에서 실제 API 호출로 변경
-          const newUser: User = {
-            id: Date.now(),
-            username: credentials.email.split('@')[0], // 이메일의 @ 앞부분을 username으로
-            name: credentials.name,
-            role: 'SENIOR', // 기본값: 노인
-            phoneNumber: credentials.phoneNumber,
-            email: credentials.email,
-            dailyCheckEnabled: false, // 기본값: 비활성
-            guardian: null,
-            managedMembers: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
+          // 회원가입만 하고 자동 로그인은 하지 않음 (로그인 페이지로 이동)
 
+          // Mock에서는 사용자 생성만 시뮬레이션 (실제 저장 없음)
+          // 자동 로그인하지 않고 isLoading만 false로 설정
           set({
-            user: newUser,
-            accessToken: `mock-token-${Date.now()}`,
-            refreshToken: `mock-refresh-${Date.now()}`,
-            isAuthenticated: true,
             isLoading: false,
             error: null,
           });
 
           // 🔴 Phase 3-8에서 활성화: 실제 API 호출
-          // const response = await authApi.signup(credentials);
-          // set({ user: response.user, ... });
+          // const response = await authApi.signup(_credentials);
+          // 회원가입만 하고 자동 로그인 안 함
         } catch (error) {
           const errorMessage = getApiErrorMessage(error);
           set({

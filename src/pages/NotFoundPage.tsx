@@ -27,7 +27,7 @@ export function NotFoundPage() {
             variant="primary"
             size="extra-large"
             fullWidth
-            onClick={() => navigate(ROUTES.HOME)}
+            onClick={() => navigate(ROUTES.DASHBOARD)}
           >
             홈으로 가기
           </Button>

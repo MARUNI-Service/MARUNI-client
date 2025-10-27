@@ -1,5 +1,6 @@
 import type { User } from '@/features/auth/types';
 import type { ProfileUpdateRequest, PasswordChangeRequest } from '../types';
+import { storage } from '@/shared/services/storage';
 
 /**
  * Mock 프로필 조회 (AuthStore에서 가져옴)
@@ -9,7 +10,7 @@ import type { ProfileUpdateRequest, PasswordChangeRequest } from '../types';
  * 개선: GET /api/members/me 실제 호출
  */
 export async function getProfile(): Promise<User> {
-  const authStorage = localStorage.getItem('auth-storage');
+  const authStorage = storage.getAuth();
   if (!authStorage) {
     throw new Error('로그인이 필요합니다');
   }
@@ -28,20 +29,20 @@ export async function getProfile(): Promise<User> {
 export async function updateProfile(data: ProfileUpdateRequest): Promise<User> {
   await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
 
-  const authStorage = localStorage.getItem('auth-storage');
+  const authStorage = storage.getAuth();
   if (!authStorage) {
     throw new Error('로그인이 필요합니다');
   }
 
-  const storage = JSON.parse(authStorage);
+  const storageData = JSON.parse(authStorage);
   const updatedUser = {
-    ...storage.state.user,
+    ...storageData.state.user,
     name: data.name,
     phoneNumber: data.phoneNumber,
   };
 
-  storage.state.user = updatedUser;
-  localStorage.setItem('auth-storage', JSON.stringify(storage));
+  storageData.state.user = updatedUser;
+  storage.setAuth(JSON.stringify(storageData));
 
   return updatedUser;
 }
@@ -62,16 +63,16 @@ export async function changePassword(data: PasswordChangeRequest): Promise<void>
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   // Mock 사용자 데이터에서 현재 비밀번호 확인
-  const authStorage = localStorage.getItem('auth-storage');
+  const authStorage = storage.getAuth();
   if (!authStorage) {
     throw new Error('로그인이 필요합니다');
   }
 
-  const storage = JSON.parse(authStorage);
-  const username = storage.state.user.username;
+  const storageData = JSON.parse(authStorage);
+  const username = storageData.state.user.username;
 
   // Mock 사용자 목록에서 비밀번호 확인 (실제로는 서버에서 검증)
-  const mockUsers = JSON.parse(localStorage.getItem('mock-users') || '{}');
+  const mockUsers = JSON.parse(storage.getMockUsers() || '{}');
   const user = mockUsers[username];
 
   if (!user) {
@@ -84,5 +85,5 @@ export async function changePassword(data: PasswordChangeRequest): Promise<void>
 
   // 새 비밀번호로 업데이트
   mockUsers[username].password = data.newPassword;
-  localStorage.setItem('mock-users', JSON.stringify(mockUsers));
+  storage.setMockUsers(JSON.stringify(mockUsers));
 }

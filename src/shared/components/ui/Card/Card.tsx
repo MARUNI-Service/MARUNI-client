@@ -24,13 +24,15 @@ import type { CardProps } from './Card.types';
  */
 export function Card({
   children,
-  clickable = false,
+  clickable,
   padding = 'medium',
   shadow = 'small',
   rounded = 'medium',
   className = '',
   onClick
 }: CardProps) {
+  // onClick이 있으면 자동으로 clickable로 처리
+  const isClickable = clickable ?? !!onClick;
   // 기본 스타일
   const baseClasses = [
     'bg-white',
@@ -64,7 +66,7 @@ export function Card({
   };
 
   // 클릭 가능한 카드의 상호작용 스타일
-  const interactiveClasses = clickable ? [
+  const interactiveClasses = isClickable ? [
     'cursor-pointer',
     'hover:shadow-md',
     'hover:border-gray-300',
@@ -87,12 +89,12 @@ export function Card({
   ].filter(Boolean).join(' ');
 
   // 클릭 가능한 카드는 button으로, 아니면 div로 렌더링
-  const Component = clickable ? 'button' : 'div';
+  const Component = isClickable ? 'button' : 'div';
 
   return (
     <Component
       className={allClasses}
-      {...(clickable && {
+      {...(isClickable && {
         type: 'button',
         role: 'button',
         tabIndex: 0,

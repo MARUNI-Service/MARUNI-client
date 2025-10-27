@@ -31,7 +31,7 @@ export function NotificationDetailPage() {
   // 로딩 중
   if (isLoading) {
     return (
-      <Layout title="알림 상세" showBack={true}>
+      <Layout title="알림 상세" showBack={true} onBack={() => navigate(-1)}>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -45,7 +45,7 @@ export function NotificationDetailPage() {
   // 알림을 찾을 수 없음
   if (!notification) {
     return (
-      <Layout title="알림 상세" showBack={true}>
+      <Layout title="알림 상세" showBack={true} onBack={() => navigate(-1)}>
         <EmptyState emoji="🔔" title="알림을 찾을 수 없습니다" description="삭제되었거나 존재하지 않는 알림입니다" />
       </Layout>
     );
@@ -55,7 +55,7 @@ export function NotificationDetailPage() {
   const timeAgo = formatTimeAgo(notification.createdAt);
 
   return (
-    <Layout title="알림 상세" showBack={true}>
+    <Layout title="알림 상세" showBack={true} onBack={() => navigate(-1)}>
       <div className="space-y-6">
         {/* 알림 내용 */}
         <Card padding="large">

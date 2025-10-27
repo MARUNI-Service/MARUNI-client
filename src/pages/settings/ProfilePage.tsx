@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout, Input, Button } from '@/shared/components';
 import { useMember } from '@/features/member';
 
@@ -7,6 +8,7 @@ import { useMember } from '@/features/member';
  * - 이름, 전화번호 수정
  */
 export function ProfilePage() {
+  const navigate = useNavigate();
   const { profile, isLoading, updateProfile, isUpdating } = useMember();
 
   const [name, setName] = useState('');
@@ -31,7 +33,7 @@ export function ProfilePage() {
 
   if (isLoading) {
     return (
-      <Layout title="내 정보 수정" showBack={true}>
+      <Layout title="내 정보 수정" showBack={true} onBack={() => navigate(-1)}>
         <div className="flex items-center justify-center py-12">
           <p className="text-xl text-gray-500">로딩 중...</p>
         </div>
@@ -40,7 +42,7 @@ export function ProfilePage() {
   }
 
   return (
-    <Layout title="내 정보 수정" showBack={true}>
+    <Layout title="내 정보 수정" showBack={true} onBack={() => navigate(-1)}>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           label="이름"

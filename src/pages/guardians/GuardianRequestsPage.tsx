@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
 import { useGuardian, type GuardianRequest } from '@/features/guardian';
-import { useToast } from '@/shared/hooks/useToast';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -14,41 +12,22 @@ import { ROUTES } from '@/shared/constants/routes';
  */
 export function GuardianRequestsPage() {
   const navigate = useNavigate();
-  const { getGuardianRequests, acceptGuardianRequest, rejectGuardianRequest, isLoading } =
-    useGuardian();
-  const toast = useToast();
-
-  const [requests, setRequests] = useState<GuardianRequest[]>([]);
-
-  useEffect(() => {
-    loadRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadRequests = async () => {
-    const data = await getGuardianRequests();
-    setRequests(data);
-  };
+  const { requests, acceptGuardianRequest, rejectGuardianRequest, isLoading } = useGuardian();
 
   const handleAccept = async (requestId: number) => {
     try {
       await acceptGuardianRequest(requestId);
 
-      toast.success('보호자 요청을 수락했습니다!');
-
-      await loadRequests(); // 목록 새로고침
-
       // 더 이상 요청이 없으면 자동으로 대시보드 이동
       // (여러 요청 연속 처리 가능, 모두 처리하면 자동 이동으로 UX 개선)
-      const remainingRequests = await getGuardianRequests();
-      if (remainingRequests.length === 0) {
-        // 모든 요청 처리 완료 → 대시보드로 이동하여 변경된 메인 화면 확인
+      if (requests.length === 1) {
+        // 마지막 요청 처리 완료 → 대시보드로 이동하여 변경된 메인 화면 확인
         setTimeout(() => {
           navigate(ROUTES.DASHBOARD);
         }, 3000); // Toast 확인 시간 제공 (default 3초)
       }
     } catch {
-      toast.error('수락에 실패했습니다');
+      // 에러는 hook에서 toast로 처리됨
     }
   };
 
@@ -56,29 +35,24 @@ export function GuardianRequestsPage() {
     try {
       await rejectGuardianRequest(requestId);
 
-      toast.info('보호자 요청을 거절했습니다');
-
-      await loadRequests(); // 목록 새로고침
-
       // 거절 시에도 동일한 로직 적용
-      const remainingRequests = await getGuardianRequests();
-      if (remainingRequests.length === 0) {
+      if (requests.length === 1) {
         setTimeout(() => {
           navigate(ROUTES.DASHBOARD);
         }, 3000); // Toast 확인 시간 제공 (default 3초)
       }
     } catch {
-      toast.error('거절에 실패했습니다');
+      // 에러는 hook에서 toast로 처리됨
     }
   };
 
   return (
-    <Layout title="보호자 요청" showBack={true}>
+    <Layout title="보호자 요청" showBack={true} onBack={() => navigate(-1)}>
       <div className="space-y-6 p-4">
         {/* 요청 목록 */}
         {requests.length > 0 ? (
           <div className="space-y-4">
-            {requests.map((request) => (
+            {requests.map((request: GuardianRequest) => (
               <Card key={request.id} padding="medium" className="space-y-4">
                 <div>
                   <div className="text-xl font-bold text-gray-900">{request.seniorName}</div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
 import {
   mockSearchGuardians,
@@ -6,94 +6,61 @@ import {
   mockGetGuardianRequests,
   mockHandleGuardianRequest,
 } from '../api/mockGuardianApi';
-import type {
-  GuardianSearchResult,
-  CreateGuardianRequestInput,
-  GuardianRequest,
-} from '../types';
+import { useToast } from '@/shared/hooks/useToast';
+import type { GuardianSearchResult } from '../types';
 
 /**
  * 보호자 관계 관리 훅
+ * - TanStack Query를 사용한 서버 상태 관리
+ * - 자동 캐싱, 낙관적 업데이트, 에러 처리
  */
 export function useGuardian() {
   const { user, setUser } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const toast = useToast();
 
-  /**
-   * 보호자 검색
-   */
-  const searchGuardians = async (keyword: string): Promise<GuardianSearchResult[]> => {
-    setIsLoading(true);
-    setError(null);
+  // 보호자 요청 목록 조회 (Query - 자동 캐싱)
+  const {
+    data: requests = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ['guardian', 'requests', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const allRequests = await mockGetGuardianRequests(user.id);
+      return allRequests.filter((req) => req.status === 'PENDING');
+    },
+    enabled: !!user,
+  });
 
-    try {
-      const results = await mockSearchGuardians(keyword);
-      return results;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '검색에 실패했습니다';
-      setError(errorMessage);
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 보호자 검색 (Mutation - 사용자 트리거)
+  const {
+    mutateAsync: searchGuardians,
+    isPending: isSearching,
+  } = useMutation<GuardianSearchResult[], Error, string>({
+    mutationFn: mockSearchGuardians,
+  });
 
-  /**
-   * 보호자 등록 요청
-   */
-  const requestGuardian = async (input: CreateGuardianRequestInput): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
+  // 보호자 요청 생성
+  const { mutateAsync: requestGuardian } = useMutation({
+    mutationFn: mockCreateGuardianRequest,
+    onSuccess: () => {
+      toast.success('보호자 등록 요청을 보냈습니다!');
+    },
+    onError: () => {
+      toast.error('보호자 요청에 실패했습니다');
+    },
+  });
 
-    try {
-      await mockCreateGuardianRequest(input);
-      // 요청 성공 (푸시 알림은 Phase 3-6에서 구현)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '요청에 실패했습니다';
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 보호자 요청 수락
+  const { mutateAsync: acceptGuardianRequest } = useMutation({
+    mutationFn: (requestId: number) =>
+      mockHandleGuardianRequest({ requestId, action: 'ACCEPT' }),
+    onSuccess: (request) => {
+      // managedMembers 업데이트
+      if (!user) return;
 
-  /**
-   * 받은 보호자 요청 목록 조회
-   */
-  const getGuardianRequests = async (): Promise<GuardianRequest[]> => {
-    if (!user) return [];
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const requests = await mockGetGuardianRequests(user.id);
-      return requests.filter((req) => req.status === 'PENDING');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '조회에 실패했습니다';
-      setError(errorMessage);
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * 보호자 요청 수락
-   */
-  const acceptGuardianRequest = async (requestId: number): Promise<void> => {
-    if (!user) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const request = await mockHandleGuardianRequest({ requestId, action: 'ACCEPT' });
-
-      // 수락 시 양쪽 사용자 업데이트
-      // 1. 현재 사용자(보호자)의 managedMembers에 추가
-      const newManagedMember = {
+      const newMember = {
         id: request.seniorId,
         name: request.seniorName,
         email: request.seniorEmail,
@@ -104,46 +71,39 @@ export function useGuardian() {
 
       setUser({
         ...user,
-        managedMembers: [...(user.managedMembers || []), newManagedMember],
+        managedMembers: [...(user?.managedMembers || []), newMember],
       });
 
-      // 2. 노인 사용자의 guardian 필드 업데이트 (실제로는 서버에서 처리)
-      // Mock에서는 현재 사용자만 업데이트
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '수락에 실패했습니다';
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // 요청 목록 새로고침
+      queryClient.invalidateQueries({ queryKey: ['guardian', 'requests'] });
+      toast.success('보호자 요청을 수락했습니다!');
+    },
+    onError: () => {
+      toast.error('보호자 요청 수락에 실패했습니다');
+    },
+  });
 
-  /**
-   * 보호자 요청 거절
-   */
-  const rejectGuardianRequest = async (requestId: number): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await mockHandleGuardianRequest({ requestId, action: 'REJECT' });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '거절에 실패했습니다';
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 보호자 요청 거절
+  const { mutateAsync: rejectGuardianRequest } = useMutation({
+    mutationFn: (requestId: number) =>
+      mockHandleGuardianRequest({ requestId, action: 'REJECT' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['guardian', 'requests'] });
+      toast.info('보호자 요청을 거절했습니다');
+    },
+    onError: () => {
+      toast.error('보호자 요청 거절에 실패했습니다');
+    },
+  });
 
   return {
     currentGuardian: user?.guardian || null,
     managedMembers: user?.managedMembers || [],
     isLoading,
-    error,
+    isSearching,
+    requests,
     searchGuardians,
     requestGuardian,
-    getGuardianRequests,
     acceptGuardianRequest,
     rejectGuardianRequest,
   };
