@@ -56,13 +56,13 @@ export function SettingsPage() {
               key={item.path}
               padding="medium"
               onClick={() => navigate(item.path)}
-              className="cursor-pointer hover:bg-gray-50 transition-colors"
+              className="cursor-pointer hover:bg-gray-50 transition-colors min-h-[100px] w-full"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 h-full">
                 {item.icon}
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-gray-900">{item.title}</h3>
-                  <p className="text-base text-gray-600 mt-1">{item.description}</p>
+                  <p className="text-base text-gray-600 mt-1 line-clamp-2">{item.description}</p>
                 </div>
               </div>
             </Card>
