@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { Layout, Card } from '@/shared/components';
 import { NavigationBar } from '@/shared/components/layout/NavigationBar';
 import { useAuth } from '@/features/auth';
 import { MessageCard } from '@/shared/components/business/MessageCard';
 import { GuardianCard } from '@/shared/components/business/GuardianCard';
 import { ManagedMemberCard } from '@/shared/components/business/ManagedMemberCard';
+import { ROUTES } from '@/shared/constants/routes';
 
 /**
  * 대시보드 페이지
@@ -11,6 +13,7 @@ import { ManagedMemberCard } from '@/shared/components/business/ManagedMemberCar
  * - dailyCheckEnabled, guardian, managedMembers에 따라 섹션 표시
  */
 export function DashboardPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   // 모든 섹션이 비어있는지 확인
@@ -40,7 +43,9 @@ export function DashboardPage() {
           {user?.guardian && (
             <section>
               <h2 className="text-2xl font-semibold mb-4">👨‍👩‍👧 내 보호자</h2>
-              <GuardianCard guardian={user.guardian} />
+              <div onClick={() => navigate(ROUTES.GUARDIANS)} className="cursor-pointer">
+                <GuardianCard guardian={user.guardian} />
+              </div>
             </section>
           )}
 

@@ -3,7 +3,7 @@ import { Layout, Card, Button } from '@/shared/components';
 import { NavigationBar } from '@/shared/components/layout/NavigationBar';
 import { ROUTES } from '@/shared/constants/routes';
 import { useAuth } from '@/features/auth/hooks';
-import { User, Lock, Bell, LogOut } from 'lucide-react';
+import { User, Lock, Bell, LogOut, Users } from 'lucide-react';
 
 /**
  * 설정 메뉴 페이지
@@ -25,6 +25,12 @@ export function SettingsPage() {
       title: '내 정보 수정',
       description: '이름, 전화번호를 변경합니다',
       path: ROUTES.SETTINGS_PROFILE,
+    },
+    {
+      icon: <Users size={32} className="text-blue-600" />,
+      title: '보호자 관리',
+      description: '보호자 등록 및 변경',
+      path: ROUTES.GUARDIANS,
     },
     {
       icon: <Bell size={32} className="text-blue-600" />,
