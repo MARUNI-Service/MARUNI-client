@@ -48,7 +48,7 @@ export function SettingsPage() {
 
   return (
     <>
-      <Layout title="설정" showBack={true}>
+      <Layout title="설정" showBack={false}>
         <div className="space-y-4 pb-24">
           {/* 설정 메뉴 */}
           {menuItems.map((item) => (
