@@ -47,7 +47,7 @@ export function GuardianRequestsPage() {
   };
 
   return (
-    <Layout title="보호자 요청" showBack={true}>
+    <Layout title="보호자 요청" showBack={true} onBack={() => navigate(-1)}>
       <div className="space-y-6 p-4">
         {/* 요청 목록 */}
         {requests.length > 0 ? (

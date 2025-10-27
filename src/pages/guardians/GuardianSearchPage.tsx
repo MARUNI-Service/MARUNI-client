@@ -49,7 +49,7 @@ export function GuardianSearchPage() {
   };
 
   return (
-    <Layout title="보호자 찾기" showBack={true}>
+    <Layout title="보호자 찾기" showBack={true} onBack={() => navigate(-1)}>
       <div className="space-y-6 p-4">
         {/* 안내 메시지 */}
         <Card padding="medium" className="bg-blue-50">
