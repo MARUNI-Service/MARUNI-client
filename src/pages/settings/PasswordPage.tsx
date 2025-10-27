@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout, Input, Button } from '@/shared/components';
 import { useMember } from '@/features/member';
 
@@ -8,6 +9,7 @@ import { useMember } from '@/features/member';
  * - 새 비밀번호 입력 (2회)
  */
 export function PasswordPage() {
+  const navigate = useNavigate();
   const { changePassword, isChangingPassword } = useMember();
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -47,7 +49,7 @@ export function PasswordPage() {
   };
 
   return (
-    <Layout title="비밀번호 변경" showBack={true}>
+    <Layout title="비밀번호 변경" showBack={true} onBack={() => navigate(-1)}>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           label="현재 비밀번호"
