@@ -14,8 +14,8 @@ import type { Notification } from '../types';
 export function getMockNotificationsForUser(userId: number): Notification[] {
   const now = new Date();
 
-  // 김순자 (노인 - elderly) - userId: 123
-  if (userId === 123) {
+  // 김순자 (노인 - soonja) - userId: 1
+  if (userId === 1) {
     return [
       {
         id: 'noti-1',
@@ -38,8 +38,8 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
     ];
   }
 
-  // 김영희 (보호자 - guardian) - userId: 456
-  if (userId === 456) {
+  // 김영희 (보호자 - younghee) - userId: 2
+  if (userId === 2) {
     return [
       {
         id: 'noti-3',
@@ -74,8 +74,8 @@ export function getMockNotificationsForUser(userId: number): Notification[] {
     ];
   }
 
-  // 박철수 (다중 보호자) - userId: 789
-  if (userId === 789) {
+  // 박철수 (다중 보호자 - cheolsu) - userId: 3
+  if (userId === 3) {
     return [
       {
         id: 'noti-6',
