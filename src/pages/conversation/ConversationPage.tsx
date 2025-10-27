@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/shared/components';
 import { ChatMessage } from '@/shared/components/business/ChatMessage';
 import { MessageInput } from '@/shared/components/business/MessageInput';
@@ -10,6 +11,7 @@ import { useConversation } from '@/features/conversation';
  * - Mock 데이터로 AI 대화 구현 (Phase 3-8에서 API 연결)
  */
 export function ConversationPage() {
+  const navigate = useNavigate();
   const { messages, isLoading, isSending, sendMessage } = useConversation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +29,7 @@ export function ConversationPage() {
   };
 
   return (
-    <Layout title="안부 메시지" showBack={true}>
+    <Layout title="안부 메시지" showBack={true} onBack={() => navigate(-1)}>
       <div className="flex flex-col h-[calc(100vh-80px)]">
         {/* 메시지 목록 */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
