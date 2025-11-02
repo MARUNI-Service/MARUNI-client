@@ -1,24 +1,22 @@
+import type { GuardianRelation } from '@/shared/types/enums';
+
 /**
- * 프로필 수정 요청
+ * 회원 정보 수정 요청
  */
-export interface ProfileUpdateRequest {
-  name: string;
-  phoneNumber?: string;
+export interface UpdateMemberRequest {
+  memberEmail: string;
+  memberName: string;
+  memberPassword: string;
 }
 
 /**
- * 비밀번호 변경 요청
+ * 내가 돌보는 사람 정보 (응답)
  */
-export interface PasswordChangeRequest {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
-/**
- * 회원 설정
- */
-export interface MemberSettings {
+export interface ManagedMemberResponse {
+  memberId: number;
+  memberName: string;
+  memberEmail: string;
+  relation: GuardianRelation;
   dailyCheckEnabled: boolean;
-  pushNotificationEnabled: boolean;
+  lastDailyCheckAt: string | null;
 }

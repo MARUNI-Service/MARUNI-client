@@ -1,89 +1,100 @@
+import { apiClient } from '@/shared/api/client';
+import { API_ENDPOINTS } from '@/shared/constants/api';
+import type { CommonApiResponse } from '@/shared/types/common';
 import type { User } from '@/features/auth/types';
-import type { ProfileUpdateRequest, PasswordChangeRequest } from '../types';
-import { storage } from '@/shared/services/storage';
+import type { UpdateMemberRequest } from '../types';
 
 /**
- * Mock 프로필 조회 (AuthStore에서 가져옴)
- *
- * TODO: Phase 3-8에서 API 연결 시 개선 예정
- * 현재: localStorage 기반 Mock 데이터
- * 개선: GET /api/members/me 실제 호출
+ * 내 정보 조회
+ * GET /api/members/me
  */
-export async function getProfile(): Promise<User> {
-  const authStorage = storage.getAuth();
-  if (!authStorage) {
-    throw new Error('로그인이 필요합니다');
+export async function getMyInfo(): Promise<User> {
+  const response = await apiClient.get<CommonApiResponse<User>>(API_ENDPOINTS.MEMBERS.ME);
+
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '내 정보 조회 실패');
   }
 
-  const { state } = JSON.parse(authStorage);
-  return state.user;
+  return response.data.data;
 }
 
 /**
- * Mock 프로필 수정
- *
- * TODO: Phase 3-8에서 API 연결 시 개선 예정
- * 현재: localStorage 기반 Mock 데이터
- * 개선: PATCH /api/members/me 실제 호출
+ * 내 정보 수정
+ * PUT /api/members/me
  */
-export async function updateProfile(data: ProfileUpdateRequest): Promise<User> {
-  await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
+export async function updateMyInfo(request: UpdateMemberRequest): Promise<User> {
+  const response = await apiClient.put<CommonApiResponse<User>>(
+    API_ENDPOINTS.MEMBERS.UPDATE_ME,
+    request
+  );
 
-  const authStorage = storage.getAuth();
-  if (!authStorage) {
-    throw new Error('로그인이 필요합니다');
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '정보 수정 실패');
   }
 
-  const storageData = JSON.parse(authStorage);
-  const updatedUser = {
-    ...storageData.state.user,
-    name: data.name,
-    phoneNumber: data.phoneNumber,
-  };
-
-  storageData.state.user = updatedUser;
-  storage.setAuth(JSON.stringify(storageData));
-
-  return updatedUser;
+  return response.data.data;
 }
 
 /**
- * Mock 비밀번호 변경
- *
- * TODO: Phase 3-8에서 API 연결 시 개선 예정
- * 현재: localStorage에 평문 비밀번호 저장 (Mock)
- * 개선: PATCH /api/members/me/password 실제 호출
- *      서버에서 bcrypt 암호화, 클라이언트는 저장 안 함
- *
- * TODO: Phase 3-8에서 보안 강화
- * 현재: 비밀번호 변경 시 재로그인 불필요
- * 개선: 비밀번호 변경 후 모든 세션 무효화 + 재로그인 요구
+ * 내 계정 삭제
+ * DELETE /api/members/me
  */
-export async function changePassword(data: PasswordChangeRequest): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export async function deleteMyAccount(): Promise<void> {
+  await apiClient.delete<CommonApiResponse<null>>(API_ENDPOINTS.MEMBERS.DELETE_ME);
+}
 
-  // Mock 사용자 데이터에서 현재 비밀번호 확인
-  const authStorage = storage.getAuth();
-  if (!authStorage) {
-    throw new Error('로그인이 필요합니다');
+/**
+ * 회원 검색 (이메일)
+ * GET /api/members/search?email={email}
+ */
+export async function searchMember(email: string): Promise<User> {
+  const response = await apiClient.get<CommonApiResponse<User>>(
+    `${API_ENDPOINTS.MEMBERS.SEARCH}?email=${encodeURIComponent(email)}`
+  );
+
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '회원 검색 실패');
   }
 
-  const storageData = JSON.parse(authStorage);
-  const username = storageData.state.user.username;
+  return response.data.data;
+}
 
-  // Mock 사용자 목록에서 비밀번호 확인 (실제로는 서버에서 검증)
-  const mockUsers = JSON.parse(storage.getMockUsers() || '{}');
-  const user = mockUsers[username];
+/**
+ * 내가 돌보는 사람들 목록
+ * GET /api/members/me/managed-members
+ */
+export async function getManagedMembers(): Promise<User[]> {
+  const response = await apiClient.get<CommonApiResponse<User[]>>(
+    API_ENDPOINTS.MEMBERS.MANAGED_MEMBERS
+  );
 
-  if (!user) {
-    throw new Error('사용자를 찾을 수 없습니다');
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '목록 조회 실패');
   }
 
-  if (user.password !== data.currentPassword) {
-    throw new Error('현재 비밀번호가 일치하지 않습니다');
+  return response.data.data;
+}
+
+/**
+ * 안부 메시지 설정 변경
+ * PATCH /api/members/me/daily-check?enabled={enabled}
+ */
+export async function updateDailyCheckSetting(enabled: boolean): Promise<User> {
+  const response = await apiClient.patch<CommonApiResponse<User>>(
+    `${API_ENDPOINTS.MEMBERS.DAILY_CHECK}?enabled=${enabled}`
+  );
+
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '설정 변경 실패');
   }
 
-  // 새 비밀번호로 업데이트
-  mockUsers[username].password = data.newPassword;
-  storage.setMockUsers(JSON.stringify(mockUsers));
+  return response.data.data;
+}
+
+/**
+ * 보호자 관계 해제
+ * DELETE /api/members/me/guardian
+ */
+export async function removeGuardian(): Promise<void> {
+  await apiClient.delete<CommonApiResponse<null>>(API_ENDPOINTS.MEMBERS.REMOVE_GUARDIAN);
 }
