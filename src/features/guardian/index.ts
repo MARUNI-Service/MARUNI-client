@@ -1,7 +1,3 @@
 export { useGuardian } from './hooks';
-export type {
-  GuardianRequest,
-  GuardianSearchResult,
-  CreateGuardianRequestInput,
-  GuardianRequestAction,
-} from './types';
+export type { GuardianRequestRequest, GuardianRequestResponse } from './types';
+export { createGuardianRequest, getGuardianRequests, acceptGuardianRequest, rejectGuardianRequest } from './api';

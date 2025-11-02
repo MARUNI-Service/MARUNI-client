@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Input, Button, Card } from '@/shared/components';
 import { Modal } from '@/shared/components/ui/Modal';
-import { useGuardian, type GuardianSearchResult } from '@/features/guardian';
+import { useGuardian } from '@/features/guardian';
+import type { User } from '@/features/auth/types';
 import { useToast } from '@/shared/hooks/useToast';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
  * 보호자 검색 페이지
+ * Phase 3-8: 실제 API 호출로 변경
  * - Journey 3 Phase 3: 보호자 검색
- * - 이메일/이름으로 검색
- * - 검색 결과 목록 표시
+ * - 이메일로 검색 (searchMember API 사용)
+ * - 검색 결과 표시
  */
 export function GuardianSearchPage() {
   const navigate = useNavigate();
@@ -18,18 +20,23 @@ export function GuardianSearchPage() {
   const toast = useToast();
 
   const [keyword, setKeyword] = useState('');
-  const [results, setResults] = useState<GuardianSearchResult[]>([]);
-  const [selectedGuardian, setSelectedGuardian] = useState<GuardianSearchResult | null>(null);
+  const [result, setResult] = useState<User | null>(null);
+  const [selectedGuardian, setSelectedGuardian] = useState<User | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleSearch = async () => {
     if (!keyword.trim()) return;
 
-    const searchResults = await searchGuardians(keyword);
-    setResults(searchResults);
+    try {
+      const searchResult = await searchGuardians(keyword);
+      setResult(searchResult);
+    } catch {
+      toast.error('검색 결과가 없습니다');
+      setResult(null);
+    }
   };
 
-  const handleSelectGuardian = (guardian: GuardianSearchResult) => {
+  const handleSelectGuardian = (guardian: User) => {
     setSelectedGuardian(guardian);
     setShowConfirmDialog(true);
   };
@@ -38,7 +45,10 @@ export function GuardianSearchPage() {
     if (!selectedGuardian) return;
 
     try {
-      await requestGuardian({ guardianId: selectedGuardian.id });
+      await requestGuardian({
+        guardianId: selectedGuardian.id,
+        relation: 'FAMILY', // 기본값
+      });
       setShowConfirmDialog(false);
 
       toast.success('보호자 등록 요청을 보냈습니다!');
@@ -83,33 +93,28 @@ export function GuardianSearchPage() {
         </div>
 
         {/* 검색 결과 */}
-        {results.length > 0 && (
+        {result && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900">검색 결과</h2>
-            {results.map((guardian) => (
-              <Card key={guardian.id} padding="medium" className="space-y-3">
-                <div>
-                  <div className="text-xl font-bold text-gray-900">{guardian.name}</div>
-                  <div className="text-base text-gray-600">{guardian.email}</div>
-                  {guardian.phoneNumber && (
-                    <div className="text-base text-gray-600">{guardian.phoneNumber}</div>
-                  )}
-                </div>
-                <Button
-                  variant="primary"
-                  size="large"
-                  fullWidth
-                  onClick={() => handleSelectGuardian(guardian)}
-                >
-                  선택
-                </Button>
-              </Card>
-            ))}
+            <Card padding="medium" className="space-y-3">
+              <div>
+                <div className="text-xl font-bold text-gray-900">{result.memberName}</div>
+                <div className="text-base text-gray-600">{result.memberEmail}</div>
+              </div>
+              <Button
+                variant="primary"
+                size="large"
+                fullWidth
+                onClick={() => handleSelectGuardian(result)}
+              >
+                선택
+              </Button>
+            </Card>
           </div>
         )}
 
         {/* 검색 결과 없음 */}
-        {keyword && results.length === 0 && !isLoading && (
+        {keyword && !result && !isLoading && (
           <Card padding="large" className="text-center">
             <div className="text-4xl mb-3">🔍</div>
             <p className="text-lg text-gray-600">검색 결과가 없습니다</p>
@@ -124,7 +129,7 @@ export function GuardianSearchPage() {
         >
           <div className="space-y-4">
             <p className="text-lg">
-              <span className="font-semibold">{selectedGuardian?.name}</span>님을
+              <span className="font-semibold">{selectedGuardian?.memberName}</span>님을
               보호자로 등록할까요?
             </p>
             <div className="text-base text-gray-600 space-y-1">

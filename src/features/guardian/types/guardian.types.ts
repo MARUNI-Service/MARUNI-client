@@ -1,43 +1,35 @@
 /**
  * 보호자 관계 관리 관련 타입
+ * Phase 3-8: 서버 API 응답 구조에 맞춤
  */
-import type { GuardianRelation } from '@/shared/types/enums';
+import type { GuardianRelation, RequestStatus } from '@/shared/types/enums';
 
 /**
- * 보호자 등록 요청
+ * 보호자 요청 생성 요청
+ * Phase 3-8: POST /api/guardians/requests
  */
-export interface GuardianRequest {
-  id: number;
-  seniorId: number; // 요청을 보낸 노인 ID
-  seniorName: string;
-  seniorEmail: string;
-  guardianId: number; // 요청을 받은 보호자 ID
-  relation: GuardianRelation; // 보호자 관계 (FAMILY, FRIEND 등)
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
-  createdAt: string;
-}
-
-/**
- * 보호자 검색 결과
- */
-export interface GuardianSearchResult {
-  id: number;
-  email: string;
-  name: string;
-  phoneNumber?: string;
-}
-
-/**
- * 보호자 등록 요청 생성
- */
-export interface CreateGuardianRequestInput {
+export interface GuardianRequestRequest {
   guardianId: number;
+  relation: GuardianRelation;
 }
 
 /**
- * 보호자 요청 수락/거절
+ * 보호자 요청 응답 (서버 응답)
+ * Phase 3-8: 서버 API 응답 구조
  */
-export interface GuardianRequestAction {
-  requestId: number;
-  action: 'ACCEPT' | 'REJECT';
+export interface GuardianRequestResponse {
+  id: number;
+  requester: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  guardian: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  relation: GuardianRelation;
+  status: RequestStatus; // PENDING, ACCEPTED, REJECTED
+  createdAt: string; // ISO 8601
 }

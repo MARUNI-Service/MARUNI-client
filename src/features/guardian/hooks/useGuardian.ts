@@ -1,17 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
-import type { ManagedMember } from '@/features/auth/types';
-import {
-  mockSearchGuardians,
-  mockCreateGuardianRequest,
-  mockGetGuardianRequests,
-  mockHandleGuardianRequest,
-} from '../api/mockGuardianApi';
+import type { ManagedMember, User } from '@/features/auth/types';
 import { useToast } from '@/shared/hooks/useToast';
-import type { GuardianSearchResult } from '../types';
+import { searchMember } from '@/features/member/api';
+import {
+  createGuardianRequest,
+  getGuardianRequests,
+  acceptGuardianRequest as acceptGuardianRequestApi,
+  rejectGuardianRequest as rejectGuardianRequestApi,
+} from '../api';
 
 /**
  * 보호자 관계 관리 훅
+ * Phase 3-8: 실제 API 호출로 변경
  * - TanStack Query를 사용한 서버 상태 관리
  * - 자동 캐싱, 낙관적 업데이트, 에러 처리
  */
@@ -25,10 +26,9 @@ export function useGuardian() {
     data: requests = [],
     isLoading,
   } = useQuery({
-    queryKey: ['guardian', 'requests', user?.id],
+    queryKey: ['guardian', 'requests'],
     queryFn: async () => {
-      if (!user) return [];
-      const allRequests = await mockGetGuardianRequests(user.id);
+      const allRequests = await getGuardianRequests();
       return allRequests.filter((req) => req.status === 'PENDING');
     },
     enabled: !!user,
@@ -38,13 +38,13 @@ export function useGuardian() {
   const {
     mutateAsync: searchGuardians,
     isPending: isSearching,
-  } = useMutation<GuardianSearchResult[], Error, string>({
-    mutationFn: mockSearchGuardians,
+  } = useMutation<User, Error, string>({
+    mutationFn: searchMember, // Member API의 searchMember 사용
   });
 
   // 보호자 요청 생성
   const { mutateAsync: requestGuardian } = useMutation({
-    mutationFn: mockCreateGuardianRequest,
+    mutationFn: createGuardianRequest,
     onSuccess: () => {
       toast.success('보호자 등록 요청을 보냈습니다!');
     },
@@ -55,16 +55,16 @@ export function useGuardian() {
 
   // 보호자 요청 수락
   const { mutateAsync: acceptGuardianRequest } = useMutation({
-    mutationFn: (requestId: number) =>
-      mockHandleGuardianRequest({ requestId, action: 'ACCEPT' }),
-    onSuccess: (request) => {
-      // managedMembers 업데이트
-      if (!user) return;
+    mutationFn: acceptGuardianRequestApi,
+    onSuccess: (_, requestId) => {
+      // 요청 목록에서 수락한 요청 찾기
+      const request = requests.find((req) => req.id === requestId);
+      if (!user || !request) return;
 
       const newMember: ManagedMember = {
-        memberId: request.seniorId,
-        memberName: request.seniorName,
-        memberEmail: request.seniorEmail,
+        memberId: request.requester.id,
+        memberName: request.requester.name,
+        memberEmail: request.requester.email,
         relation: request.relation,
         dailyCheckEnabled: true,
         lastDailyCheckAt: null,
@@ -86,8 +86,7 @@ export function useGuardian() {
 
   // 보호자 요청 거절
   const { mutateAsync: rejectGuardianRequest } = useMutation({
-    mutationFn: (requestId: number) =>
-      mockHandleGuardianRequest({ requestId, action: 'REJECT' }),
+    mutationFn: rejectGuardianRequestApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['guardian', 'requests'] });
       toast.info('보호자 요청을 거절했습니다');

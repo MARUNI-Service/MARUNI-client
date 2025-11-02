@@ -1,6 +1,1 @@
-export type {
-  GuardianRequest,
-  GuardianSearchResult,
-  CreateGuardianRequestInput,
-  GuardianRequestAction,
-} from './guardian.types';
+export type { GuardianRequestRequest, GuardianRequestResponse } from './guardian.types';
