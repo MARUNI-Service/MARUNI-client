@@ -93,7 +93,7 @@ export interface AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   signup: (credentials: SignupRequest) => Promise<void>;
   logout: () => void;
-  refreshAccessToken: () => Promise<void>;
+  // refreshAccessToken 제거 (Phase 3-8: Access Token만 사용)
   setUser: (user: User | null) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   clearError: () => void;

@@ -95,7 +95,7 @@ const MOCK_USERS: Record<string, User> = {
  */
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // 초기 상태
       user: null,
       accessToken: null,
@@ -211,31 +211,8 @@ export const useAuthStore = create<AuthState>()(
         });
       },
 
-      /**
-       * 토큰 갱신
-       */
-      refreshAccessToken: async () => {
-        const { refreshToken } = get();
+      // Phase 3-8: refreshAccessToken 제거 (Access Token만 사용)
 
-        if (!refreshToken) {
-          get().logout();
-          throw new Error('리프레시 토큰이 없습니다');
-        }
-
-        try {
-          const response = await authApi.refreshAccessToken(refreshToken);
-
-          // 상태 업데이트 (persist가 자동으로 localStorage에 저장)
-          set({
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
-          });
-        } catch (error) {
-          // 토큰 갱신 실패 시 로그아웃
-          get().logout();
-          throw error;
-        }
-      },
 
       /**
        * 사용자 정보 설정
