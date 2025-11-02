@@ -15,7 +15,7 @@ export function useAuth() {
     signup,
     logout,
     setUser,
-    setTokens,
+    setToken,
   } = useAuthStore();
 
   return {
@@ -31,6 +31,6 @@ export function useAuth() {
     signup,
     logout,
     setUser,
-    setTokens,
+    setToken,
   };
 }

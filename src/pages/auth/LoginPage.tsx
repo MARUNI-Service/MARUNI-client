@@ -32,30 +32,29 @@ export function LoginPage() {
 
           {/* 로그인 폼 */}
           <div className="space-y-6">
-            {/* 사용자 이름 입력 */}
+            {/* 이메일 입력 */}
             <div>
               <Input
-                id="username"
-                label="사용자 이름"
-                type="text"
-                value={formData.username}
-                onChange={(e) => handleChange('username', e.target.value)}
-                placeholder="soonja, younghee, cheolsu, newuser"
+                id="memberEmail"
+                label="이메일"
+                type="email"
+                value={formData.memberEmail}
+                onChange={(e) => handleChange('memberEmail', e.target.value)}
+                placeholder="이메일을 입력하세요"
                 disabled={isLoading}
-                autoComplete="username"
-                helperText="테스트용: soonja, younghee, cheolsu, newuser"
+                autoComplete="email"
               />
             </div>
 
-            {/* 비밀번호 입력 - MVP에서는 사용 안 함 */}
+            {/* 비밀번호 입력 */}
             <div>
               <Input
-                id="password"
+                id="memberPassword"
                 label="비밀번호"
                 type="password"
-                value={formData.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                placeholder="(Mock 로그인에서는 불필요)"
+                value={formData.memberPassword}
+                onChange={(e) => handleChange('memberPassword', e.target.value)}
+                placeholder="비밀번호를 입력하세요"
                 disabled={isLoading}
                 autoComplete="current-password"
               />

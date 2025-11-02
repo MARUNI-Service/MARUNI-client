@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
+import type { ManagedMember } from '@/features/auth/types';
 import {
   mockSearchGuardians,
   mockCreateGuardianRequest,
@@ -60,13 +61,13 @@ export function useGuardian() {
       // managedMembers 업데이트
       if (!user) return;
 
-      const newMember = {
-        id: request.seniorId,
-        name: request.seniorName,
-        email: request.seniorEmail,
-        lastCheckIn: null,
-        lastCheckTime: undefined,
-        emotionStatus: 'NEUTRAL' as const,
+      const newMember: ManagedMember = {
+        memberId: request.seniorId,
+        memberName: request.seniorName,
+        memberEmail: request.seniorEmail,
+        relation: request.relation,
+        dailyCheckEnabled: true,
+        lastDailyCheckAt: null,
       };
 
       setUser({

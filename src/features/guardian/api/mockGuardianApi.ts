@@ -62,6 +62,7 @@ export const mockCreateGuardianRequest = (
         seniorName: '김순자',
         seniorEmail: 'soonja@example.com',
         guardianId: input.guardianId,
+        relation: 'FAMILY', // Phase 3-8: 기본값
         status: 'PENDING',
         createdAt: new Date().toISOString(),
       };

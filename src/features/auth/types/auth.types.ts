@@ -1,4 +1,5 @@
 import type { BaseEntity } from '@/shared/types/common';
+import type { GuardianRelation } from '@/shared/types/enums';
 
 /**
  * 사용자 역할
@@ -6,85 +7,76 @@ import type { BaseEntity } from '@/shared/types/common';
 export type UserRole = 'SENIOR' | 'GUARDIAN';
 
 /**
- * 보호자 정보 (최소 필드만)
+ * 보호자 정보 (서버 응답 구조)
+ * Phase 3-8: 서버 API 응답 구조에 맞춰 수정
  */
 export interface Guardian {
-  id: number;
-  name: string;
-  relationship: string; // "딸", "아들", "간병인" 등
+  memberId: number;
+  memberName: string;
+  memberEmail: string;
+  relation: GuardianRelation;
 }
 
 /**
- * 보호 대상 정보 (최소 필드만)
+ * 보호 대상 정보 (서버 응답 구조)
+ * Phase 3-8: 서버 API 응답 구조에 맞춰 수정
  */
 export interface ManagedMember {
-  id: number;
-  name: string;
-  email: string;
-  lastCheckIn: string | null; // ISO 8601 문자열 또는 null (아직 체크인 없음)
-  lastCheckTime?: string; // 호환성을 위해 유지 (deprecated)
-  emotionStatus: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'WARNING';
+  memberId: number;
+  memberName: string;
+  memberEmail: string;
+  relation: GuardianRelation;
+  dailyCheckEnabled: boolean;
+  lastDailyCheckAt: string | null; // ISO 8601
 }
 
 /**
- * 사용자 정보
+ * 사용자 정보 (서버 응답 구조)
+ * Phase 3-8: 서버 API 응답 구조에 맞춰 수정
  */
 export interface User extends BaseEntity {
-  username: string;
-  name: string;
-  role: UserRole;
-  phoneNumber?: string;
-  email?: string;
-
-  // 🆕 Phase 3-1: 역할별 동적 화면을 위한 추가 필드
+  memberName: string;
+  memberEmail: string;
   dailyCheckEnabled: boolean;
+  hasPushToken: boolean;
+
+  // Guardian 구조
   guardian: Guardian | null;
+
+  // ManagedMembers 구조
   managedMembers: ManagedMember[];
 }
 
 /**
- * 로그인 요청
+ * 로그인 요청 (서버 API 구조)
+ * Phase 3-8: memberEmail, memberPassword로 변경
  */
 export interface LoginRequest {
-  username: string;
-  password: string;
+  memberEmail: string;
+  memberPassword: string;
 }
 
 /**
  * 회원가입 요청
  */
 export interface SignupRequest {
-  email: string;
-  name: string;
-  password: string;
-  phoneNumber?: string;
+  memberEmail: string;
+  memberName: string;
+  memberPassword: string;
+  dailyCheckEnabled?: boolean; // 기본값 true
 }
 
-/**
- * 로그인 응답
- */
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
-
-/**
- * 토큰 갱신 응답
- */
-export interface RefreshTokenResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+// Phase 3-8: LoginResponse, RefreshTokenResponse 제거 (사용하지 않음)
 
 /**
  * Auth 상태
+ * Phase 3-8: refreshToken은 호환성을 위해 유지하지만 사용하지 않음
  */
 export interface AuthState {
   // 상태
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
+  refreshToken: string | null; // 호환성을 위해 유지 (deprecated)
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -95,6 +87,6 @@ export interface AuthState {
   logout: () => void;
   // refreshAccessToken 제거 (Phase 3-8: Access Token만 사용)
   setUser: (user: User | null) => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setToken: (accessToken: string) => void; // setTokens → setToken
   clearError: () => void;
 }

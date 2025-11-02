@@ -60,13 +60,12 @@ export function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // 🔴 Phase 3-2: Mock 회원가입
-      // Phase 3-8에서 실제 API 호출로 변경
+      // Phase 3-8: 실제 API 호출
       await signup({
-        email: formData.email,
-        name: formData.name,
-        password: formData.password,
-        phoneNumber: formData.phoneNumber,
+        memberEmail: formData.email,
+        memberName: formData.name,
+        memberPassword: formData.password,
+        dailyCheckEnabled: true, // 기본값
       });
 
       // 회원가입 성공 → 로그인 페이지로 이동

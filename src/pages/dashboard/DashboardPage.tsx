@@ -28,7 +28,7 @@ export function DashboardPage() {
         <div className="space-y-6 pb-24">
           {/* 환영 메시지 */}
           <div className="text-center py-4">
-            <h1 className="text-3xl font-bold text-gray-900">안녕하세요, {user?.name}님!</h1>
+            <h1 className="text-3xl font-bold text-gray-900">안녕하세요, {user?.memberName}님!</h1>
           </div>
 
           {/* 섹션 1: 내 안부 메시지 */}
@@ -55,7 +55,7 @@ export function DashboardPage() {
               <h2 className="text-2xl font-semibold mb-4">👨‍👩‍👧 내가 돌보는 사람들</h2>
               <div className="space-y-4">
                 {user.managedMembers.map((member) => (
-                  <ManagedMemberCard key={member.id} member={member} />
+                  <ManagedMemberCard key={member.memberId} member={member} />
                 ))}
               </div>
             </section>

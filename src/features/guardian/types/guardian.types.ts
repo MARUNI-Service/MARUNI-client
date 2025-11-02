@@ -1,6 +1,7 @@
 /**
  * 보호자 관계 관리 관련 타입
  */
+import type { GuardianRelation } from '@/shared/types/enums';
 
 /**
  * 보호자 등록 요청
@@ -11,6 +12,7 @@ export interface GuardianRequest {
   seniorName: string;
   seniorEmail: string;
   guardianId: number; // 요청을 받은 보호자 ID
+  relation: GuardianRelation; // 보호자 관계 (FAMILY, FRIEND 등)
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
   createdAt: string;
 }

@@ -16,8 +16,8 @@ export function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
-      setName(profile.name);
-      setPhoneNumber(profile.phoneNumber || '');
+      setName(profile.memberName);
+      setPhoneNumber(''); // phoneNumber 필드 제거됨
     }
   }, [profile]);
 
@@ -65,7 +65,7 @@ export function ProfilePage() {
         <Input
           label="이메일"
           type="email"
-          value={profile?.email || ''}
+          value={profile?.memberEmail || ''}
           disabled
           helperText="이메일은 변경할 수 없습니다"
         />
