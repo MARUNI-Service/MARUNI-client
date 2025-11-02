@@ -1,0 +1,44 @@
+import { apiClient } from '@/shared/api/client';
+import { API_ENDPOINTS } from '@/shared/constants/api';
+import type { CommonApiResponse } from '@/shared/types/common';
+import type { SendMessageRequest, ConversationResponseDto, MessageDto } from '../types';
+
+/**
+ * AI 대화 메시지 전송
+ * POST /api/conversations/messages
+ * Phase 3-8: 실제 API 호출
+ */
+export async function sendMessage(request: SendMessageRequest): Promise<ConversationResponseDto> {
+  // 500자 제한 검증
+  if (request.content.length > 500) {
+    throw new Error('메시지는 500자를 초과할 수 없습니다');
+  }
+
+  const response = await apiClient.post<CommonApiResponse<ConversationResponseDto>>(
+    API_ENDPOINTS.CONVERSATIONS.SEND_MESSAGE,
+    request
+  );
+
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '메시지 전송 실패');
+  }
+
+  return response.data.data;
+}
+
+/**
+ * 대화 내역 조회
+ * GET /api/conversations/history?days={days}
+ * Phase 3-8: 실제 API 호출
+ */
+export async function getHistory(days: number = 7): Promise<MessageDto[]> {
+  const response = await apiClient.get<CommonApiResponse<MessageDto[]>>(
+    `${API_ENDPOINTS.CONVERSATIONS.HISTORY}?days=${days}`
+  );
+
+  if (!response.data.isSuccess || !response.data.data) {
+    throw new Error(response.data.message || '대화 내역 조회 실패');
+  }
+
+  return response.data.data;
+}

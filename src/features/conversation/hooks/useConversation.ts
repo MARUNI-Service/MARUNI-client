@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
 import { useToast } from '@/shared/hooks/useToast';
-import type { Message } from '../types/conversation.types';
-import { mockGetMessages, mockSendMessage } from '../api/mockConversationApi';
+import type { MessageDto, SendMessageRequest } from '../types';
+import { getHistory, sendMessage as sendMessageApi } from '../api';
 
 /**
  * 대화 관리 훅
+ * Phase 3-8: 실제 API 호출로 변경
  * - TanStack Query를 사용한 서버 상태 관리
  * - 자동 캐싱, 낙관적 업데이트, 에러 처리
  */
@@ -19,8 +20,8 @@ export function useConversation() {
     data: messages = [],
     isLoading,
   } = useQuery({
-    queryKey: ['conversation', 'messages', user?.id],
-    queryFn: () => mockGetMessages(user?.id || 0),
+    queryKey: ['conversation', 'history'],
+    queryFn: () => getHistory(7), // 7일간의 대화 내역
     enabled: !!user,
   });
 
@@ -29,61 +30,46 @@ export function useConversation() {
     mutateAsync: sendMessage,
     isPending: isSending,
   } = useMutation({
-    mutationFn: (content: string) => mockSendMessage(user?.id || 0, content.trim()),
+    mutationFn: (content: string) => {
+      const request: SendMessageRequest = { content: content.trim() };
+      return sendMessageApi(request);
+    },
 
     // 낙관적 업데이트: UI 즉시 반영
     onMutate: async (content) => {
-      if (!user) return;
-
       await queryClient.cancelQueries({
-        queryKey: ['conversation', 'messages', user.id],
+        queryKey: ['conversation', 'history'],
       });
 
-      const previousMessages = queryClient.getQueryData<Message[]>([
-        'conversation',
-        'messages',
-        user.id,
-      ]);
+      const previousMessages = queryClient.getQueryData<MessageDto[]>(['conversation', 'history']);
 
       // 임시 사용자 메시지 추가
-      queryClient.setQueryData<Message[]>(
-        ['conversation', 'messages', user.id],
-        (old = []) => [
-          ...old,
-          {
-            id: Date.now(),
-            sender: 'USER' as const,
-            content,
-            createdAt: new Date().toISOString(),
-          },
-        ]
-      );
+      queryClient.setQueryData<MessageDto[]>(['conversation', 'history'], (old = []) => [
+        ...old,
+        {
+          id: Date.now(),
+          type: 'USER_MESSAGE' as const,
+          content,
+          emotion: null,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
 
       return { previousMessages };
     },
 
     // 성공 시 AI 응답 추가
     onSuccess: ({ userMessage, aiMessage }) => {
-      if (!user) return;
-
-      queryClient.setQueryData<Message[]>(
-        ['conversation', 'messages', user.id],
-        (old = []) => {
-          // 임시 메시지 제거 후 실제 메시지 추가
-          const withoutTemp = old.filter((m) => m.id !== userMessage.id);
-          return [...withoutTemp, userMessage, aiMessage];
-        }
-      );
+      queryClient.setQueryData<MessageDto[]>(['conversation', 'history'], (old = []) => {
+        // 임시 메시지 제거 후 실제 메시지 추가
+        const withoutTemp = old.filter((m) => m.id !== userMessage.id);
+        return [...withoutTemp, userMessage, aiMessage];
+      });
     },
 
     // 실패 시 롤백
     onError: (_err, _content, context) => {
-      if (!user) return;
-
-      queryClient.setQueryData(
-        ['conversation', 'messages', user.id],
-        context?.previousMessages
-      );
+      queryClient.setQueryData(['conversation', 'history'], context?.previousMessages);
       toast.error('메시지 전송에 실패했습니다');
     },
   });

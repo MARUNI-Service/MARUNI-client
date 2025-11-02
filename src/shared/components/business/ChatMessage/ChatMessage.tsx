@@ -10,20 +10,19 @@ import type { ChatMessageProps } from './ChatMessage.types';
  * - 2개 이상 feature에서 사용 확인되면 현재 위치 유지
  */
 export function ChatMessage({ message }: ChatMessageProps) {
-  const isUser = message.sender === 'USER';
+  const isUser = message.type === 'USER_MESSAGE';
   const time = new Date(message.createdAt).toLocaleTimeString('ko-KR', {
     hour: '2-digit',
     minute: '2-digit',
   });
 
-  // 감정 상태 이모지
-  const emotionEmoji = message.emotionStatus
+  // 감정 상태 이모지 (Phase 3-8: EmotionType으로 변경)
+  const emotionEmoji = message.emotion
     ? {
         POSITIVE: '😊',
         NEGATIVE: '😢',
         NEUTRAL: '😐',
-        WARNING: '⚠️',
-      }[message.emotionStatus]
+      }[message.emotion]
     : null;
 
   return (
