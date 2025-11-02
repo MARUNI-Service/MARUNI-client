@@ -1,1 +1,1 @@
-export { login, logout, refreshAccessToken } from './authApi';
+export { login, logout } from './authApi';

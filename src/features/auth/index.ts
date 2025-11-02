@@ -3,13 +3,13 @@
  */
 
 // Types
-export type { User, UserRole, LoginRequest, LoginResponse, RefreshTokenResponse, AuthState } from './types';
+export type { User, UserRole, LoginRequest, AuthState } from './types';
 
 // Store
 export { useAuthStore } from './store';
 
 // API
-export { login, logout, refreshAccessToken } from './api';
+export { login, logout } from './api';
 
 // Hooks
 export { useAuth } from './hooks/useAuth';

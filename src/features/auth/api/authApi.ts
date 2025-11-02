@@ -1,43 +1,51 @@
 import { apiClient } from '@/shared/api/client';
 import { API_ENDPOINTS } from '@/shared/constants/api';
-import type { ApiResponse } from '@/shared/types/common';
-import type { LoginRequest, LoginResponse, RefreshTokenResponse } from '../types';
+import type { CommonApiResponse } from '@/shared/types/common';
+import type { LoginRequest, User } from '../types';
 
 /**
  * 로그인 API
- * @param credentials - 사용자 이름과 비밀번호
- * @returns 액세스 토큰, 리프레시 토큰, 사용자 정보
+ * Phase 3-8: 2단계 처리
+ * 1. POST /api/auth/login → 헤더에서 토큰 추출
+ * 2. GET /api/members/me → 사용자 정보 조회
  */
-export async function login(credentials: LoginRequest): Promise<LoginResponse> {
-  const response = await apiClient.post<ApiResponse<LoginResponse>>(
+export async function login(credentials: LoginRequest): Promise<{
+  accessToken: string;
+  user: User;
+}> {
+  // 1. 로그인 요청
+  const loginResponse = await apiClient.post<CommonApiResponse<null>>(
     API_ENDPOINTS.AUTH.LOGIN,
     credentials
   );
-  return response.data.data;
+
+  // 2. 헤더에서 토큰 추출 (인터셉터에서 자동으로 localStorage에 저장)
+  const authHeader = loginResponse.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new Error('로그인 응답에 토큰이 없습니다');
+  }
+  const accessToken = authHeader.substring(7);
+
+  // 3. 사용자 정보 조회
+  const userResponse = await apiClient.get<CommonApiResponse<User>>(
+    API_ENDPOINTS.MEMBERS.ME
+  );
+
+  if (!userResponse.data.isSuccess || !userResponse.data.data) {
+    throw new Error('사용자 정보 조회 실패');
+  }
+
+  return {
+    accessToken,
+    user: userResponse.data.data,
+  };
 }
 
 /**
  * 로그아웃 API
- * - 클라이언트 측 로그아웃 (토큰 삭제)
- * - 서버에 로그아웃 엔드포인트가 있다면 호출 가능
+ * - 클라이언트 전용 (서버 호출 불필요)
  */
 export async function logout(): Promise<void> {
-  // 필요시 서버에 로그아웃 요청
-  // await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-
-  // 현재는 클라이언트 측에서만 처리
+  localStorage.removeItem('access_token');
   return Promise.resolve();
-}
-
-/**
- * 토큰 갱신 API
- * @param refreshToken - 리프레시 토큰
- * @returns 새로운 액세스 토큰과 리프레시 토큰
- */
-export async function refreshAccessToken(refreshToken: string): Promise<RefreshTokenResponse> {
-  const response = await apiClient.post<ApiResponse<RefreshTokenResponse>>(
-    API_ENDPOINTS.AUTH.REFRESH,
-    { refreshToken }
-  );
-  return response.data.data;
 }
