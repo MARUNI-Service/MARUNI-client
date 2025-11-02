@@ -57,17 +57,15 @@ export const useAuthStore = create<AuthState>()(
       /**
        * 회원가입
        * Phase 3-8: 실제 API 호출
+       * POST /api/join
        * 회원가입만 하고 자동 로그인은 하지 않음
        */
       signup: async (credentials: SignupRequest) => {
         set({ isLoading: true, error: null });
 
         try {
-          // 실제 API 호출 (Phase 2-3에서 구현)
-          // await authApi.signup(credentials);
-
-          // 임시로 성공 처리 (Phase 2-3에서 구현 예정)
-          console.log('Signup credentials:', credentials);
+          // 실제 API 호출 (Phase 2-3: joinApi 사용)
+          await authApi.signup(credentials);
 
           set({
             isLoading: false,
