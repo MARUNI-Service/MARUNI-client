@@ -1,1 +1,1 @@
-export { sendMessage, getHistory } from './conversationApi';
+export { sendMessage, getHistory, getLatestMessage } from './conversationApi';

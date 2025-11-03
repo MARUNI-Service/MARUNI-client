@@ -42,3 +42,17 @@ export async function getHistory(days: number = 7): Promise<MessageDto[]> {
 
   return response.data.data;
 }
+
+/**
+ * 가장 최근 메시지 조회
+ * GET /api/conversations/messages/latest
+ * Phase 3-8: 홈 화면 최근 대화 표시용
+ */
+export async function getLatestMessage(): Promise<MessageDto | null> {
+  const response = await apiClient.get<CommonApiResponse<MessageDto | null>>(
+    API_ENDPOINTS.CONVERSATIONS.LATEST_MESSAGE
+  );
+
+  // data가 null일 수 있음 (메시지가 없는 경우)
+  return response.data.data;
+}

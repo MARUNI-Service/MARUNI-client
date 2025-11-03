@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
   CONVERSATIONS: {
     SEND_MESSAGE: '/conversations/messages',
     HISTORY: '/conversations/history',
+    LATEST_MESSAGE: '/conversations/messages/latest',
   },
 
   // 보호자 관계
