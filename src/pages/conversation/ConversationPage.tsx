@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useConversation } from '@/features/conversation';
 import { Layout } from '@/shared/components';
 import { ChatMessage } from '@/shared/components/business/ChatMessage';
 import { MessageInput } from '@/shared/components/business/MessageInput';
-import { useConversation } from '@/features/conversation';
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * AI 대화 페이지
@@ -29,29 +29,25 @@ export function ConversationPage() {
   };
 
   return (
-    <Layout title="안부 메시지" showBack={true} onBack={() => navigate(-1)}>
-      <div className="flex flex-col h-[calc(100vh-80px)]">
+    <Layout title='마루니' showBack={true} onBack={() => navigate(-1)}>
+      <div className='flex flex-col h-[calc(100vh-80px)]'>
         {/* 메시지 목록 */}
-        <div className="flex-1 overflow-y-auto px-4 py-6">
+        <div className='flex-1 overflow-y-auto px-4 py-6'>
           {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-xl text-gray-500">대화 불러오는 중...</p>
+            <div className='flex items-center justify-center h-full'>
+              <p className='text-xl text-gray-500'>대화 불러오는 중...</p>
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="text-6xl mb-4">💬</div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  첫 대화를 시작해보세요
-                </h2>
-                <p className="text-lg text-gray-600">
-                  오늘 하루 어떠셨는지 이야기해주세요
-                </p>
+            <div className='flex items-center justify-center h-full'>
+              <div className='text-center'>
+                <div className='text-6xl mb-4'>💬</div>
+                <h2 className='text-2xl font-bold text-gray-900 mb-2'>첫 대화를 시작해보세요</h2>
+                <p className='text-lg text-gray-600'>오늘 하루 어떠셨는지 이야기해주세요</p>
               </div>
             </div>
           ) : (
             <>
-              {messages.map((message) => (
+              {messages.map(message => (
                 <ChatMessage key={message.id} message={message} />
               ))}
               <div ref={messagesEndRef} />
@@ -60,7 +56,7 @@ export function ConversationPage() {
         </div>
 
         {/* 메시지 입력창 */}
-        <div className="border-t border-gray-200 bg-white px-4 py-4">
+        <div className='border-t border-gray-200 bg-white px-4 py-4'>
           <MessageInput
             onSend={handleSend}
             disabled={isSending}
