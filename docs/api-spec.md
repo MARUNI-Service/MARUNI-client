@@ -1,6 +1,6 @@
 # MARUNI Frontend API 연동 가이드
 
-**최종 업데이트**: 2025-10-29
+**최종 업데이트**: 2025-11-02
 **버전**: 2.0.0
 **상태**: Phase 2 MVP 완성
 
@@ -70,16 +70,28 @@ Content-Type: application/json
 
 ```json
 {
-  "isSuccess": true,
-  "code": "S001",
-  "message": "요청이 성공적으로 처리되었습니다",
-  "data": null
+  "code": "M201",
+  "message": "로그인 성공",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "tokenType": "Bearer",
+    "expiresIn": 3600,
+    "member": {
+      "memberId": 1,
+      "memberEmail": "user@example.com",
+      "memberName": "홍길동",
+      "dailyCheckEnabled": true,
+      "hasGuardian": false,
+      "managedMembersCount": 0
+    }
+  }
 }
 ```
 
-- **중요**: Access Token은 응답 헤더 `Authorization`에 포함됩니다
-- 형식: `Bearer {access_token}`
-- 유효기간: 1시간
+- **중요**: Access Token은 응답 바디의 `data.accessToken`에 포함됩니다
+- 토큰 타입: `Bearer`
+- 유효기간: 3600초 (1시간)
+- 회원 정보도 함께 반환되어 추가 API 호출 불필요
 
 #### 2. 인증이 필요한 API 호출
 
@@ -101,9 +113,20 @@ sessionStorage.removeItem('access_token');
 
 ### 인증 에러 처리
 
+**로그인 실패 (401)**:
+
 ```json
 {
-  "isSuccess": false,
+  "code": "A401",
+  "message": "로그인에 실패했습니다",
+  "data": null
+}
+```
+
+**토큰 인증 실패 (401)**:
+
+```json
+{
   "code": "A402",
   "message": "유효하지 않은 토큰입니다",
   "data": null
@@ -120,10 +143,9 @@ sessionStorage.removeItem('access_token');
 
 ```typescript
 interface CommonApiResponse<T> {
-  isSuccess: boolean; // 성공 여부
-  code: string; // 응답 코드 (S001, M404 등)
+  code: string;    // 응답 코드 (S001, M404, A401 등)
   message: string; // 응답 메시지
-  data: T | null; // 실제 데이터 (실패 시 null)
+  data: T | null;  // 실제 데이터 (실패 시 null)
 }
 ```
 
@@ -133,7 +155,6 @@ interface CommonApiResponse<T> {
 
 ```json
 {
-  "isSuccess": true,
   "code": "S001",
   "message": "요청이 성공적으로 처리되었습니다",
   "data": {
@@ -148,7 +169,6 @@ interface CommonApiResponse<T> {
 
 ```json
 {
-  "isSuccess": true,
   "code": "S001",
   "message": "요청이 성공적으로 처리되었습니다",
   "data": [
@@ -162,7 +182,6 @@ interface CommonApiResponse<T> {
 
 ```json
 {
-  "isSuccess": false,
   "code": "M404",
   "message": "회원을 찾을 수 없습니다",
   "data": null
@@ -190,7 +209,23 @@ POST /api/auth/login
 }
 ```
 
-**Response**: Access Token이 응답 헤더에 포함
+**Response**: `LoginResponseDto`
+
+```typescript
+{
+  accessToken: string;       // JWT Access Token
+  tokenType: "Bearer";       // 토큰 타입 (고정값)
+  expiresIn: number;         // 유효기간 (초 단위, 3600 = 1시간)
+  member: {
+    memberId: number;
+    memberEmail: string;
+    memberName: string;
+    dailyCheckEnabled: boolean;
+    hasGuardian: boolean;           // 보호자 존재 여부
+    managedMembersCount: number;    // 관리 중인 회원 수 (보호자 역할인 경우)
+  }
+}
+```
 
 ---
 
@@ -619,12 +654,21 @@ POST /api/alert-rules/detect
 Authorization: Bearer {token}
 ```
 
-**Response**:
+**Response**: `AlertDetectionResultDto`
 
 ```typescript
 {
-  memberId: number;
-  detectedAnomalies: [...];  // 감지된 이상징후 목록
+  memberId: number;                                       // 감지 대상 회원 ID
+  detectedCount: number;                                  // 감지된 이상징후 개수
+  highestAlertLevel: "EMERGENCY" | "HIGH" | "MEDIUM" | "LOW" | null;  // 최고 위험 레벨
+  detectedAlerts: [                                       // 감지된 이상징후 목록
+    {
+      alertLevel: "EMERGENCY" | "HIGH" | "MEDIUM" | "LOW";
+      message: string;                                    // 알림 메시지
+      analysisDetails: string;                            // 분석 상세 정보
+    }
+  ];
+  summaryMessage: string;                                 // 전체 감지 요약 메시지
 }
 ```
 

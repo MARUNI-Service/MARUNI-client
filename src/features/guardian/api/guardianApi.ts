@@ -16,7 +16,7 @@ export async function createGuardianRequest(
     request
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '보호자 요청 생성 실패');
   }
 
@@ -33,7 +33,7 @@ export async function getGuardianRequests(): Promise<GuardianRequestResponse[]> 
     API_ENDPOINTS.GUARDIANS.REQUESTS
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '보호자 요청 목록 조회 실패');
   }
 

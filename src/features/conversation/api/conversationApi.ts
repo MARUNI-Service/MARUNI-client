@@ -19,7 +19,7 @@ export async function sendMessage(request: SendMessageRequest): Promise<Conversa
     request
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '메시지 전송 실패');
   }
 
@@ -36,7 +36,7 @@ export async function getHistory(days: number = 7): Promise<MessageDto[]> {
     `${API_ENDPOINTS.CONVERSATIONS.HISTORY}?days=${days}`
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '대화 내역 조회 실패');
   }
 

@@ -11,7 +11,7 @@ import type { UpdateMemberRequest } from '../types';
 export async function getMyInfo(): Promise<User> {
   const response = await apiClient.get<CommonApiResponse<User>>(API_ENDPOINTS.MEMBERS.ME);
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '내 정보 조회 실패');
   }
 
@@ -28,7 +28,7 @@ export async function updateMyInfo(request: UpdateMemberRequest): Promise<User> 
     request
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '정보 수정 실패');
   }
 
@@ -52,7 +52,7 @@ export async function searchMember(email: string): Promise<User> {
     `${API_ENDPOINTS.MEMBERS.SEARCH}?email=${encodeURIComponent(email)}`
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '회원 검색 실패');
   }
 
@@ -68,7 +68,7 @@ export async function getManagedMembers(): Promise<User[]> {
     API_ENDPOINTS.MEMBERS.MANAGED_MEMBERS
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '목록 조회 실패');
   }
 
@@ -84,7 +84,7 @@ export async function updateDailyCheckSetting(enabled: boolean): Promise<User> {
     `${API_ENDPOINTS.MEMBERS.DAILY_CHECK}?enabled=${enabled}`
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '설정 변경 실패');
   }
 

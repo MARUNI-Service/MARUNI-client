@@ -18,7 +18,7 @@ export async function checkEmailAvailability(email: string): Promise<{
     }>
   >(`${API_ENDPOINTS.JOIN.EMAIL_CHECK}?memberEmail=${encodeURIComponent(email)}`);
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '이메일 확인 실패');
   }
 
@@ -38,7 +38,7 @@ export async function signup(request: SignupRequest): Promise<User> {
     dailyCheckEnabled: request.dailyCheckEnabled ?? true, // 기본값
   });
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '회원가입 실패');
   }
 

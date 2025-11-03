@@ -24,7 +24,7 @@ export async function createAlertRule(
     request
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 규칙 생성 실패');
   }
 
@@ -39,7 +39,7 @@ export async function getAlertRules(): Promise<AlertRuleResponseDto[]> {
     API_ENDPOINTS.ALERT_RULES.LIST
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 규칙 목록 조회 실패');
   }
 
@@ -54,7 +54,7 @@ export async function getAlertRuleDetail(id: number): Promise<AlertRuleResponseD
     API_ENDPOINTS.ALERT_RULES.DETAIL(id)
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 규칙 조회 실패');
   }
 
@@ -73,7 +73,7 @@ export async function updateAlertRule(
     request
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 규칙 수정 실패');
   }
 
@@ -98,7 +98,7 @@ export async function toggleAlertRule(
     `${API_ENDPOINTS.ALERT_RULES.TOGGLE(id)}?active=${active}`
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 규칙 토글 실패');
   }
 
@@ -113,7 +113,7 @@ export async function getAlertHistory(days: number = 30): Promise<AlertHistoryRe
     `${API_ENDPOINTS.ALERT_RULES.HISTORY}?days=${days}`
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 이력 조회 실패');
   }
 
@@ -128,7 +128,7 @@ export async function getAlertHistoryDetail(id: number): Promise<AlertHistoryRes
     API_ENDPOINTS.ALERT_RULES.HISTORY_DETAIL(id)
   );
 
-  if (!response.data.isSuccess || !response.data.data) {
+  if (!response.data.data) {
     throw new Error(response.data.message || '알림 이력 상세 조회 실패');
   }
 

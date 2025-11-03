@@ -1,6 +1,6 @@
 // 서버 응답 구조 (CommonApiResponse)
+// 실제 서버 응답: { code, message, data }
 export interface CommonApiResponse<T = unknown> {
-  isSuccess: boolean;
   code: string;
   message: string;
   data: T | null;
