@@ -64,3 +64,20 @@ export interface AlertHistoryResponseDto {
   alertDate: string; // ISO 8601
   createdAt: string; // ISO 8601
 }
+
+/**
+ * 수동 이상징후 감지 결과 DTO
+ * Phase 3-8: POST /api/alert-rules/detect
+ */
+export interface AlertDetectionResultDto {
+  memberId: number; // 감지 대상 회원 ID
+  detectedCount: number; // 감지된 이상징후 개수
+  highestAlertLevel: AlertLevel | null; // 최고 위험 레벨
+  detectedAlerts: Array<{
+    // 감지된 이상징후 목록
+    alertLevel: AlertLevel;
+    message: string; // 알림 메시지
+    analysisDetails: string; // 분석 상세 정보
+  }>;
+  summaryMessage: string; // 전체 감지 요약 메시지
+}

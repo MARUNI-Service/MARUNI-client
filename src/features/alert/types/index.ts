@@ -4,4 +4,5 @@ export type {
   AlertRuleUpdateRequest,
   AlertRuleResponseDto,
   AlertHistoryResponseDto,
+  AlertDetectionResultDto,
 } from './alert.types';

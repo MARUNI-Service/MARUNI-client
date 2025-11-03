@@ -6,6 +6,7 @@ import type {
   AlertRuleUpdateRequest,
   AlertRuleResponseDto,
   AlertHistoryResponseDto,
+  AlertDetectionResultDto,
 } from '../types';
 
 /**
@@ -130,6 +131,23 @@ export async function getAlertHistoryDetail(id: number): Promise<AlertHistoryRes
 
   if (!response.data.data) {
     throw new Error(response.data.message || '알림 이력 상세 조회 실패');
+  }
+
+  return response.data.data;
+}
+
+/**
+ * 수동 이상징후 감지
+ * POST /api/alert-rules/detect
+ * Phase 3-8: 서버 API 명세 기준
+ */
+export async function detectAnomalies(): Promise<AlertDetectionResultDto> {
+  const response = await apiClient.post<CommonApiResponse<AlertDetectionResultDto>>(
+    API_ENDPOINTS.ALERT_RULES.DETECT
+  );
+
+  if (!response.data.data) {
+    throw new Error(response.data.message || '이상징후 감지 실패');
   }
 
   return response.data.data;
