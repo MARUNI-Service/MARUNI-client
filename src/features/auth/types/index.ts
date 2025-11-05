@@ -5,7 +5,6 @@ export type {
   ManagedMember,
   LoginRequest,
   SignupRequest,
-  LoginResponse,
-  RefreshTokenResponse,
+  // LoginResponse, RefreshTokenResponse 제거 (Phase 3-8)
   AuthState,
 } from './auth.types';

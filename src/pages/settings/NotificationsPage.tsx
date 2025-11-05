@@ -1,30 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
 import { useAuth } from '@/features/auth';
-import { useToast } from '@/shared/hooks/useToast';
+import { useMember } from '@/features/member';
 
 /**
  * 알림 설정 페이지
- * - 안부 메시지 ON/OFF
+ * - 안부 메시지 ON/OFF (API 연동)
  * - 푸시 알림 설정 (Phase 3-6 연동)
  */
 export function NotificationsPage() {
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
-  const toast = useToast();
+  const { user } = useAuth();
+  const { updateDailyCheck, isUpdatingDailyCheck } = useMember();
 
-  const handleToggleDailyCheck = () => {
+  const handleToggleDailyCheck = async () => {
     if (!user) return;
 
     const newValue = !user.dailyCheckEnabled;
-    setUser({
-      ...user,
-      dailyCheckEnabled: newValue,
-    });
-
-    toast.success(
-      newValue ? '안부 메시지를 받습니다' : '안부 메시지를 받지 않습니다'
-    );
+    await updateDailyCheck(newValue);
   };
 
   return (
@@ -42,8 +35,13 @@ export function NotificationsPage() {
               size="large"
               fullWidth
               onClick={handleToggleDailyCheck}
+              disabled={isUpdatingDailyCheck}
             >
-              {user?.dailyCheckEnabled ? 'ON (받고 있음)' : 'OFF (받지 않음)'}
+              {isUpdatingDailyCheck
+                ? '변경 중...'
+                : user?.dailyCheckEnabled
+                  ? 'ON (받고 있음)'
+                  : 'OFF (받지 않음)'}
             </Button>
           </div>
         </Card>

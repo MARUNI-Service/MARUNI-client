@@ -1,22 +1,31 @@
-import type { EmotionStatus } from '@/shared/utils/emotion';
+import type { MessageType, EmotionType } from '@/shared/types/enums';
 
 /**
- * 메시지 발신자 타입
+ * 메시지 전송 요청
+ * Phase 3-8: AI 대화 메시지 전송
  */
-export type MessageSender = 'USER' | 'AI';
+export interface SendMessageRequest {
+  content: string; // 최대 500자
+}
 
 /**
- * 감정 상태 (중앙화된 타입 재export)
+ * 메시지 DTO (서버 응답)
+ * Phase 3-8: 서버 API 응답 구조
  */
-export type { EmotionStatus };
-
-/**
- * 메시지
- */
-export interface Message {
+export interface MessageDto {
   id: number;
-  sender: MessageSender;
+  type: MessageType; // USER_MESSAGE, AI_RESPONSE, SYSTEM_MESSAGE
   content: string;
-  emotionStatus?: EmotionStatus; // 사용자 메시지만
+  emotion: EmotionType | null; // POSITIVE, NEGATIVE, NEUTRAL
   createdAt: string; // ISO 8601
+}
+
+/**
+ * 대화 응답 DTO
+ * Phase 3-8: AI 대화 메시지 전송 응답
+ */
+export interface ConversationResponseDto {
+  conversationId: number;
+  userMessage: MessageDto;
+  aiMessage: MessageDto;
 }

@@ -20,8 +20,8 @@ export function GuardianCard({ guardian }: GuardianCardProps) {
 
         {/* 정보 */}
         <div>
-          <p className="text-2xl font-semibold text-gray-900">{guardian.name}</p>
-          <p className="text-lg text-gray-600">{guardian.relationship}</p>
+          <p className="text-2xl font-semibold text-gray-900">{guardian.memberName}</p>
+          <p className="text-lg text-gray-600">{guardian.relation}</p>
         </div>
       </div>
     </Card>

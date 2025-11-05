@@ -1,1 +1,1 @@
-export * from './member.types';
+export type { UpdateMemberRequest, ManagedMemberResponse } from './member.types';

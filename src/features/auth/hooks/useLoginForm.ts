@@ -5,17 +5,16 @@ import { useAuthStore } from '../store';
 import type { LoginRequest } from '../types';
 
 /**
- * 로그인 폼 상태 관리 훅 (MVP 단순화 버전)
- * - Phase 3-1 ~ 3-7: Mock 로그인이므로 복잡한 validation 불필요
- * - Phase 3-8: API 연결 시 필요한 validation 추가
+ * 로그인 폼 상태 관리 훅
+ * Phase 3-8: API 연결 - memberEmail, memberPassword 사용
  */
 export function useLoginForm() {
   const navigate = useNavigate();
   const { login, isLoading, error, clearError } = useAuthStore();
 
   const [formData, setFormData] = useState<LoginRequest>({
-    username: '',
-    password: '',
+    memberEmail: '',
+    memberPassword: '',
   });
 
   /**
@@ -37,8 +36,8 @@ export function useLoginForm() {
    * 로그인 제출 핸들러
    */
   const handleSubmit = async () => {
-    // 🔴 MVP 단순화: validation 최소화 (빈 값만 체크)
-    if (!formData.username.trim()) {
+    // 빈 값 체크
+    if (!formData.memberEmail.trim() || !formData.memberPassword.trim()) {
       return;
     }
 

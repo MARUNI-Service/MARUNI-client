@@ -1,5 +1,5 @@
-import type { Message } from '@/features/conversation';
+import type { MessageDto } from '@/features/conversation';
 
 export interface ChatMessageProps {
-  message: Message;
+  message: MessageDto;
 }

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Card } from '@/shared/components';
-import { useGuardian, type GuardianRequest } from '@/features/guardian';
+import { useGuardian } from '@/features/guardian';
 import { ROUTES } from '@/shared/constants/routes';
 
 /**
@@ -52,11 +52,11 @@ export function GuardianRequestsPage() {
         {/* 요청 목록 */}
         {requests.length > 0 ? (
           <div className="space-y-4">
-            {requests.map((request: GuardianRequest) => (
+            {requests.map((request) => (
               <Card key={request.id} padding="medium" className="space-y-4">
                 <div>
-                  <div className="text-xl font-bold text-gray-900">{request.seniorName}</div>
-                  <div className="text-base text-gray-600">{request.seniorEmail}</div>
+                  <div className="text-xl font-bold text-gray-900">{request.requester.name}</div>
+                  <div className="text-base text-gray-600">{request.requester.email}</div>
                   <div className="text-sm text-gray-500 mt-2">
                     {new Date(request.createdAt).toLocaleDateString('ko-KR')}
                   </div>
@@ -64,7 +64,7 @@ export function GuardianRequestsPage() {
 
                 <div className="space-y-2">
                   <p className="text-lg text-gray-700">
-                    {request.seniorName}님이 회원님을
+                    {request.requester.name}님이 회원님을
                     <br />
                     보호자로 등록하길 원합니다
                   </p>

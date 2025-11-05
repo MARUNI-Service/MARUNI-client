@@ -13,11 +13,12 @@ interface ManagedMemberCardProps {
  * - "대화보기" 버튼 제공
  */
 export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
-  const { emoji, text } = getEmotionConfig(member.emotionStatus);
+  // Phase 3-8: emotionStatus 필드 제거됨, 임시로 NEUTRAL 사용
+  const { emoji, text } = getEmotionConfig('NEUTRAL');
 
   const handleViewConversation = () => {
     // Phase 3-4에서 대화 이력 화면으로 이동
-    console.log('대화보기 클릭:', member.id);
+    console.log('대화보기 클릭:', member.memberId);
   };
 
   return (
@@ -33,8 +34,8 @@ export function ManagedMemberCard({ member }: ManagedMemberCardProps) {
 
             {/* 이름 */}
             <div>
-              <p className="text-xl font-semibold text-gray-900">{member.name}</p>
-              <p className="text-base text-gray-500">{formatLastCheckTime(member.lastCheckTime)}</p>
+              <p className="text-xl font-semibold text-gray-900">{member.memberName}</p>
+              <p className="text-base text-gray-500">{formatLastCheckTime(member.lastDailyCheckAt || undefined)}</p>
             </div>
           </div>
 

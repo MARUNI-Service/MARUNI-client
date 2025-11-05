@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/rlarb/coding/maruni/maruni-server/src/main/java/com/anyang/maruni/global/config/**)",
+      "Read(//c/Users/rlarb/coding/maruni/maruni-server/src/main/java/com/anyang/maruni/global/security/**)",
+      "Read(//c/Users/rlarb/coding/maruni/maruni-server/src/main/java/com/anyang/maruni/domain/guardian/presentation/controller/**)",
+      "Read(//c/Users/rlarb/coding/maruni/maruni-server/src/main/resources/**)",
+      "Read(//c/Users/rlarb/coding/maruni/maruni-server/src/main/java/com/anyang/maruni/domain/member/application/dto/request/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

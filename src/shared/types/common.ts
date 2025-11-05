@@ -1,4 +1,12 @@
-// Base API Response Type
+// 서버 응답 구조 (CommonApiResponse)
+// 실제 서버 응답: { code, message, data }
+export interface CommonApiResponse<T = unknown> {
+  code: string;
+  message: string;
+  data: T | null;
+}
+
+// @deprecated - 서버 응답 구조 변경으로 사용 중단, CommonApiResponse 사용 권장
 export interface ApiResponse<T = unknown> {
   data: T;
   message: string;

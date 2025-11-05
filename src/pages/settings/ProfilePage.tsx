@@ -5,30 +5,35 @@ import { useMember } from '@/features/member';
 
 /**
  * 내 정보 수정 페이지
- * - 이름, 전화번호 수정
+ * Phase 3-8: 이름, 이메일, 비밀번호 수정
  */
 export function ProfilePage() {
   const navigate = useNavigate();
   const { profile, isLoading, updateProfile, isUpdating } = useMember();
 
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [memberName, setMemberName] = useState('');
+  const [memberEmail, setMemberEmail] = useState('');
+  const [memberPassword, setMemberPassword] = useState('');
 
   useEffect(() => {
     if (profile) {
-      setName(profile.name);
-      setPhoneNumber(profile.phoneNumber || '');
+      setMemberName(profile.memberName);
+      setMemberEmail(profile.memberEmail);
     }
   }, [profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim()) {
+    if (!memberName.trim() || !memberEmail.trim() || !memberPassword.trim()) {
       return;
     }
 
-    await updateProfile({ name, phoneNumber });
+    await updateProfile({
+      memberName,
+      memberEmail,
+      memberPassword,
+    });
   };
 
   if (isLoading) {
@@ -47,27 +52,29 @@ export function ProfilePage() {
         <Input
           label="이름"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={memberName}
+          onChange={(e) => setMemberName(e.target.value)}
           placeholder="홍길동"
           required
         />
 
         <Input
-          label="전화번호"
-          type="tel"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder="010-1234-5678"
-          helperText="'-' 없이 숫자만 입력하세요"
+          label="이메일"
+          type="email"
+          value={memberEmail}
+          onChange={(e) => setMemberEmail(e.target.value)}
+          placeholder="user@example.com"
+          required
         />
 
         <Input
-          label="이메일"
-          type="email"
-          value={profile?.email || ''}
-          disabled
-          helperText="이메일은 변경할 수 없습니다"
+          label="비밀번호"
+          type="password"
+          value={memberPassword}
+          onChange={(e) => setMemberPassword(e.target.value)}
+          placeholder="새 비밀번호 입력"
+          helperText="정보 수정을 위해 비밀번호를 입력하세요"
+          required
         />
 
         <Button

@@ -3,9 +3,7 @@ import { API_BASE_URL } from '@/shared/constants/api';
 import type { ApiError } from '@/shared/types/common';
 
 /**
- * Axios 인스턴스 생성 (MVP 단순화 버전)
- * - Phase 3-1 ~ 3-7: Mock 데이터 사용하므로 복잡한 인터셉터 불필요
- * - Phase 3-8: API 연결 시 필요한 인터셉터 추가
+ * Axios 인스턴스 생성
  */
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -15,10 +13,47 @@ export const apiClient = axios.create({
   },
 });
 
-// 🔴 Phase 3-1 ~ 3-7: Mock 데이터 사용하므로 인터셉터 불필요
-// Phase 3-8 API 연결 시 아래 주석 해제하여 사용
-// - 요청 인터셉터: Authorization 헤더 추가
-// - 응답 인터셉터: 401 토큰 갱신, 403/500 에러 처리
+/**
+ * Request 인터셉터: JWT 토큰 자동 추가
+ */
+apiClient.interceptors.request.use(
+  (config) => {
+    // localStorage에서 토큰 가져오기
+    const token = localStorage.getItem('access_token');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+/**
+ * Response 인터셉터: 토큰 추출 및 에러 처리
+ */
+apiClient.interceptors.response.use(
+  (response) => {
+    // 로그인 응답인 경우 헤더에서 토큰 추출
+    const authHeader = response.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      localStorage.setItem('access_token', token);
+    }
+
+    return response;
+  },
+  (error) => {
+    // 401 Unauthorized - 자동 로그아웃
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      window.location.href = '/auth/login';
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 /**
  * API 에러 추출 헬퍼 함수
