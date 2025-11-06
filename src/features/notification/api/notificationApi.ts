@@ -5,22 +5,23 @@
 
 import { apiClient } from '@/shared/api/client';
 import { API_ENDPOINTS } from '@/shared/constants/api';
+import type { CommonApiResponse } from '@/shared/types/common';
 import type { Notification } from '../types';
 
 /**
  * 전체 알림 조회 (최신순)
  */
 export async function getNotifications(): Promise<Notification[]> {
-  const response = await apiClient.get<Notification[]>(API_ENDPOINTS.NOTIFICATIONS.LIST);
-  return response.data;
+  const response = await apiClient.get<CommonApiResponse<Notification[]>>(API_ENDPOINTS.NOTIFICATIONS.LIST);
+  return response.data.data || [];
 }
 
 /**
  * 안읽은 알림 개수 조회
  */
 export async function getUnreadCount(): Promise<number> {
-  const response = await apiClient.get<number>(API_ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT);
-  return response.data;
+  const response = await apiClient.get<CommonApiResponse<number>>(API_ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT);
+  return response.data.data || 0;
 }
 
 /**
@@ -28,10 +29,13 @@ export async function getUnreadCount(): Promise<number> {
  * @param notificationId - 알림 ID
  */
 export async function markAsRead(notificationId: number): Promise<Notification> {
-  const response = await apiClient.patch<Notification>(
+  const response = await apiClient.patch<CommonApiResponse<Notification>>(
     API_ENDPOINTS.NOTIFICATIONS.MARK_READ(notificationId)
   );
-  return response.data;
+  if (!response.data.data) {
+    throw new Error('알림 정보를 찾을 수 없습니다');
+  }
+  return response.data.data;
 }
 
 /**
