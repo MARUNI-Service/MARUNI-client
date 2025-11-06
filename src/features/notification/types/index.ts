@@ -1,1 +1,7 @@
-export type { Notification, NotificationType, NotificationLevel } from './notification.types';
+export type {
+  Notification,
+  NotificationType,
+  NotificationSourceType,
+  NotificationLevel,
+} from './notification.types';
+export { getNotificationLevel } from './notification.types';

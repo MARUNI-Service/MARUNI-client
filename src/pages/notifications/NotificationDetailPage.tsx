@@ -7,9 +7,10 @@
 
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Bell, Users, AlertTriangle, AlertCircle, MessageCircle } from 'lucide-react';
+import { Bell, Users, AlertTriangle, AlertCircle, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import { useNotification, useNotifications } from '@/features/notification';
 import type { NotificationType, NotificationLevel } from '@/features/notification/types';
+import { getNotificationLevel } from '@/features/notification/types';
 import { Layout, EmptyState, Button, Card } from '@/shared/components';
 import { formatTimeAgo } from '@/shared/utils/date';
 import { cn } from '@/shared/utils/cn';
@@ -19,7 +20,7 @@ export function NotificationDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { markAsRead } = useNotifications();
-  const { data: notification, isLoading } = useNotification(id || '');
+  const { data: notification, isLoading } = useNotification(Number(id));
 
   // 알림 자동 읽음 처리
   useEffect(() => {
@@ -51,7 +52,8 @@ export function NotificationDetailPage() {
     );
   }
 
-  const icon = getNotificationIcon(notification.type, notification.level);
+  const level = getNotificationLevel(notification.type);
+  const icon = getNotificationIcon(notification.type, level);
   const timeAgo = formatTimeAgo(notification.createdAt);
 
   return (
@@ -60,7 +62,7 @@ export function NotificationDetailPage() {
         {/* 알림 내용 */}
         <Card padding="large">
           <div className="flex items-start gap-4">
-            <div className={cn('flex-shrink-0', getLevelColor(notification.level))}>{icon}</div>
+            <div className={cn('flex-shrink-0', getLevelColor(level))}>{icon}</div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900">{notification.title}</h2>
               <p className="text-sm text-gray-400 mt-1">{timeAgo}</p>
@@ -83,7 +85,9 @@ export function NotificationDetailPage() {
           </Card>
         )}
 
-        {notification.type === 'ALERT' && (
+        {(notification.type === 'EMOTION_ALERT' ||
+          notification.type === 'NO_RESPONSE_ALERT' ||
+          notification.type === 'KEYWORD_ALERT') && (
           <Card padding="medium">
             <Button variant="primary" size="large" fullWidth onClick={() => navigate(ROUTES.CONVERSATION)}>
               대화 전체보기
@@ -107,17 +111,24 @@ export function NotificationDetailPage() {
  * 알림 종류 및 레벨에 따른 아이콘 반환
  */
 function getNotificationIcon(type: NotificationType, level: NotificationLevel) {
-  if (level === 'HIGH' || level === 'EMERGENCY') {
+  if (level === 'EMERGENCY') {
     return <AlertCircle size={32} />;
   }
 
   switch (type) {
     case 'GUARDIAN_REQUEST':
       return <Users size={32} />;
-    case 'ALERT':
+    case 'GUARDIAN_ACCEPT':
+      return <CheckCircle size={32} />;
+    case 'GUARDIAN_REJECT':
+      return <XCircle size={32} />;
+    case 'EMOTION_ALERT':
+    case 'NO_RESPONSE_ALERT':
+    case 'KEYWORD_ALERT':
       return <AlertTriangle size={32} />;
     case 'DAILY_CHECK':
       return <MessageCircle size={32} />;
+    case 'SYSTEM':
     default:
       return <Bell size={32} />;
   }

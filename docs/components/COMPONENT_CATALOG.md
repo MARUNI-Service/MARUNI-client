@@ -11,12 +11,14 @@
 **경로**: `src/shared/components/ui/Button/`
 
 **Props**:
+
 - `variant`: 'primary' | 'secondary' (기본값: 'primary')
 - `size`: 'large' | 'extra-large' (기본값: 'large')
 - `fullWidth`: boolean (기본값: false)
 - `disabled`: boolean (기본값: false)
 
 **노인 친화적 특징**:
+
 - ✅ 터치 영역: Large 60px, Extra-large 72px
 - ✅ 명확한 포커스 링 (4px)
 - ✅ 접근성: aria-label 자동 설정
@@ -29,12 +31,14 @@
 **경로**: `src/shared/components/layout/Layout/`
 
 **Props**:
+
 - `title`: string (선택)
 - `showBack`: boolean (기본값: false)
 - `onBack`: () => void (선택)
 - `children`: ReactNode
 
 **특징**:
+
 - ✅ 모바일 최적화 (max-width: 480px)
 - ✅ Header/Main 명확한 구조
 - ✅ 중앙 정렬 제목
@@ -47,6 +51,7 @@
 **경로**: `src/shared/components/ui/Input/`
 
 **Props**:
+
 - `label`: string (선택)
 - `error`: string (선택)
 - `helperText`: string (선택)
@@ -55,6 +60,7 @@
 - `type`: string (기본값: 'text')
 
 **노인 친화적 특징**:
+
 - ✅ 높이: 60px
 - ✅ 폰트 크기: 18px
 - ✅ 명확한 라벨-입력 연결
@@ -67,6 +73,7 @@
 **경로**: `src/shared/components/ui/Card/`
 
 **Props**:
+
 - `clickable`: boolean (기본값: false)
 - `padding`: 'small' | 'medium' | 'large' (기본값: 'medium')
 - `shadow`: 'none' | 'small' | 'medium' | 'large' (기본값: 'small')
@@ -74,6 +81,7 @@
 - `onClick`: () => void (clickable일 때)
 
 **특징**:
+
 - ✅ 클릭 가능/불가능 모드 자동 전환
 - ✅ 호버 효과 및 포커스 링
 - ✅ 다양한 스타일 옵션
@@ -86,11 +94,13 @@
 **경로**: `src/shared/components/ui/LoadingSpinner/`
 
 **Props**:
+
 - `size`: 'small' | 'medium' | 'large' (기본값: 'medium')
 - `label`: string (기본값: '로딩 중...')
 - `className`: string (선택)
 
 **접근성 특징**:
+
 - ✅ role="status"
 - ✅ aria-live="polite"
 - ✅ aria-busy="true"
@@ -103,11 +113,13 @@
 **경로**: `src/shared/components/ui/ErrorBoundary/`
 
 **Props**:
+
 - `children`: ReactNode
 - `fallback`: ReactNode (선택)
 - `onError`: (error, errorInfo) => void (선택)
 
 **특징**:
+
 - ✅ React Error Boundary 패턴
 - ✅ 노인 친화적 에러 UI
 - ✅ "다시 시도" 버튼으로 복구
@@ -121,14 +133,7 @@
 모든 컴포넌트는 한 곳에서 import할 수 있습니다:
 
 ```typescript
-import {
-  Button,
-  Input,
-  Card,
-  Layout,
-  LoadingSpinner,
-  ErrorBoundary,
-} from './shared/components';
+import { Button, Input, Card, Layout, LoadingSpinner, ErrorBoundary } from './shared/components';
 ```
 
 ---
@@ -136,6 +141,7 @@ import {
 ## ✅ Phase 1 품질 달성 현황
 
 ### 필수 요구사항
+
 - ✅ TypeScript 타입 완전 정의 (모든 Props 인터페이스)
 - ✅ 노인 친화적 크기 (터치 영역 60px+ 확보)
 - ✅ 접근성 속성 (aria-label, role, aria-describedby 등)
@@ -143,6 +149,7 @@ import {
 - ✅ 키보드 네비게이션 지원 (Tab, Enter, Space 키)
 
 ### 권장 사항
+
 - ✅ 사용 예제 주석 (모든 컴포넌트에 JSDoc 포함)
 - ✅ Props 기본값 설정 (적절한 default values)
 - ✅ 일관된 네이밍 규칙 (ButtonProps, LayoutProps 등)
@@ -153,14 +160,14 @@ import {
 
 ## 📊 컴포넌트 메트릭스
 
-| 컴포넌트 | 파일 수 | 최소 터치 영역 | 접근성 | 테스트 |
-|---------|--------|--------------|--------|-------|
-| Button | 3 | 60px | ✅ | ✅ |
-| Layout | 3 | 60px (뒤로가기) | ✅ | ✅ |
-| Input | 3 | 60px | ✅ | ✅ |
-| Card | 3 | 48px+ | ✅ | ✅ |
-| LoadingSpinner | 3 | N/A | ✅ | ✅ |
-| ErrorBoundary | 3 | 60px (버튼) | ✅ | ✅ |
+| 컴포넌트       | 파일 수 | 최소 터치 영역  | 접근성 | 테스트 |
+| -------------- | ------- | --------------- | ------ | ------ |
+| Button         | 3       | 60px            | ✅     | ✅     |
+| Layout         | 3       | 60px (뒤로가기) | ✅     | ✅     |
+| Input          | 3       | 60px            | ✅     | ✅     |
+| Card           | 3       | 48px+           | ✅     | ✅     |
+| LoadingSpinner | 3       | N/A             | ✅     | ✅     |
+| ErrorBoundary  | 3       | 60px (버튼)     | ✅     | ✅     |
 
 ---
 
@@ -169,12 +176,14 @@ import {
 Phase 1 완료 후 다음 단계:
 
 ### Phase 2: 보조 컴포넌트 (선택)
+
 - Modal (모달 대화상자)
 - Toast (알림 메시지)
 - Badge (상태 표시 배지)
 - Select (드롭다운 선택)
 
 ### Phase 3: 비즈니스 컴포넌트
+
 - ChatMessage (AI 대화 메시지)
 - DailyCheckCard (안부 확인 카드)
 - GuardianCard (보호자 정보 카드)

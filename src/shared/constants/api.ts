@@ -51,4 +51,11 @@ export const API_ENDPOINTS = {
     HISTORY_DETAIL: (id: number) => `/alert-rules/history/${id}`,
     DETECT: '/alert-rules/detect',
   },
+
+  // 통합 알림
+  NOTIFICATIONS: {
+    LIST: '/notifications',
+    UNREAD_COUNT: '/notifications/unread-count',
+    MARK_READ: (id: number) => `/notifications/${id}/read`,
+  },
 } as const;

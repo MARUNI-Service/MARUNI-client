@@ -5,15 +5,17 @@
  * - 읽음/안읽음 상태 표시
  */
 
-import { Bell, Users, AlertTriangle, AlertCircle, MessageCircle } from 'lucide-react';
+import { Bell, Users, AlertTriangle, AlertCircle, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import type { NotificationCardProps } from './NotificationCard.types';
 import type { NotificationType, NotificationLevel } from '@/features/notification/types';
+import { getNotificationLevel } from '@/features/notification/types';
 import { Card } from '@/shared/components';
 import { formatTimeAgo } from '@/shared/utils/date';
 import { cn } from '@/shared/utils/cn';
 
 export function NotificationCard({ notification, onClick }: NotificationCardProps) {
-  const icon = getNotificationIcon(notification.type, notification.level);
+  const level = getNotificationLevel(notification.type);
+  const icon = getNotificationIcon(notification.type, level);
   const timeAgo = formatTimeAgo(notification.createdAt);
 
   return (
@@ -27,7 +29,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
     >
       <div className="flex items-start gap-4">
         {/* 아이콘 */}
-        <div className={cn('flex-shrink-0', getLevelColor(notification.level))}>{icon}</div>
+        <div className={cn('flex-shrink-0', getLevelColor(level))}>{icon}</div>
 
         {/* 알림 내용 */}
         <div className="flex-1 min-w-0">
@@ -49,7 +51,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
  */
 function getNotificationIcon(type: NotificationType, level: NotificationLevel) {
   // 긴급/높음 레벨은 경고 아이콘 우선
-  if (level === 'HIGH' || level === 'EMERGENCY') {
+  if (level === 'EMERGENCY') {
     return <AlertCircle size={32} />;
   }
 
@@ -57,10 +59,17 @@ function getNotificationIcon(type: NotificationType, level: NotificationLevel) {
   switch (type) {
     case 'GUARDIAN_REQUEST':
       return <Users size={32} />;
-    case 'ALERT':
+    case 'GUARDIAN_ACCEPT':
+      return <CheckCircle size={32} />;
+    case 'GUARDIAN_REJECT':
+      return <XCircle size={32} />;
+    case 'EMOTION_ALERT':
+    case 'NO_RESPONSE_ALERT':
+    case 'KEYWORD_ALERT':
       return <AlertTriangle size={32} />;
     case 'DAILY_CHECK':
       return <MessageCircle size={32} />;
+    case 'SYSTEM':
     default:
       return <Bell size={32} />;
   }
