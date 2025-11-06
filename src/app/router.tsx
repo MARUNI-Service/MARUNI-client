@@ -6,6 +6,7 @@ import { GuardiansPage, GuardianSearchPage, GuardianRequestsPage } from '@/pages
 import { SettingsPage, ProfilePage, NotificationsPage as NotificationSettingsPage, PasswordPage } from '@/pages/settings';
 import { NotificationsPage, NotificationDetailPage } from '@/pages/notifications';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { ErrorPage } from '@/pages/ErrorPage';
 import { ProtectedRoute } from '@/features/auth';
 import { ROUTES } from '@/shared/constants/routes';
 
@@ -21,7 +22,7 @@ import { ROUTES } from '@/shared/constants/routes';
 export const router = createBrowserRouter([
   {
     path: '/',
-    errorElement: <NotFoundPage />,
+    errorElement: <ErrorPage />,
     children: [
       // 루트 경로 - 로그인으로 리다이렉트
       {
