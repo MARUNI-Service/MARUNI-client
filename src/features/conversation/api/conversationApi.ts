@@ -40,13 +40,6 @@ export async function getHistory(days: number = 7): Promise<MessageDto[]> {
     throw new Error(response.data.message || '대화 내역 조회 실패');
   }
 
-  // 디버깅: 서버에서 받은 시간 형식 확인
-  if (response.data.data.length > 0) {
-    console.log('🔍 서버에서 받은 첫 메시지:', response.data.data[0]);
-    console.log('🔍 createdAt 원본:', response.data.data[0].createdAt);
-    console.log('🔍 createdAt 타입:', typeof response.data.data[0].createdAt);
-  }
-
   return response.data.data;
 }
 
