@@ -22,6 +22,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
       padding="medium"
       onClick={onClick}
       className={cn(
+        'w-full',
         'cursor-pointer hover:bg-gray-50 transition-colors',
         !notification.isRead && 'bg-blue-50'
       )}
