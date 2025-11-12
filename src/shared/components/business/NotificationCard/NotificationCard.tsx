@@ -33,13 +33,15 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
 
         {/* 알림 내용 */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
             <h3 className="text-xl font-bold text-gray-900 truncate">{notification.title}</h3>
-            {/* 안읽음 표시 */}
-            {!notification.isRead && <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0" />}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <p className="text-sm text-gray-400 whitespace-nowrap">{timeAgo}</p>
+              {/* 안읽음 표시 */}
+              {!notification.isRead && <div className="w-3 h-3 bg-blue-500 rounded-full" />}
+            </div>
           </div>
-          <p className="text-base text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
-          <p className="text-sm text-gray-400 mt-2">{timeAgo}</p>
+          <p className="text-base text-gray-600 mt-1 line-clamp-2 text-left">{notification.message}</p>
         </div>
       </div>
     </Card>
