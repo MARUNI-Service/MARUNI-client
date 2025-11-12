@@ -1,12 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth';
 import type { ManagedMember, User } from '@/features/auth/types';
-import { useToast } from '@/shared/hooks/useToast';
 import { searchMember } from '@/features/member/api';
+import { useToast } from '@/shared/hooks/useToast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  acceptGuardianRequest as acceptGuardianRequestApi,
   createGuardianRequest,
   getGuardianRequests,
-  acceptGuardianRequest as acceptGuardianRequestApi,
   rejectGuardianRequest as rejectGuardianRequestApi,
 } from '../api';
 
@@ -22,34 +22,27 @@ export function useGuardian() {
   const toast = useToast();
 
   // 보호자 요청 목록 조회 (Query - 자동 캐싱)
-  const {
-    data: requests = [],
-    isLoading,
-  } = useQuery({
+  const { data: requests = [], isLoading } = useQuery({
     queryKey: ['guardian', 'requests'],
     queryFn: async () => {
       const allRequests = await getGuardianRequests();
-      return allRequests.filter((req) => req.status === 'PENDING');
+      return allRequests.filter(req => req.status === 'PENDING');
     },
-    enabled: !!user,
+    staleTime: 30000, // 30초 동안 fresh 상태 유지
   });
 
   // 보호자 검색 (Mutation - 사용자 트리거)
-  const {
-    mutateAsync: searchGuardians,
-    isPending: isSearching,
-  } = useMutation<User, Error, string>({
-    mutationFn: searchMember, // Member API의 searchMember 사용
-  });
+  const { mutateAsync: searchGuardians, isPending: isSearching } = useMutation<User, Error, string>(
+    {
+      mutationFn: searchMember, // Member API의 searchMember 사용
+    }
+  );
 
   // 보호자 요청 생성
   const { mutateAsync: requestGuardian } = useMutation({
     mutationFn: createGuardianRequest,
     onSuccess: () => {
       toast.success('보호자 등록 요청을 보냈습니다!');
-    },
-    onError: () => {
-      toast.error('보호자 요청에 실패했습니다');
     },
   });
 
@@ -58,7 +51,7 @@ export function useGuardian() {
     mutationFn: acceptGuardianRequestApi,
     onSuccess: (_, requestId) => {
       // 요청 목록에서 수락한 요청 찾기
-      const request = requests.find((req) => req.id === requestId);
+      const request = requests.find(req => req.id === requestId);
       if (!user || !request) return;
 
       const newMember: ManagedMember = {
