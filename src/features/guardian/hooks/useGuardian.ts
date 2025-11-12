@@ -28,7 +28,7 @@ export function useGuardian() {
       const allRequests = await getGuardianRequests();
       return allRequests.filter(req => req.status === 'PENDING');
     },
-    enabled: !!user,
+    staleTime: 30000, // 30초 동안 fresh 상태 유지
   });
 
   // 보호자 검색 (Mutation - 사용자 트리거)
