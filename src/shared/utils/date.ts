@@ -48,7 +48,7 @@ export function formatTimeAgo(
   if (diffDays < 7) return `${diffDays}일 전`;
 
   // 7일 이상은 날짜 표시
-  return date.toLocaleDateString('ko-KR');
+  return date.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
 }
 
 /**

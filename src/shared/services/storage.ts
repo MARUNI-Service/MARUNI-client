@@ -8,7 +8,6 @@ const STORAGE_KEYS = {
   AUTH: 'auth-storage',
   GUARDIAN_REQUESTS: 'guardian-requests',
   CONVERSATION_PREFIX: 'conversation-messages-',
-  MOCK_USERS: 'mock-users',
 } as const;
 
 export const storage = {
@@ -26,8 +25,4 @@ export const storage = {
     localStorage.getItem(`${STORAGE_KEYS.CONVERSATION_PREFIX}${userId}`),
   setConversationMessages: (userId: number, data: string) =>
     localStorage.setItem(`${STORAGE_KEYS.CONVERSATION_PREFIX}${userId}`, data),
-
-  // Mock 사용자
-  getMockUsers: () => localStorage.getItem(STORAGE_KEYS.MOCK_USERS),
-  setMockUsers: (data: string) => localStorage.setItem(STORAGE_KEYS.MOCK_USERS, data),
 };

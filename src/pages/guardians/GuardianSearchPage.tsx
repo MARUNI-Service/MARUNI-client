@@ -50,8 +50,6 @@ export function GuardianSearchPage() {
         relation: 'FAMILY', // 기본값
       });
       setShowConfirmDialog(false);
-
-      toast.success('보호자 등록 요청을 보냈습니다!');
       navigate(ROUTES.GUARDIANS);
     } catch {
       toast.error('요청에 실패했습니다');

@@ -7,8 +7,7 @@
 
 import { Bell, Users, AlertTriangle, AlertCircle, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import type { NotificationCardProps } from './NotificationCard.types';
-import type { NotificationType, NotificationLevel } from '@/features/notification/types';
-import { getNotificationLevel } from '@/features/notification/types';
+import { getNotificationLevel, type NotificationType, type NotificationLevel } from '@/features/notification/types';
 import { Card } from '@/shared/components';
 import { formatTimeAgo } from '@/shared/utils/date';
 import { cn } from '@/shared/utils/cn';

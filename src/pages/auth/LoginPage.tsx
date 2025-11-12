@@ -16,6 +16,12 @@ export function LoginPage() {
     handleSubmit,
   } = useLoginForm();
 
+  // Form 제출 핸들러 (엔터키 지원)
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   return (
     <Layout title="MARUNI 로그인">
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
@@ -31,7 +37,7 @@ export function LoginPage() {
           </div>
 
           {/* 로그인 폼 */}
-          <div className="space-y-6">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* 이메일 입력 */}
             <div>
               <Input
@@ -71,10 +77,10 @@ export function LoginPage() {
 
             {/* 로그인 버튼 */}
             <Button
+              type="submit"
               variant="primary"
               size="extra-large"
               fullWidth
-              onClick={handleSubmit}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -86,7 +92,7 @@ export function LoginPage() {
                 '로그인'
               )}
             </Button>
-          </div>
+          </form>
 
           {/* 회원가입 링크 */}
           <div className="mt-8 text-center">
