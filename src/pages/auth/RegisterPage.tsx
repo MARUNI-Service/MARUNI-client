@@ -87,7 +87,7 @@ export function RegisterPage() {
   };
 
   return (
-    <Layout title="회원가입" showBack={true}>
+    <Layout title="회원가입" showBack={true} onBack={() => navigate(-1)}>
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto py-8 px-4">
         {/* 이메일 */}
         <div>
