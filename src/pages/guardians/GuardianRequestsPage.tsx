@@ -58,7 +58,7 @@ export function GuardianRequestsPage() {
                   <div className="text-xl font-bold text-gray-900">{request.requester.name}</div>
                   <div className="text-base text-gray-600">{request.requester.email}</div>
                   <div className="text-sm text-gray-500 mt-2">
-                    {new Date(request.createdAt).toLocaleDateString('ko-KR')}
+                    {new Date(request.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
                   </div>
                 </div>
 

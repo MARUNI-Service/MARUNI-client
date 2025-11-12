@@ -14,6 +14,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const time = new Date(message.createdAt).toLocaleTimeString('ko-KR', {
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'Asia/Seoul',
   });
 
   // 감정 상태 이모지 (Phase 3-8: EmotionType으로 변경)
