@@ -48,7 +48,7 @@ apiClient.interceptors.response.use(
     // 401 Unauthorized - 자동 로그아웃
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
-      window.location.href = '/auth/login';
+      window.location.href = '/login';
     }
 
     return Promise.reject(error);
