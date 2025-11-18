@@ -58,3 +58,67 @@ export function formatTimeAgo(
 export function formatLastCheckTime(isoDate?: string, fallback = '대화 없음'): string {
   return formatTimeAgo(isoDate, { fallback });
 }
+
+/**
+ * ISO 8601 날짜를 날짜 구분선 포맷으로 변환
+ * @param isoDate - ISO 8601 형식의 날짜 문자열
+ * @returns 날짜 구분선 문자열 (예: "2025년 1월 18일 토요일")
+ * @example
+ * formatDateDivider("2025-01-18T09:00:00Z") // "2025년 1월 18일 토요일"
+ */
+export function formatDateDivider(isoDate: string): string {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+    timeZone: 'Asia/Seoul',
+  });
+}
+
+/**
+ * ISO 8601 날짜를 YYYY-MM-DD 포맷으로 변환
+ * @param isoDate - ISO 8601 형식의 날짜 문자열
+ * @returns YYYY-MM-DD 형식의 날짜 문자열
+ * @example
+ * formatDateKey("2025-01-18T09:00:00Z") // "2025-01-18"
+ */
+export function formatDateKey(isoDate: string): string {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * 메시지를 날짜별로 그룹화
+ * @param messages - 메시지 배열
+ * @returns 날짜별로 그룹화된 메시지 배열 [{ date, messages }]
+ * @example
+ * const grouped = groupMessagesByDate(messages);
+ * // [
+ * //   { date: "2025-01-18", messages: [...] },
+ * //   { date: "2025-01-17", messages: [...] },
+ * // ]
+ */
+export function groupMessagesByDate<T extends { createdAt: string }>(
+  messages: T[]
+): Array<{ date: string; messages: T[] }> {
+  const grouped = new Map<string, T[]>();
+
+  messages.forEach((message) => {
+    const dateKey = formatDateKey(message.createdAt);
+    if (!grouped.has(dateKey)) {
+      grouped.set(dateKey, []);
+    }
+    grouped.get(dateKey)!.push(message);
+  });
+
+  // Map을 배열로 변환 (날짜 순서 유지)
+  return Array.from(grouped.entries()).map(([date, messages]) => ({
+    date,
+    messages,
+  }));
+}

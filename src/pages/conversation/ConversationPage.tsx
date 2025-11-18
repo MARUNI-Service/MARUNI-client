@@ -1,8 +1,10 @@
 import { useConversation } from '@/features/conversation';
 import { Button } from '@/shared/components/ui/Button';
 import { ChatMessage } from '@/shared/components/business/ChatMessage';
+import { DateDivider } from '@/shared/components/business/DateDivider';
 import { MessageInput } from '@/shared/components/business/MessageInput';
-import { useEffect, useRef } from 'react';
+import { groupMessagesByDate } from '@/shared/utils/date';
+import { useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -15,6 +17,11 @@ export function ConversationPage() {
   const navigate = useNavigate();
   const { messages, isLoading, isSending, sendMessage } = useConversation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 메시지를 날짜별로 그룹화
+  const groupedMessages = useMemo(() => {
+    return groupMessagesByDate(messages);
+  }, [messages]);
 
   // 새 메시지 추가 시 자동 스크롤
   useEffect(() => {
@@ -63,8 +70,16 @@ export function ConversationPage() {
           </div>
         ) : (
           <div className='max-w-md mx-auto'>
-            {messages.map(message => (
-              <ChatMessage key={message.id} message={message} />
+            {groupedMessages.map((group) => (
+              <div key={group.date}>
+                {/* 날짜 구분선 */}
+                <DateDivider date={group.messages[0].createdAt} />
+
+                {/* 해당 날짜의 메시지들 */}
+                {group.messages.map((message) => (
+                  <ChatMessage key={message.id} message={message} />
+                ))}
+              </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
