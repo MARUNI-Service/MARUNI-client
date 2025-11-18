@@ -46,3 +46,16 @@ export async function getNotificationById(notificationId: number): Promise<Notif
   const notifications = await getNotifications();
   return notifications.find((n) => n.id === notificationId) || null;
 }
+
+/**
+ * 데모 알림 생성 (시연용)
+ * - 랜덤으로 위험 알림 생성
+ * - 보호자 계정만 사용 가능
+ */
+export async function createDemoAlert(): Promise<void> {
+  const response = await apiClient.post<CommonApiResponse<null>>(API_ENDPOINTS.ALERT_RULES.DEMO_ALERT);
+
+  if (!response.data || response.data.code !== 'SUCCESS') {
+    throw new Error(response.data?.message || '데모 알림 생성 실패');
+  }
+}

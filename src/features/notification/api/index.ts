@@ -1,1 +1,7 @@
-export { getNotifications, getNotificationById, getUnreadCount, markAsRead } from './notificationApi';
+export {
+  getNotifications,
+  getNotificationById,
+  getUnreadCount,
+  markAsRead,
+  createDemoAlert,
+} from './notificationApi';

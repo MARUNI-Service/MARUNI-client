@@ -50,6 +50,7 @@ export const API_ENDPOINTS = {
     HISTORY: '/alert-rules/history',
     HISTORY_DETAIL: (id: number) => `/alert-rules/history/${id}`,
     DETECT: '/alert-rules/detect',
+    DEMO_ALERT: '/alert-rules/demo-alert',
   },
 
   // 통합 알림

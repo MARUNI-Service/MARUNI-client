@@ -5,7 +5,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getNotifications, getNotificationById, getUnreadCount, markAsRead } from '../api';
+import { getNotifications, getNotificationById, getUnreadCount, markAsRead, createDemoAlert } from '../api';
 import { useToast } from '@/shared/hooks/useToast';
 
 /**
@@ -42,11 +42,27 @@ export function useNotifications() {
     },
   });
 
+  // 데모 알림 생성
+  const { mutateAsync: createDemoAlertMutation, isPending: isCreatingDemo } = useMutation({
+    mutationFn: createDemoAlert,
+    onSuccess: () => {
+      toast.success('데모 알림이 생성되었습니다');
+      // 알림 목록 새로고침
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : '데모 알림 생성에 실패했습니다';
+      toast.error(errorMessage);
+    },
+  });
+
   return {
     notifications,
     isLoading,
     markAsRead: markAsReadMutation,
     unreadCount,
+    createDemoAlert: createDemoAlertMutation,
+    isCreatingDemo,
   };
 }
 

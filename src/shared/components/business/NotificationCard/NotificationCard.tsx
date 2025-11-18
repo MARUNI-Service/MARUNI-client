@@ -15,7 +15,7 @@ import { cn } from '@/shared/utils/cn';
 export function NotificationCard({ notification, onClick }: NotificationCardProps) {
   const level = getNotificationLevel(notification.type);
   const icon = getNotificationIcon(notification.type, level);
-  const timeAgo = formatTimeAgo(notification.createdAt);
+  const timeAgo = formatTimeAgo(notification.createdAt, { showMinutes: true });
 
   return (
     <Card
